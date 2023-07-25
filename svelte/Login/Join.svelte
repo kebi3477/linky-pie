@@ -3,13 +3,13 @@
 </script>
 <main>
     <Header></Header>
-    <div class="login__content">
-        <div class="login__wraper">
-            <div class="login__title title">Welcome! Friend!</div>
-            <div class="login__title--small title">I'm Web Collector</div>
-            <input type="text" name="id" id="login__input-id" class="login__input-id input" placeholder="ID">
-            <input type="password" name="pw" id="login__input-pw" class="login__input-pw input" placeholder="PASSWORD">
-            <button class="login__button">LOGIN</button>
+    <div class="join__content">
+        <div class="join__wraper">
+            <div class="join__title title">Sign Up</div>
+            <input type="text" name="id" id="join__input-id" class="join__input-id input" placeholder="ID">
+            <input type="password" name="pw" id="join__input-pw" class="join__input-pw input" placeholder="PASSWORD">
+            <input type="text" name="name" id="join__input-name" class="join__input-name input" placeholder="NAME">
+            <button class="join__button">Join</button>
         </div>
     </div>
 </main>
@@ -23,40 +23,40 @@
         align-items: center;
         background-color: #102031;
     }
-    .login__content {
+    .join__content {
         width: 500px;
-        height: 90vh;
-        background-color: #ffffff1f;
+        height: 100vh;
+        background-color: #f2f2f2;
         display: grid;
         align-items: center;
         justify-content: center;
     }
-    .login__wraper {
+    .join__wraper {
         width: 300px;
         display: flex;
         flex-flow: column nowrap;
         margin-top: -200px;
-        gap: 10px;
+        gap: 30px;
     }
     .title {
         width: 100%;
         text-align: center;
-        color: #fff;
+        color: #102031;
     }
-    .login__title {
+    .join__title {
         font-size: 16pt;
         font-weight: bold;
     }
-    .login__title--small {
+    .join__title--small {
         font-size: 10pt;
         margin-bottom: 50px;
     }
     .input {
-        color: #fff;
-        background-color: #ffffff1f;
+        color: #102031;
+        background-color: #fbfbfb;
         font-size: 14pt;
     }
-    .login__button {
+    .join__button {
         padding: 10px;
         cursor: pointer;
         font-size: 12pt;
@@ -65,7 +65,7 @@
         transition: .5s;
         background-color: #001a35;
     }
-    .login__button:hover {
+    .join__button:hover {
         background-color: #06223f;
     }
-</style>
+</style>    

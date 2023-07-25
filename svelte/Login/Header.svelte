@@ -1,8 +1,9 @@
 <script>
+    import { Link, link } from "svelte-routing";
 </script>
 <header class="login__header">
-    <div class="login__button">로그인</div>
-    <div class="login__button">회원가입</div>
+    <a href="/" class="login__button" use:link>로그인</a>
+    <a href="/join" class="login__button" use:link>회원가입</a>
 </header>
 <style>
     .login__header {

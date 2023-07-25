@@ -1,14 +1,15 @@
 <script>
     import { Router, Link, Route } from "svelte-routing";
     import Login from './Login/Login.svelte';
+    import Join from './Login/Join.svelte';
 
     export let url = "/";
 </script>
 
-<main>
+<main name="web-collector">
     <Router {url}>
         <Route path="/" component={Login}></Route>
-        <Route path="/login" component={Login}></Route>
+        <Route path="/join" component={Join}></Route>
     </Router>
 </main>
 
