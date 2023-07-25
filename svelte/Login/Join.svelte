@@ -47,10 +47,6 @@
         font-size: 16pt;
         font-weight: bold;
     }
-    .join__title--small {
-        font-size: 10pt;
-        margin-bottom: 50px;
-    }
     .input {
         color: #102031;
         background-color: #fbfbfb;
