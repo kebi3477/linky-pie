@@ -17,7 +17,7 @@ function serve() {
 	return {
 		writeBundle() {
 			if (server) return;
-			server = require('child_process').spawn('npm', ['svelt', '--', '--dev'], {
+			server = require('child_process').spawn('npm', ['run svelt', '--', '--dev'], {
 				stdio: ['ignore', 'inherit', 'inherit'],
 				shell: true
 			});
@@ -29,7 +29,7 @@ function serve() {
 }
 
 export default {
-	input: 'svelte/main.js',
+	input: __dirname + '/svelte/main.js',
 	output: {
 		sourcemap: true,
 		format: 'iife',
