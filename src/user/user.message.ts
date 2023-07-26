@@ -4,6 +4,7 @@ export class UserMessage {
     public static SUCCESS_READ   = '성공적으로 사용자를 조회했습니다.'; 
     public static SUCCESS_UPDATE = '성공적으로 사용자를 수정했습니다.'; 
     public static SUCCESS_DELETE = '성공적으로 사용자를 삭제했습니다.'; 
+    public static SUCCESS_LOGIN  = '로그인 성공!';
 
     // 4XX
     public static NOT_FOUND      = '해당 아이디의 사용자가 존재하지 않습니다.';

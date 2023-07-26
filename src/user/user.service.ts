@@ -21,4 +21,17 @@ export class UserService {
             throw error;
         }
     }
+
+    async login(id: string, password: string): Promise<User> {
+        try {
+            const user = await this.model.login(id, password);
+            if (!user) {
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+            
+           return user;
+        } catch (error) {
+            throw error;
+        }
+    }
 }

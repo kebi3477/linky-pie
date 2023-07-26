@@ -28,11 +28,16 @@ export class UserResponseDto {
     @IsString()
     @IsNotEmpty()
     message!: string;
-
-    user: User
+    statusCode: number;
+    user: User;
 
     setMessage(message: string): UserResponseDto {
         this.message = message;
+        return this;
+    }
+
+    setStatusCode(status: number): UserResponseDto {
+        this.statusCode = status;
         return this;
     }
 

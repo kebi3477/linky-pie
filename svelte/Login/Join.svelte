@@ -1,15 +1,34 @@
 <script>
+    import Fetch from '../Module/fetch';
     import Header from './Header.svelte';
+
+    let id = '';
+    let password = '';
+    let name = '';
+
+    async function join() {
+        const user = {
+            id, password, name
+        }
+        
+        try {
+            const res = await Fetch.post('/api/users', user)
+            alert('회원가입 성공!');
+            location.href = '/';
+        } catch (err) {
+            alert(err.message);
+        }
+    }
 </script>
 <main>
     <Header></Header>
     <div class="join__content">
         <div class="join__wraper">
             <div class="join__title title">Sign Up</div>
-            <input type="text" name="id" id="join__input-id" class="join__input-id input" placeholder="ID">
-            <input type="password" name="pw" id="join__input-pw" class="join__input-pw input" placeholder="PASSWORD">
-            <input type="text" name="name" id="join__input-name" class="join__input-name input" placeholder="NAME">
-            <button class="join__button">Join</button>
+            <input type="text" name="id" id="join__input-id" class="join__input-id input" placeholder="ID" bind:value={id}>
+            <input type="password" name="pw" id="join__input-pw" class="join__input-pw input" placeholder="PASSWORD" bind:value={password}>
+            <input type="text" name="name" id="join__input-name" class="join__input-name input" placeholder="NAME" bind:value={name}>
+            <button type="button" class="join__button" on:click={join}>Join</button>
         </div>
     </div>
 </main>

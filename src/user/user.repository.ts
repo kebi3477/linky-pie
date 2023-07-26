@@ -26,4 +26,8 @@ export class UserRepository {
     public async save(user: User) {
         return await this.repository.save(user);
     }
+
+    public async login(id: string, password: string) {
+        return this.repository.findOne({ where: { id: id, password: password }})
+    }
 }

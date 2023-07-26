@@ -1,5 +1,20 @@
 <script>
+    import Fetch from '../Module/fetch';
     import Header from './Header.svelte';
+
+    let id = '';
+    let password = '';
+
+    async function login() {
+        try {
+            const res = await Fetch.post('/api/users/login', { id, password })
+            alert('로그인 성공!');
+            location.href = '/';
+        } catch (err) {
+            alert(err.message);
+        }
+    }
+
 </script>
 <main>
     <Header></Header>
@@ -7,9 +22,9 @@
         <div class="login__wraper">
             <div class="login__title title">Welcome! Friend!</div>
             <div class="login__title--small title">I'm Web Collector</div>
-            <input type="text" name="id" id="login__input-id" class="login__input-id input" placeholder="ID">
-            <input type="password" name="pw" id="login__input-pw" class="login__input-pw input" placeholder="PASSWORD">
-            <button class="login__button">LOGIN</button>
+            <input type="text" name="id" id="login__input-id" class="login__input-id input" placeholder="ID" bind:value={id}>
+            <input type="password" name="pw" id="login__input-pw" class="login__input-pw input" placeholder="PASSWORD" bind:value={password}>
+            <button class="login__button" on:click={login}>LOGIN</button>
         </div>
     </div>
 </main>
