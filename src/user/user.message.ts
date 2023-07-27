@@ -7,6 +7,7 @@ export class UserMessage {
     public static SUCCESS_LOGIN  = '로그인 성공!';
 
     // 4XX
+    public static BAD_REQUEST    = '잘못된 요청입니다.';
     public static NOT_FOUND      = '해당 아이디의 사용자가 존재하지 않습니다.';
     public static CONFLICT       = '해당 아이디는 이미 사용 중입니다.';
 

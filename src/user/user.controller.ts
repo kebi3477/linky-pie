@@ -1,8 +1,11 @@
-import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDTO, UserResponseDto } from './user.dto';
+import { CreateUserDTO, UserResponseDto, RequestWithUser } from './user.dto';
 import { User } from 'src/entity/user.entity';
 import { UserMessage } from './user.message';
+import { LocalAuthenticationGuard } from '../auth/local.strategy';
+import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
+import { Response } from 'express';
 
 @Controller('users')
 export class UserController {
@@ -14,9 +17,7 @@ export class UserController {
             const newUser: User = await this.service.create(createUserDTO);
             const result: UserResponseDto = new UserResponseDto();
 
-            return result.setStatusCode(HttpStatus.CREATED)
-                         .setMessage(UserMessage.SUCCESS_CREATE)
-                         .setUser(newUser);
+            return result.set(HttpStatus.CREATED, UserMessage.SUCCESS_CREATE, newUser);
         } catch (error) {
             if (error.message === UserMessage.CONFLICT) {
                 throw new HttpException(UserMessage.CONFLICT, HttpStatus.CONFLICT);
@@ -27,14 +28,17 @@ export class UserController {
     }
 
     @Post('/login')
-    async login(@Body('id') id: string, @Body('password') password: string) {
+    @HttpCode(HttpStatus.OK)
+    @UseGuards(LocalAuthenticationGuard)
+    async login(@Req() request: RequestWithUser, @Res() response: Response) {
         try {
-            const user: User = await this.service.login(id, password);
+            const user = request.user;
+            const cookie = this.service.getCookieWithJwtToken(user.id);
             const result: UserResponseDto = new UserResponseDto();
 
-            return result.setStatusCode(HttpStatus.OK)
-                         .setMessage(UserMessage.SUCCESS_LOGIN)
-                         .setUser(user);
+            response.setHeader('Set-Cookie', cookie);
+            user.password = undefined;
+            return response.send(result.set(HttpStatus.OK, UserMessage.SUCCESS_LOGIN, user))
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -43,4 +47,22 @@ export class UserController {
             }
         }
     }
+
+    @Get()
+    @UseGuards(JwtAuthenticationGuard)
+    authenticate(@Req() request: RequestWithUser) {
+      const user = request.user;
+      user.password = undefined;
+      return user;
+    }
+
+    @Post('logout')
+    async logout(@Req() request: RequestWithUser, @Res() response: Response) {
+        response.setHeader(
+            'Set-Cookie',
+            this.service.getCookieForLogOut(),
+        );
+        return response.sendStatus(HttpStatus.OK);
+    }
+
 }

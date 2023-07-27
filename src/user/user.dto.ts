@@ -24,12 +24,23 @@ export class CreateUserDTO {
     type?: number;
 }
 
+export class RequestWithUser extends Request {
+    user: User;
+}
+
 export class UserResponseDto {
     @IsString()
     @IsNotEmpty()
     message!: string;
     statusCode: number;
     user: User;
+
+    set(status:number, message: string, user: User = null): UserResponseDto {
+        this.statusCode = status;
+        this.message = message;
+        this.user = user;
+        return this;
+    }
 
     setMessage(message: string): UserResponseDto {
         this.message = message;

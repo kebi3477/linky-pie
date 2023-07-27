@@ -3104,29 +3104,29 @@ var app = (function () {
 				button = element("button");
 				button.textContent = "LOGIN";
 				attr_dev(div0, "class", "login__title title svelte-1jqmo63");
-				add_location(div0, file$2, 22, 12, 534);
+				add_location(div0, file$2, 22, 12, 551);
 				attr_dev(div1, "class", "login__title--small title svelte-1jqmo63");
-				add_location(div1, file$2, 23, 12, 602);
+				add_location(div1, file$2, 23, 12, 619);
 				attr_dev(input0, "type", "text");
 				attr_dev(input0, "name", "id");
 				attr_dev(input0, "id", "login__input-id");
 				attr_dev(input0, "class", "login__input-id input svelte-1jqmo63");
 				attr_dev(input0, "placeholder", "ID");
-				add_location(input0, file$2, 24, 12, 678);
+				add_location(input0, file$2, 24, 12, 695);
 				attr_dev(input1, "type", "password");
 				attr_dev(input1, "name", "pw");
 				attr_dev(input1, "id", "login__input-pw");
 				attr_dev(input1, "class", "login__input-pw input svelte-1jqmo63");
 				attr_dev(input1, "placeholder", "PASSWORD");
-				add_location(input1, file$2, 25, 12, 805);
+				add_location(input1, file$2, 25, 12, 822);
 				attr_dev(button, "class", "login__button svelte-1jqmo63");
-				add_location(button, file$2, 26, 12, 948);
+				add_location(button, file$2, 26, 12, 965);
 				attr_dev(div2, "class", "login__wraper svelte-1jqmo63");
-				add_location(div2, file$2, 21, 8, 493);
+				add_location(div2, file$2, 21, 8, 510);
 				attr_dev(div3, "class", "login__content svelte-1jqmo63");
-				add_location(div3, file$2, 20, 4, 455);
+				add_location(div3, file$2, 20, 4, 472);
 				attr_dev(main, "class", "svelte-1jqmo63");
-				add_location(main, file$2, 18, 0, 420);
+				add_location(main, file$2, 18, 0, 437);
 			},
 			l: function claim(nodes) {
 				throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3209,7 +3209,7 @@ var app = (function () {
 		async function login() {
 			try {
 				const res = await Fetch.post('/api/users/login', { id, password });
-				alert('로그인 성공!');
+				alert(`${res.user.name}님 환영합니다.`);
 				location.href = '/';
 			} catch(err) {
 				alert(err.message);

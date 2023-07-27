@@ -8,7 +8,7 @@
     async function login() {
         try {
             const res = await Fetch.post('/api/users/login', { id, password })
-            alert('로그인 성공!');
+            alert(`${res.user.name}님 환영합니다.`);
             location.href = '/';
         } catch (err) {
             alert(err.message);
