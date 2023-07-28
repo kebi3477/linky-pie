@@ -1,4 +1,5 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
+import { Block } from './block.entity';
 
 @Entity({ name: 'users'})
 export class User {
@@ -13,6 +14,9 @@ export class User {
 
     @Column({ name: 'type', default: 0, comment: '0:사용자, 1:관리자' })
     type: number;
+
+    @OneToMany(() => Block, (block) => block.user)
+    blocks: Block[]
 
     @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
     createdAt: Date;

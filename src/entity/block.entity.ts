@@ -6,9 +6,9 @@ export class Block {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, (user) => user.blocks, { onDelete: 'CASCADE' })
   @JoinColumn({ name: 'user_id' })
-  user_id: string;
+  user: User;
 
   @Column({ length: 100 })
   title: string;

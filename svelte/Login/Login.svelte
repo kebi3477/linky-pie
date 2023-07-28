@@ -16,6 +16,13 @@
         }
     }
 
+    async function handleEnter(event) {
+        if(event.key !== 'Enter') {
+            return;
+        }
+
+        login();
+    }
 </script>
 <main>
     <Header></Header>
@@ -23,8 +30,8 @@
         <div class="login__wraper">
             <div class="login__title title">Welcome! Friend!</div>
             <div class="login__title--small title">I'm Web Collector</div>
-            <input type="text" name="id" id="login__input-id" class="login__input-id input" placeholder="ID" bind:value={id}>
-            <input type="password" name="pw" id="login__input-pw" class="login__input-pw input" placeholder="PASSWORD" bind:value={password}>
+            <input type="text" name="id" id="login__input-id" class="login__input-id input" placeholder="ID" bind:value={id} on:keydown={handleEnter}>
+            <input type="password" name="pw" id="login__input-pw" class="login__input-pw input" placeholder="PASSWORD" bind:value={password} on:keydown={handleEnter}>
             <button class="login__button" on:click={login}>LOGIN</button>
         </div>
     </div>

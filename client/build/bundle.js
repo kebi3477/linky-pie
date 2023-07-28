@@ -213,6 +213,14 @@ var app = (function () {
 	}
 
 	/**
+	 * @returns {void} */
+	function destroy_each(iterations, detaching) {
+		for (let i = 0; i < iterations.length; i += 1) {
+			if (iterations[i]) iterations[i].d(detaching);
+		}
+	}
+
+	/**
 	 * @template {keyof HTMLElementTagNameMap} K
 	 * @param {K} name
 	 * @returns {HTMLElementTagNameMap[K]}
@@ -770,6 +778,14 @@ var app = (function () {
 		info.block.p(child_ctx, dirty);
 	}
 
+	// general each functions:
+
+	function ensure_array_like(array_like_or_iterator) {
+		return array_like_or_iterator?.length !== undefined
+			? array_like_or_iterator
+			: Array.from(array_like_or_iterator);
+	}
+
 	/** @returns {{}} */
 	function get_spread_update(levels, updates) {
 		const update = {};
@@ -1087,6 +1103,29 @@ var app = (function () {
 		attr(node, attribute, value);
 		if (value == null) dispatch_dev('SvelteDOMRemoveAttribute', { node, attribute });
 		else dispatch_dev('SvelteDOMSetAttribute', { node, attribute, value });
+	}
+
+	/**
+	 * @param {Text} text
+	 * @param {unknown} data
+	 * @returns {void}
+	 */
+	function set_data_dev(text, data) {
+		data = '' + data;
+		if (text.data === data) return;
+		dispatch_dev('SvelteDOMSetData', { node: text, data });
+		text.data = /** @type {string} */ (data);
+	}
+
+	function ensure_array_like_dev(arg) {
+		if (
+			typeof arg !== 'string' &&
+			!(arg && typeof arg === 'object' && 'length' in arg) &&
+			!(typeof Symbol === 'function' && arg && Symbol.iterator in arg)
+		) {
+			throw new Error('{#each} only works with iterable values.');
+		}
+		return ensure_array_like(arg);
 	}
 
 	/**
@@ -3118,29 +3157,29 @@ var app = (function () {
 				button = element("button");
 				button.textContent = "LOGIN";
 				attr_dev(div0, "class", "login__title title svelte-1jqmo63");
-				add_location(div0, file$3, 23, 12, 616);
+				add_location(div0, file$3, 30, 12, 753);
 				attr_dev(div1, "class", "login__title--small title svelte-1jqmo63");
-				add_location(div1, file$3, 24, 12, 684);
+				add_location(div1, file$3, 31, 12, 821);
 				attr_dev(input0, "type", "text");
 				attr_dev(input0, "name", "id");
 				attr_dev(input0, "id", "login__input-id");
 				attr_dev(input0, "class", "login__input-id input svelte-1jqmo63");
 				attr_dev(input0, "placeholder", "ID");
-				add_location(input0, file$3, 25, 12, 760);
+				add_location(input0, file$3, 32, 12, 897);
 				attr_dev(input1, "type", "password");
 				attr_dev(input1, "name", "pw");
 				attr_dev(input1, "id", "login__input-pw");
 				attr_dev(input1, "class", "login__input-pw input svelte-1jqmo63");
 				attr_dev(input1, "placeholder", "PASSWORD");
-				add_location(input1, file$3, 26, 12, 887);
+				add_location(input1, file$3, 33, 12, 1049);
 				attr_dev(button, "class", "login__button svelte-1jqmo63");
-				add_location(button, file$3, 27, 12, 1030);
+				add_location(button, file$3, 34, 12, 1217);
 				attr_dev(div2, "class", "login__wraper svelte-1jqmo63");
-				add_location(div2, file$3, 22, 8, 575);
+				add_location(div2, file$3, 29, 8, 712);
 				attr_dev(div3, "class", "login__content svelte-1jqmo63");
-				add_location(div3, file$3, 21, 4, 537);
+				add_location(div3, file$3, 28, 4, 674);
 				attr_dev(main, "class", "svelte-1jqmo63");
-				add_location(main, file$3, 19, 0, 502);
+				add_location(main, file$3, 26, 0, 639);
 			},
 			l: function claim(nodes) {
 				throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3166,8 +3205,10 @@ var app = (function () {
 
 				if (!mounted) {
 					dispose = [
-						listen_dev(input0, "input", /*input0_input_handler*/ ctx[3]),
-						listen_dev(input1, "input", /*input1_input_handler*/ ctx[4]),
+						listen_dev(input0, "input", /*input0_input_handler*/ ctx[4]),
+						listen_dev(input0, "keydown", /*handleEnter*/ ctx[3], false, false, false, false),
+						listen_dev(input1, "input", /*input1_input_handler*/ ctx[5]),
+						listen_dev(input1, "keydown", /*handleEnter*/ ctx[3], false, false, false, false),
 						listen_dev(button, "click", /*login*/ ctx[2], false, false, false, false)
 					];
 
@@ -3230,6 +3271,14 @@ var app = (function () {
 			}
 		}
 
+		async function handleEnter(event) {
+			if (event.key !== 'Enter') {
+				return;
+			}
+
+			login();
+		}
+
 		const writable_props = [];
 
 		Object.keys($$props).forEach(key => {
@@ -3252,7 +3301,8 @@ var app = (function () {
 			Header,
 			id,
 			password,
-			login
+			login,
+			handleEnter
 		});
 
 		$$self.$inject_state = $$props => {
@@ -3264,7 +3314,7 @@ var app = (function () {
 			$$self.$inject_state($$props.$$inject);
 		}
 
-		return [id, password, login, input0_input_handler, input1_input_handler];
+		return [id, password, login, handleEnter, input0_input_handler, input1_input_handler];
 	}
 
 	class Login extends SvelteComponentDev {
@@ -3512,54 +3562,152 @@ var app = (function () {
 	const { console: console_1 } = globals;
 	const file$1 = "svelte\\Block\\Block.svelte";
 
+	function get_each_context(ctx, list, i) {
+		const child_ctx = ctx.slice();
+		child_ctx[8] = list[i];
+		child_ctx[10] = i;
+		return child_ctx;
+	}
+
+	// (57:12) {#each blocks as item, idx}
+	function create_each_block(ctx) {
+		let div2;
+		let div0;
+		let t1;
+		let div1;
+		let t2_value = /*item*/ ctx[8].title + "";
+		let t2;
+		let t3;
+		let a;
+		let t4;
+		let a_href_value;
+		let t5;
+
+		const block = {
+			c: function create() {
+				div2 = element("div");
+				div0 = element("div");
+				div0.textContent = `${/*idx*/ ctx[10]}`;
+				t1 = space();
+				div1 = element("div");
+				t2 = text(t2_value);
+				t3 = space();
+				a = element("a");
+				t4 = text("바로가기");
+				t5 = space();
+				attr_dev(div0, "class", "svelte-11tsx1z");
+				add_location(div0, file$1, 58, 20, 1495);
+				attr_dev(div1, "class", "svelte-11tsx1z");
+				add_location(div1, file$1, 59, 20, 1533);
+				attr_dev(a, "href", a_href_value = /*item*/ ctx[8].link);
+				attr_dev(a, "target", "_blank");
+				attr_dev(a, "class", "svelte-11tsx1z");
+				add_location(a, file$1, 60, 20, 1578);
+				attr_dev(div2, "class", "block__item svelte-11tsx1z");
+				add_location(div2, file$1, 57, 16, 1448);
+			},
+			m: function mount(target, anchor) {
+				insert_dev(target, div2, anchor);
+				append_dev(div2, div0);
+				append_dev(div2, t1);
+				append_dev(div2, div1);
+				append_dev(div1, t2);
+				append_dev(div2, t3);
+				append_dev(div2, a);
+				append_dev(a, t4);
+				append_dev(div2, t5);
+			},
+			p: function update(ctx, dirty) {
+				if (dirty & /*blocks*/ 2 && t2_value !== (t2_value = /*item*/ ctx[8].title + "")) set_data_dev(t2, t2_value);
+
+				if (dirty & /*blocks*/ 2 && a_href_value !== (a_href_value = /*item*/ ctx[8].link)) {
+					attr_dev(a, "href", a_href_value);
+				}
+			},
+			d: function destroy(detaching) {
+				if (detaching) {
+					detach_dev(div2);
+				}
+			}
+		};
+
+		dispatch_dev("SvelteRegisterBlock", {
+			block,
+			id: create_each_block.name,
+			type: "each",
+			source: "(57:12) {#each blocks as item, idx}",
+			ctx
+		});
+
+		return block;
+	}
+
 	function create_fragment$1(ctx) {
 		let main;
+		let div2;
 		let div0;
 		let input;
 		let t;
-		let div2;
 		let div1;
 		let mounted;
 		let dispose;
+		let each_value = ensure_array_like_dev(/*blocks*/ ctx[1]);
+		let each_blocks = [];
+
+		for (let i = 0; i < each_value.length; i += 1) {
+			each_blocks[i] = create_each_block(get_each_context(ctx, each_value, i));
+		}
 
 		const block = {
 			c: function create() {
 				main = element("main");
+				div2 = element("div");
 				div0 = element("div");
 				input = element("input");
 				t = space();
-				div2 = element("div");
 				div1 = element("div");
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					each_blocks[i].c();
+				}
+
 				attr_dev(input, "type", "text");
 				attr_dev(input, "name", "url");
 				attr_dev(input, "id", "url__input");
-				attr_dev(input, "class", "url__input");
-				add_location(input, file$1, 41, 8, 856);
-				attr_dev(div0, "class", "url__container");
-				add_location(div0, file$1, 40, 4, 818);
-				attr_dev(div1, "class", "block__item");
-				add_location(div1, file$1, 44, 8, 1039);
-				attr_dev(div2, "class", "block__list");
-				add_location(div2, file$1, 43, 4, 1004);
-				add_location(main, file$1, 39, 0, 806);
+				attr_dev(input, "class", "url__input svelte-11tsx1z");
+				add_location(input, file$1, 53, 12, 1208);
+				attr_dev(div0, "class", "url__container svelte-11tsx1z");
+				add_location(div0, file$1, 52, 8, 1166);
+				attr_dev(div1, "class", "block__list svelte-11tsx1z");
+				add_location(div1, file$1, 55, 8, 1364);
+				attr_dev(div2, "class", "block__content svelte-11tsx1z");
+				add_location(div2, file$1, 51, 4, 1128);
+				attr_dev(main, "class", "svelte-11tsx1z");
+				add_location(main, file$1, 50, 0, 1116);
 			},
 			l: function claim(nodes) {
 				throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, main, anchor);
-				append_dev(main, div0);
+				append_dev(main, div2);
+				append_dev(div2, div0);
 				append_dev(div0, input);
 				set_input_value(input, /*url*/ ctx[0]);
-				append_dev(main, t);
-				append_dev(main, div2);
+				append_dev(div2, t);
 				append_dev(div2, div1);
+
+				for (let i = 0; i < each_blocks.length; i += 1) {
+					if (each_blocks[i]) {
+						each_blocks[i].m(div1, null);
+					}
+				}
 
 				if (!mounted) {
 					dispose = [
-						listen_dev(input, "input", /*input_input_handler*/ ctx[3]),
-						listen_dev(input, "keydown", /*handleEnter*/ ctx[1], false, false, false, false),
-						listen_dev(input, "paste", /*handlePaste*/ ctx[2], false, false, false, false)
+						listen_dev(input, "input", /*input_input_handler*/ ctx[4]),
+						listen_dev(input, "keydown", /*handleEnter*/ ctx[2], false, false, false, false),
+						listen_dev(input, "paste", /*handlePaste*/ ctx[3], false, false, false, false)
 					];
 
 					mounted = true;
@@ -3569,6 +3717,29 @@ var app = (function () {
 				if (dirty & /*url*/ 1 && input.value !== /*url*/ ctx[0]) {
 					set_input_value(input, /*url*/ ctx[0]);
 				}
+
+				if (dirty & /*blocks*/ 2) {
+					each_value = ensure_array_like_dev(/*blocks*/ ctx[1]);
+					let i;
+
+					for (i = 0; i < each_value.length; i += 1) {
+						const child_ctx = get_each_context(ctx, each_value, i);
+
+						if (each_blocks[i]) {
+							each_blocks[i].p(child_ctx, dirty);
+						} else {
+							each_blocks[i] = create_each_block(child_ctx);
+							each_blocks[i].c();
+							each_blocks[i].m(div1, null);
+						}
+					}
+
+					for (; i < each_blocks.length; i += 1) {
+						each_blocks[i].d(1);
+					}
+
+					each_blocks.length = each_value.length;
+				}
 			},
 			i: noop,
 			o: noop,
@@ -3577,6 +3748,7 @@ var app = (function () {
 					detach_dev(main);
 				}
 
+				destroy_each(each_blocks, detaching);
 				mounted = false;
 				run_all(dispose);
 			}
@@ -3597,6 +3769,7 @@ var app = (function () {
 		let { $$slots: slots = {}, $$scope } = $$props;
 		validate_slots('Block', slots, []);
 		let url = '';
+		let blocks = [];
 
 		async function loginCheck() {
 			const res = await Fetch.get('/api/users');
@@ -3612,20 +3785,27 @@ var app = (function () {
 				return;
 			}
 
-			createBlock();
+			createBlock(url);
 		}
 
 		async function handlePaste(event) {
-			$$invalidate(0, url = (event.clipboardData || window.clipboardData).getData('text'));
-			createBlock();
+			const link = (event.clipboardData || window.clipboardData).getData('text');
+			createBlock(link);
 		}
 
-		async function createBlock(e) {
-			//TODO : Create Block Event
-			console.log(url);
+		async function createBlock(link) {
+			await Fetch.post('/api/blocks', { title: '테스트', content: '본문 테스트', link });
+			$$invalidate(0, url = '');
+		}
+
+		async function getBlockList() {
+			const res = await Fetch.get('/api/blocks');
+			console.log(res);
+			$$invalidate(1, blocks = res.block);
 		}
 
 		loginCheck();
+		getBlockList();
 		const writable_props = [];
 
 		Object.keys($$props).forEach(key => {
@@ -3641,21 +3821,24 @@ var app = (function () {
 			navigate,
 			Fetch,
 			url,
+			blocks,
 			loginCheck,
 			handleEnter,
 			handlePaste,
-			createBlock
+			createBlock,
+			getBlockList
 		});
 
 		$$self.$inject_state = $$props => {
 			if ('url' in $$props) $$invalidate(0, url = $$props.url);
+			if ('blocks' in $$props) $$invalidate(1, blocks = $$props.blocks);
 		};
 
 		if ($$props && "$$inject" in $$props) {
 			$$self.$inject_state($$props.$$inject);
 		}
 
-		return [url, handleEnter, handlePaste, input_input_handler];
+		return [url, blocks, handleEnter, handlePaste, input_input_handler];
 	}
 
 	class Block extends SvelteComponentDev {
