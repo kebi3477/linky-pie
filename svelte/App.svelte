@@ -3,6 +3,7 @@
     import Login from './Login/Login.svelte';
     import Join from './Login/Join.svelte';
     import Block from './Block/Block.svelte';
+    import Root from "./Root.svelte";
 
     export let url = "/";
 </script>
@@ -11,7 +12,8 @@
     <Router {url}>
         <Route path="block" component={Block}></Route>
         <Route path="join" component={Join}></Route>
-        <Route path="/" component={Login}></Route>
+        <Route path="login" component={Login}></Route>
+        <Route path="/" component={Root}></Route>
     </Router>
 </main>
 

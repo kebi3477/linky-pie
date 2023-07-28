@@ -51,9 +51,11 @@ export class UserController {
     @Get()
     @UseGuards(JwtAuthenticationGuard)
     authenticate(@Req() request: RequestWithUser) {
-      const user = request.user;
-      user.password = undefined;
-      return user;
+        const user = request.user;
+        const result: UserResponseDto = new UserResponseDto();
+        
+        user.password = undefined;
+        return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, user);
     }
 
     @Post('logout')

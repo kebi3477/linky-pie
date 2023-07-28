@@ -10,7 +10,7 @@
 
         if (res.statusCode === 401) {
             alert('로그인이 필요합니다!');
-            navigate('/', { replace: true });
+            navigate('/login', { replace: true });
         }
     }
 
