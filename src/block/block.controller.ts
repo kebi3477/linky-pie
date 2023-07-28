@@ -44,4 +44,9 @@ export class BlockController {
             }
         }
     }
+
+    @Get('/test')
+    async getTest() {
+        return await this.service.callChatGPT('test');
+    }
 }

@@ -3564,18 +3564,18 @@ var app = (function () {
 
 	function get_each_context(ctx, list, i) {
 		const child_ctx = ctx.slice();
-		child_ctx[8] = list[i];
-		child_ctx[10] = i;
+		child_ctx[9] = list[i];
+		child_ctx[11] = i;
 		return child_ctx;
 	}
 
-	// (57:12) {#each blocks as item, idx}
+	// (62:12) {#each blocks as item, idx}
 	function create_each_block(ctx) {
 		let div2;
 		let div0;
 		let t1;
 		let div1;
-		let t2_value = /*item*/ ctx[8].title + "";
+		let t2_value = /*item*/ ctx[9].title + "";
 		let t2;
 		let t3;
 		let a;
@@ -3587,7 +3587,7 @@ var app = (function () {
 			c: function create() {
 				div2 = element("div");
 				div0 = element("div");
-				div0.textContent = `${/*idx*/ ctx[10]}`;
+				div0.textContent = `${/*idx*/ ctx[11]}`;
 				t1 = space();
 				div1 = element("div");
 				t2 = text(t2_value);
@@ -3596,15 +3596,15 @@ var app = (function () {
 				t4 = text("바로가기");
 				t5 = space();
 				attr_dev(div0, "class", "svelte-11tsx1z");
-				add_location(div0, file$1, 58, 20, 1495);
+				add_location(div0, file$1, 63, 20, 1598);
 				attr_dev(div1, "class", "svelte-11tsx1z");
-				add_location(div1, file$1, 59, 20, 1533);
-				attr_dev(a, "href", a_href_value = /*item*/ ctx[8].link);
+				add_location(div1, file$1, 64, 20, 1636);
+				attr_dev(a, "href", a_href_value = /*item*/ ctx[9].link);
 				attr_dev(a, "target", "_blank");
 				attr_dev(a, "class", "svelte-11tsx1z");
-				add_location(a, file$1, 60, 20, 1578);
+				add_location(a, file$1, 65, 20, 1681);
 				attr_dev(div2, "class", "block__item svelte-11tsx1z");
-				add_location(div2, file$1, 57, 16, 1448);
+				add_location(div2, file$1, 62, 16, 1551);
 			},
 			m: function mount(target, anchor) {
 				insert_dev(target, div2, anchor);
@@ -3618,9 +3618,9 @@ var app = (function () {
 				append_dev(div2, t5);
 			},
 			p: function update(ctx, dirty) {
-				if (dirty & /*blocks*/ 2 && t2_value !== (t2_value = /*item*/ ctx[8].title + "")) set_data_dev(t2, t2_value);
+				if (dirty & /*blocks*/ 2 && t2_value !== (t2_value = /*item*/ ctx[9].title + "")) set_data_dev(t2, t2_value);
 
-				if (dirty & /*blocks*/ 2 && a_href_value !== (a_href_value = /*item*/ ctx[8].link)) {
+				if (dirty & /*blocks*/ 2 && a_href_value !== (a_href_value = /*item*/ ctx[9].link)) {
 					attr_dev(a, "href", a_href_value);
 				}
 			},
@@ -3635,7 +3635,7 @@ var app = (function () {
 			block,
 			id: create_each_block.name,
 			type: "each",
-			source: "(57:12) {#each blocks as item, idx}",
+			source: "(62:12) {#each blocks as item, idx}",
 			ctx
 		});
 
@@ -3675,15 +3675,15 @@ var app = (function () {
 				attr_dev(input, "name", "url");
 				attr_dev(input, "id", "url__input");
 				attr_dev(input, "class", "url__input svelte-11tsx1z");
-				add_location(input, file$1, 53, 12, 1208);
+				add_location(input, file$1, 58, 12, 1311);
 				attr_dev(div0, "class", "url__container svelte-11tsx1z");
-				add_location(div0, file$1, 52, 8, 1166);
+				add_location(div0, file$1, 57, 8, 1269);
 				attr_dev(div1, "class", "block__list svelte-11tsx1z");
-				add_location(div1, file$1, 55, 8, 1364);
+				add_location(div1, file$1, 60, 8, 1467);
 				attr_dev(div2, "class", "block__content svelte-11tsx1z");
-				add_location(div2, file$1, 51, 4, 1128);
+				add_location(div2, file$1, 56, 4, 1231);
 				attr_dev(main, "class", "svelte-11tsx1z");
-				add_location(main, file$1, 50, 0, 1116);
+				add_location(main, file$1, 55, 0, 1219);
 			},
 			l: function claim(nodes) {
 				throw new Error("options.hydrate only works if the component was compiled with the `hydratable: true` option");
@@ -3804,8 +3804,13 @@ var app = (function () {
 			$$invalidate(1, blocks = res.block);
 		}
 
+		async function getAI() {
+			await Fetch.get('/api/blocks/test');
+		}
+
 		loginCheck();
 		getBlockList();
+		getAI();
 		const writable_props = [];
 
 		Object.keys($$props).forEach(key => {
@@ -3826,7 +3831,8 @@ var app = (function () {
 			handleEnter,
 			handlePaste,
 			createBlock,
-			getBlockList
+			getBlockList,
+			getAI
 		});
 
 		$$self.$inject_state = $$props => {
