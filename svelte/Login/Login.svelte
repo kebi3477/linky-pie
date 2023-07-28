@@ -1,4 +1,5 @@
 <script>
+    import { navigate } from 'svelte-routing';
     import Fetch from '../Module/fetch';
     import Header from './Header.svelte';
 
@@ -9,7 +10,7 @@
         try {
             const res = await Fetch.post('/api/users/login', { id, password })
             alert(`${res.user.name}님 환영합니다.`);
-            location.href = '/';
+            navigate("/block", { replace: true })
         } catch (err) {
             alert(err.message);
         }

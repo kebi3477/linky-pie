@@ -11,12 +11,15 @@ export default class Fetch {
             headers: { 'Content-Type': 'application/json' }
         }).then(res => res.json());
 
-        console.log(Fetch.getFirstStatusCode(response.statusCode));
         if (Fetch.getFirstStatusCode(response.statusCode) !== 2) {
             throw new Error(response.message);
         }
 
         return response;
+    }
+
+    static async get(url) {
+        return await fetch(url).then(res => res.json());
     }
     
 }

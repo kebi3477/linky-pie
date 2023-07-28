@@ -24,7 +24,7 @@ export class CreateUserDTO {
     type?: number;
 }
 
-export class RequestWithUser extends Request {
+export class RequestWithUser {
     user: User;
 }
 
