@@ -14,7 +14,13 @@ export class Block {
   title: string;
 
   @Column({ type: 'text', nullable: true })
+  subtitle: string;
+
+  @Column({ type: 'text', nullable: true })
   content: string;
+
+  @Column({ type: 'text', nullable: true })
+  hashtag: string;
 
   @Column({ type: 'text', nullable: true })
   link: string;

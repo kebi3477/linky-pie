@@ -14,8 +14,7 @@ export class BlockController {
     @UseGuards(JwtAuthenticationGuard)
     async create(@Req() request: RequestWithUser, @Body() createBlockDTO: CreateBlockDTO) {
         try {
-            createBlockDTO.user_id = request.user.id;
-            const newBlock: Block = await this.service.create(createBlockDTO);
+            const newBlock: Block = await this.service.create(request.user.id, createBlockDTO);
             const result: BlockResponseDto = new BlockResponseDto();
 
             return result.set(HttpStatus.CREATED, BlockMessage.SUCCESS_CREATE, newBlock);

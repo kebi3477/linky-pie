@@ -1,21 +1,18 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
 import { Block } from 'src/entity/block.entity';
+import { User } from 'src/entity/user.entity';
 
 export class CreateBlockDTO {
     @IsNotEmpty()
     @IsString()
-    @MaxLength(100)
-    title: string;
-  
-    @IsNotEmpty()
-    @IsString()
-    content: string;
-  
-    @IsNotEmpty()
-    @IsString()
     link: string;
 
-    user_id: string;
+    title: string;
+    subtitle: string;
+    content: string;
+    hashtag: string;
+
+    user_id: User;
 }
 
 export class BlockResponseDto {
