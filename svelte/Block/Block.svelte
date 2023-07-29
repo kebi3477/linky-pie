@@ -43,14 +43,9 @@
         console.log(res);
         blocks = res.block;
     }
-    
-    async function getAI() {
-        await Fetch.get('/api/blocks/test');
-    }
 
     loginCheck();
     getBlockList();
-    getAI();
 </script>
 
 <main>

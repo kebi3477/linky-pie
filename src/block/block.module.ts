@@ -6,6 +6,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Block } from 'src/entity/block.entity';
 import { APP_PIPE } from '@nestjs/core';
 import { User } from 'src/entity/user.entity';
+import { UserRepository } from 'src/user/user.repository';
 
 @Module({
     imports: [
@@ -15,6 +16,7 @@ import { User } from 'src/entity/user.entity';
     providers: [
         BlockService, 
         BlockRepository,
+        UserRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe

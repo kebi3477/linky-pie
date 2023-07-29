@@ -12,7 +12,7 @@ export class CreateBlockDTO {
     content: string;
     hashtag: string;
 
-    user_id: User;
+    user: User;
 }
 
 export class BlockResponseDto {
