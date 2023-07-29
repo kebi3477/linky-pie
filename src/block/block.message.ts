@@ -8,6 +8,7 @@ export class BlockMessage {
     // 4XX
     public static BAD_REQUEST    = '잘못된 요청입니다.';
     public static NOT_FOUND      = '해당 아이디의 블록이 존재하지 않습니다.';
+    public static NOT_FOUND_CONTENT = 'URL 정보를 가져오지 못했습니다.';
     public static CONFLICT       = '이미 사용 중입니다.';
 
     // 5XX

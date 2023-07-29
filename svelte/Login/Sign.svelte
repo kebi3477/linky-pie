@@ -1,4 +1,8 @@
+<script>
+    export let close;
+</script>
 <main>
+    <button on:click={close}>닫기</button>
     [web-collector] 개인정보 이용 동의서
 
     안녕하세요. [web-collector]를 이용해주셔서 감사합니다.

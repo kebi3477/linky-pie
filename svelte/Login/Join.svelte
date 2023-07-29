@@ -1,10 +1,12 @@
 <script>
     import Fetch from '../Module/fetch';
     import Header from './Header.svelte';
+    import Sign from './Sign.svelte';
 
     let id = '';
     let password = '';
     let name = '';
+    let showModel = false;
 
     async function join() {
         const user = {
@@ -19,8 +21,19 @@
             alert(err.message);
         }
     }
+
+    function openModal() {
+        showModel = true;
+    }
+
+    function closeModal() {
+        showModel = false;
+    }
 </script>
 <main>
+    {#if showModel}
+        <Sign close={closeModal} />
+    {/if}
     <Header></Header>
     <div class="join__content">
         <div class="join__wraper">
@@ -28,6 +41,12 @@
             <input type="text" name="id" id="join__input-id" class="join__input-id input" placeholder="ID" bind:value={id}>
             <input type="password" name="pw" id="join__input-pw" class="join__input-pw input" placeholder="PASSWORD" bind:value={password}>
             <input type="text" name="name" id="join__input-name" class="join__input-name input" placeholder="NAME" bind:value={name}>
+            <div class="join__wrap">
+                <input type="checkbox" name="accept" id="join__input-accept" class="join__input-accept">
+                <label for="join__input-accept">동의합니다</label>
+                <button class="join__button-accept" on:click={openModal}>개인정보 이용 동의서</button>
+            </div>
+            
             <button type="button" class="join__button" on:click={join}>Join</button>
         </div>
     </div>
