@@ -8,7 +8,7 @@
 
     async function login() {
         try {
-            const res = await Fetch.post('/api/users/login', { id, password })
+            const res = await Fetch.post('/api/auth/login', { id, password })
             alert(`${res.user.name}님 환영합니다.`);
             navigate("/block", { replace: true })
         } catch (err) {
