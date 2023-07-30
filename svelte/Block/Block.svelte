@@ -1,9 +1,12 @@
 <script>
     import { navigate } from "svelte-routing";
     import Fetch from "../Module/fetch";
+    import Loading from '../Module/Loading.svelte';
+    import { onMount } from "svelte";
 
     let url = '';
     let blocks = [];
+    let loading;
 
     async function loginCheck() {
         const res = await Fetch.get('/api/users');
@@ -29,26 +32,33 @@
     }
 
     async function createBlock(link) {
+        loading.start();
         const res = await Fetch.post('/api/blocks', {
             title: '테스트',
             content: '본문 테스트',
             link: link
         })
 
-        url = '';
+        if (res.statusCode === 201) {
+            url = '';   
+        }
+
+        loading.stop();
     }
 
     async function getBlockList() {
+        loading.start();
         const res = await Fetch.get('/api/blocks');
-        console.log(res);
         blocks = res.block;
+        loading.stop();
     }
 
     loginCheck();
-    getBlockList();
+    onMount(getBlockList);
 </script>
 
 <main>
+    <Loading bind:this={loading}></Loading>
     <div class="block__content">
         <div class="url__container">
             <input type="text" name="url" id="url__input" class="url__input" bind:value={url} on:keydown={handleEnter} on:paste={handlePaste}>
