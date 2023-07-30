@@ -60,10 +60,7 @@ export class UserController {
 
     @Post('logout')
     async logout(@Req() request: RequestWithUser, @Res() response: Response) {
-        response.setHeader(
-            'Set-Cookie',
-            this.service.getCookieForLogOut(),
-        );
+        response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
         return response.sendStatus(HttpStatus.OK);
     }
 

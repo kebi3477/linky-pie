@@ -10,7 +10,8 @@ export class BlockMessage {
     public static NOT_FOUND      = '해당 아이디의 블록이 존재하지 않습니다.';
     public static NOT_FOUND_CONTENT = 'URL 정보를 가져오지 못했습니다.';
     public static CONFLICT       = '이미 사용 중입니다.';
-
+    
     // 5XX
     public static SERVER_ERROR   = '서버에서 처리 중 오류가 발생했습니다.';
+    public static GPT_ERROR      = 'AI가 처리 중 오류가 발생했습니다.';
 }

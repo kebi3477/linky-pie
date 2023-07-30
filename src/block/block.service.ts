@@ -8,28 +8,46 @@ import cheerio from 'cheerio';
 import { UserRepository } from 'src/user/user.repository';
 import { UserMessage } from 'src/user/user.message';
 import { BlockMessage } from './block.message';
+import { Logger } from '../module/logger';
 
 @Injectable()
 export class BlockService {
+    private logger = new Logger(BlockService.name).getLogger();
+
     constructor(
         private readonly model: BlockRepository,
         private readonly userModel: UserRepository
     ) {}
 
+    /**
+     * 블록 생성
+     * 
+     * @param userId 사용자ID
+     * @param createBlockDTO 블록 생성 DTO
+     * @returns 생성한 Block
+     */
     public async create(userId: string, createBlockDTO: CreateBlockDTO): Promise<Block> {
         try {
+            this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
+
             const user = await this.userModel.getUser(userId);
             if (!user) {
+                this.logger.log(`[블록 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
             const contents: string = await this.getContentsByURL(createBlockDTO.link);
             if (!contents) {
+                this.logger.log(`[블록 생성] 크롤링 실패`);
                 throw new Error(BlockMessage.NOT_FOUND_CONTENT);
             }
 
             const msg: string = await this.callChatGPT(contents);
-            console.log(msg);
+            if (!msg) {
+                this.logger.log(`[블록 생성] GPT 호출 성공 [ msg : ${msg} ] `);
+                throw new Error(BlockMessage.GPT_ERROR);
+            }
+
             const res = JSON.parse(msg);
             
             createBlockDTO.user = user;
@@ -38,16 +56,26 @@ export class BlockService {
             createBlockDTO.content = res.body;
             createBlockDTO.hashtag = res.hashtag;
         
+            this.logger.log(`[블록 생성] 생성 시작 [ title : ${res.title} ] `);
             const newBlock: Block = this.model.createBlock(createBlockDTO);
+            this.logger.log(`[블록 생성] 생성 성공 [ id : ${newBlock.id} ] `);
             return await this.model.save(newBlock);
         } catch (error) {
-            console.log(error);
+            this.logger.error(`[블록 생성] 에러! [ error : ${error.message} ] `);
             throw error;
         }
     }
 
+    /**
+     * 블록 목록 조회
+     * 
+     * @param userId 사용자ID
+     * @returns Block[]
+     */
     public async getBlockList(userId: string): Promise<Block[]> {
         try {
+            this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+
             const user: User = new User();
             user.id = userId;
 
@@ -58,7 +86,15 @@ export class BlockService {
         }
     }
 
+    /**
+     * URL 크롤링 후 p 태그의 내용 반환
+     * 
+     * @param url 웹 URL
+     * @returns 
+     */
     private async getContentsByURL(url: string): Promise<string> {
+        this.logger.log(`[크롤링] 시작 [ URL : ${url} ]`);
+
         let body = "";
 
         await axios.get(url).then(response => {
@@ -66,15 +102,24 @@ export class BlockService {
             const $ = cheerio.load(html);
             body = $('p').text();
         })
-        .catch(err => {
-            console.log(err);
+        .catch(error => {
+            this.logger.error(`[크롤링] 오류 출력 [ error : ${error.message} ]`);
         });
 
+        this.logger.log(`[크롤링] 성공`);
         return body;
     }
 
+    /**
+     * GPT에게 본문 내용으로 JSON 요청
+     * 
+     * @param contents 본문 내용
+     * @returns GPT에게 요청한 본문 내용으로 받은 요약본
+     */
     private async callChatGPT(contents: string): Promise<string> {
         try {
+            this.logger.log(`[GPT 호출] 시작`);
+            
             const response = await axios.post(`${process.env.GPT_URL}/v1/chat/completions`, {
                 model: "gpt-3.5-turbo",
                 messages: [{ role: "user", content: this.getPrompt(contents) }],
@@ -86,15 +131,23 @@ export class BlockService {
             });
             
             if (response.status === 200) {
+                this.logger.log(`[GPT 호출] 성공`);
                 return response.data.choices[0].message.content;
             } else {
+                this.logger.log(`[GPT 호출] 실패`);
                 return "";
             }
         } catch (error) {
-            console.error("오류가 발생하였습니다.", error);
+            this.logger.log(`[GPT 호출] 오류 출력 [ error : ${error.message} ]`);
         }
     }
 
+    /**
+     * 프롬프트 문자열 반환
+     * 
+     * @param contents 본문 내용
+     * @returns 프롬프트
+     */
     private getPrompt(contents: string): string {
         return `
             다음은 내가 크롤링을 해서 받아온 URL의 본문이야.
