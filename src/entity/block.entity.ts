@@ -1,14 +1,11 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Group } from './group.entity';
 import { User } from './user.entity';
 
-@Entity()
+@Entity('blocks')
 export class Block {
   @PrimaryGeneratedColumn('uuid')
   id: string;
-
-  @ManyToOne(() => User, (user) => user.blocks, { onDelete: 'CASCADE' })
-  @JoinColumn({ name: 'user_id' })
-  user: User;
 
   @Column({ length: 100 })
   title: string;
@@ -24,6 +21,14 @@ export class Block {
 
   @Column({ type: 'text', nullable: true })
   link: string;
+
+  @ManyToOne(() => Group, (group) => group.blocks)
+  @JoinColumn({ name: 'group_id' })
+  group: Group;
+
+  @ManyToOne(() => User, (user) => user.blocks)
+  @JoinColumn({ name: 'user_id' })
+  user: User;
 
   @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
   createdAt: Date;

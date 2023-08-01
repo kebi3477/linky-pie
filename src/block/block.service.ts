@@ -2,13 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { BlockRepository } from './block.repository';
 import { CreateBlockDTO } from './block.dto';
 import { Block } from 'src/entity/block.entity';
-import { User } from 'src/entity/user.entity';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { UserRepository } from 'src/user/user.repository';
 import { UserMessage } from 'src/user/user.message';
 import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
+import { Group } from 'src/entity/group.entity';
+import { GroupRepository } from 'src/group/group.repository';
+import { GroupMessage } from 'src/module/message';
+import { User } from 'src/entity/user.entity';
 
 @Injectable()
 export class BlockService {
@@ -16,17 +19,19 @@ export class BlockService {
 
     constructor(
         private readonly model: BlockRepository,
-        private readonly userModel: UserRepository
+        private readonly userModel: UserRepository,
+        private readonly groupModel: GroupRepository
     ) {}
 
     /**
      * 블록 생성
      * 
      * @param userId 사용자ID
+     * @param groupId 그룹ID
      * @param createBlockDTO 블록 생성 DTO
      * @returns 생성한 Block
      */
-    public async create(userId: string, createBlockDTO: CreateBlockDTO): Promise<Block> {
+    public async create(userId: string, groupId: null|string, createBlockDTO: CreateBlockDTO): Promise<Block> {
         try {
             this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
 
@@ -44,12 +49,19 @@ export class BlockService {
 
             const msg: string = await this.callChatGPT(contents);
             if (!msg) {
-                this.logger.log(`[블록 생성] GPT 호출 성공 [ msg : ${msg} ] `);
+                this.logger.log(`[블록 생성] GPT 호출 실패 [ msg : ${msg} ] `);
                 throw new Error(BlockMessage.GPT_ERROR);
             }
 
             const res = JSON.parse(msg);
             
+            if (groupId !== null) {
+                const group = await this.groupModel.getGroup(groupId);
+                createBlockDTO.group = group;
+            } else {
+                createBlockDTO.group = null;
+            }
+
             createBlockDTO.user = user;
             createBlockDTO.title = res.title;
             createBlockDTO.subtitle = res.subtitle;
@@ -67,19 +79,39 @@ export class BlockService {
     }
 
     /**
-     * 블록 목록 조회
+     * 블록 목록 조회 (사용자ID)
      * 
-     * @param userId 사용자ID
+     * @param userId 사용자 ID
      * @returns Block[]
      */
-    public async getBlockList(userId: string): Promise<Block[]> {
+        public async getBlockListByUser(userId: string): Promise<Block[]> {
+            try {
+                this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+    
+                const user: User = new User();
+                user.id = userId;
+    
+                return await this.model.getBlockListByUser(user);
+            } catch (error) {
+                console.log(error);
+                throw error;
+            }
+        }
+
+    /**
+     * 블록 목록 조회
+     * 
+     * @param blockGroupId 블록 그룹 ID
+     * @returns Block[]
+     */
+    public async getBlockList(blockGroupId: string): Promise<Block[]> {
         try {
-            this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+            this.logger.log(`[블록 목록 조회] API 호출 [ blockGroupId : ${blockGroupId} ]`);
 
-            const user: User = new User();
-            user.id = userId;
+            const blockGroup: Group = new Group();
+            blockGroup.id = blockGroupId;
 
-            return await this.model.getBlockListByUser(user);
+            return await this.model.getBlockListByGroup(blockGroup);
         } catch (error) {
             console.log(error);
             throw error;

@@ -1,5 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
 import { Block } from 'src/entity/block.entity';
+import { Group } from 'src/entity/group.entity';
 import { User } from 'src/entity/user.entity';
 
 export class CreateBlockDTO {
@@ -12,6 +13,7 @@ export class CreateBlockDTO {
     content: string;
     hashtag: string;
 
+    group?: Group|null;
     user: User;
 }
 

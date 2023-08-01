@@ -1,29 +1,27 @@
 import { Module, ValidationPipe } from '@nestjs/common';
-import { BlockService } from './block.service';
-import { BlockController } from './block.controller';
-import { BlockRepository } from './block.repository';
+import { GroupService } from './group.service';
+import { GroupController } from './group.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Block } from 'src/entity/block.entity';
-import { APP_PIPE } from '@nestjs/core';
 import { Group } from 'src/entity/group.entity';
+import { APP_PIPE } from '@nestjs/core';
+import { GroupRepository } from './group.repository';
 import { UserRepository } from 'src/user/user.repository';
 import { User } from 'src/entity/user.entity';
-import { GroupRepository } from 'src/group/group.repository';
 
 @Module({
     imports: [
         TypeOrmModule.forFeature([Block, User, Group]),
     ],
-    controllers: [ BlockController ],
-    providers: [
-        BlockService, 
-        BlockRepository,
-        UserRepository,
+    controllers: [ GroupController ],
+    providers: [ 
+        GroupService,
         GroupRepository,
+        UserRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe
         },
     ],
 })
-export class BlockModule {}
+export class GroupModule {}

@@ -24,10 +24,6 @@ export class CreateUserDTO {
     type?: number;
 }
 
-export class RequestWithUser extends Request {
-    user: User;
-}
-
 export class UserResponseDto {
     @IsString()
     @IsNotEmpty()

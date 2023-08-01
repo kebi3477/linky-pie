@@ -3,6 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Block } from "src/entity/block.entity";
 import { Repository } from "typeorm";
 import { CreateBlockDTO } from "./block.dto";
+import { Group } from "src/entity/group.entity";
 import { User } from "src/entity/user.entity";
 
 
@@ -31,5 +32,9 @@ export class BlockRepository {
 
     public async getBlockListByUser(user: User): Promise<Block[]> {
         return await this.repository.find({ where: { user : user }, order: { createdAt: "DESC" } })
+    }
+
+    public async getBlockListByGroup(group: Group): Promise<Block[]> {
+        return await this.repository.find({ where: { group : group }, order: { createdAt: "DESC" } })
     }
 }
