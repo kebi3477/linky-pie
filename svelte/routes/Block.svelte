@@ -39,6 +39,7 @@
 
         if (res.statusCode === 201) {
             url = '';   
+            blocks = [...blocks, res.block];
         }
 
         loading.stop();

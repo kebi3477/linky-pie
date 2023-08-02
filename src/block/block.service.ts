@@ -166,6 +166,7 @@ export class BlockService {
                 this.logger.log(`[GPT 호출] 성공`);
                 return response.data.choices[0].message.content;
             } else {
+                console.log(response);
                 this.logger.log(`[GPT 호출] 실패`);
                 return "";
             }

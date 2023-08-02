@@ -31,6 +31,8 @@
 
         if (res.statusCode === 201) {
             title = '';   
+            groups = [...groups, res.group];
+            console.log(groups);
         }
 
         loading.stop();

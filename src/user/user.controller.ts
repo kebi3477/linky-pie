@@ -26,7 +26,7 @@ export class UserController {
         }
     }
 
-    @Get()
+    @Get('/me')
     @UseGuards(JwtAuthenticationGuard)
     authenticate(@Req() request: RequestWithUser) {
         const user = request.user;
@@ -34,5 +34,31 @@ export class UserController {
         
         user.password = undefined;
         return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, user);
+    }
+
+    @Post(':userId/follow/:followingUserId')
+    followUser(
+        @Param('userId') userId: string,
+        @Param('followingUserId') followingUserId: string,
+    ): Promise<void> {
+        return this.service.followUser(userId, followingUserId);
+    }
+  
+    @Delete(':userId/unfollow/:followingUserId')
+    unfollowUser(
+        @Param('userId') userId: string,
+        @Param('followingUserId') followingUserId: string,
+    ): Promise<void> {
+        return this.service.unfollowUser(userId, followingUserId);
+    }
+  
+    @Get(':userId/followers')
+    getFollowers(@Param('userId') userId: string): Promise<User[]> {
+        return this.service.getFollowers(userId);
+    }
+  
+    @Get(':userId/following')
+    getFollowing(@Param('userId') userId: string): Promise<User[]> {
+        return this.service.getFollowing(userId);
     }
 }

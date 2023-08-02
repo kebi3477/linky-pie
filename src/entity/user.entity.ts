@@ -1,9 +1,14 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
 import { Group } from './group.entity';
 import { Block } from './block.entity';
+import { Follower } from './follower.entity';
 
 @Entity('users')
 export class User {
+    constructor(id='') {
+        this.id = id;
+    }
+
     @PrimaryColumn({ name: 'id', length: 50, comment: '아이디' })
     id: string;
     
@@ -16,20 +21,26 @@ export class User {
     @Column({ name: 'type', default: 0, comment: '0:사용자, 1:관리자' })
     type: number;
 
+    @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
+    createdAt: Date;
+    
+    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true, comment: '수정날짜' })
+    updatedAt: Date | null;
+    
+    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true, comment: '삭제날짜' })
+    deletedAt: Date | null;
+
     @OneToMany(() => Group, (group) => group.user)
     groups: Group[]
 
     @OneToMany(() => Block, (block) => block.user)
     blocks: Block[]
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
-    createdAt: Date;
+    @OneToMany(() => Follower, (follower) => follower.user)
+    followers: Follower[];
 
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true, comment: '수정날짜' })
-    updatedAt: Date | null;
-
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true, comment: '삭제날짜' })
-    deletedAt: Date | null;
+    @OneToMany(() => Follower, (follower) => follower.following)
+    following: Follower[];
 
     static of(params: Partial<User>): User {
         const user = new User();

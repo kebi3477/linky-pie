@@ -5,6 +5,8 @@ import { CreateUserDTO } from './user.dto';
 import { User } from 'src/entity/user.entity';
 import { UserMessage } from './user.message';
 import { Logger } from 'src/module/logger';
+import { FollowerRepository } from 'src/follower/follower.repository';
+import { Follower } from 'src/entity/follower.entity';
 
 @Injectable()
 export class UserService {
@@ -13,6 +15,7 @@ export class UserService {
 
     constructor(
         private readonly model: UserRepository,
+        private readonly followerModel: FollowerRepository
     ) {}
 
     /**
@@ -36,7 +39,7 @@ export class UserService {
             this.logger.log(`[사용자 생성] 생성 성공  [ userId : ${createUserDTO.id} ]`);
             return await this.model.save(newUser);
         } catch (error) {
-            console.log(error);
+            this.logger.error(`[사용자 생성] 오류! => ${error.message}`);
             throw error;
         }
     }
@@ -59,7 +62,56 @@ export class UserService {
             
             return user;
         } catch (error) {
+            this.logger.error(`[사용자 조회] 오류! => ${error.message}`);
             throw error;
         }
+    }
+
+    /**
+     * 팔로잉
+     * 
+     * @param userId 팔로우 하는 사용자 아이디
+     * @param followingUserId 팔로잉 받는 사용자 아이디
+     */
+    async followUser(userId: string, followingUserId: string): Promise<void> {
+        try {
+            this.logger.log(`[팔로잉] API 호출 [ userId : ${userId}, following : ${followingUserId} ]`);
+
+            const user = new User(userId);
+            const following = new User(followingUserId);
+            const follower = new Follower();
+
+            follower.user = user;
+            follower.following = following;
+
+            this.logger.log(`[팔로잉] 성공 [ userId : ${userId} ]`);
+            await this.followerModel.save(follower);
+        } catch (error) {
+            this.logger.error(`[팔로잉] 오류! => ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
+     * 언팔로우
+     * 
+     * @param userId 팔로우 한 사용자 아이디
+     * @param followingUserId 취소할 팔로잉 아이디
+     */
+    async unfollowUser(userId: string, followingUserId: string): Promise<void> {
+        this.logger.log(`[언팔로우] API 호출 [ userId : ${userId}, following : ${followingUserId} ]`);
+
+        const user = new User(userId);
+        const following = new User(followingUserId);
+
+        await this.followerModel.deleteFollower(user, following);
+    }
+
+    async getFollowers(userId: string): Promise<User[]> {
+        return this.followerModel.getFollowers(userId);
+    }
+
+    async getFollowing(userId: string): Promise<User[]> {
+        return this.followerModel.getFollowing(userId);
     }
 }
