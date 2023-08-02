@@ -1,7 +1,7 @@
 <script>
-    import Fetch from '../Module/fetch';
-    import Header from './Header.svelte';
-    import Sign from './Sign.svelte';
+    import Fetch from '../utils/fetch';
+    import Header from '../components/LoginHeader.svelte';
+    import Sign from '../components/Sign.svelte';
 
     let id = '';
     let password = '';

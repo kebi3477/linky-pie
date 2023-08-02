@@ -1,11 +1,13 @@
 <script>
-    import { navigate } from "svelte-routing";
-    import Fetch from "../Module/fetch";
-    import Loading from '../Module/Loading.svelte';
     import { onMount } from "svelte";
+    import { navigate } from "svelte-routing";
+    import Fetch from "../utils/fetch";
+    import Loading from '../components/Loading.svelte';
+    import Header from '../components/MainHeader.svelte';
 
     let url = '';
     let blocks = [];
+    let groups = [];
     let loading;
 
     async function loginCheck() {
@@ -33,11 +35,7 @@
 
     async function createBlock(link) {
         loading.start();
-        const res = await Fetch.post('/api/blocks', {
-            title: '테스트',
-            content: '본문 테스트',
-            link: link
-        })
+        const res = await Fetch.post('/api/blocks', { link })
 
         if (res.statusCode === 201) {
             url = '';   
@@ -53,15 +51,32 @@
         loading.stop();
     }
 
-    loginCheck();
+    async function getGroupList() {
+        loading.start();
+        const res = await Fetch.get('/api/groups');
+        groups = res.group;
+        loading.stop();
+    }
+
+    // loginCheck();
     onMount(getBlockList);
+    onMount(getGroupList);
 </script>
 
 <main>
     <Loading bind:this={loading}></Loading>
+    <Header></Header>
     <div class="block__content">
         <div class="url__container">
             <input type="text" name="url" id="url__input" class="url__input" bind:value={url} on:keydown={handleEnter} on:paste={handlePaste}>
+        </div>
+        <div class="group__list">
+            {#each groups as item, idx}
+                <div class="group__item">
+                    <div>{idx}</div>
+                    <div>{item.title}</div>
+                </div>
+            {/each}
         </div>
         <div class="block__list">
             {#each blocks as item, idx}
@@ -103,6 +118,25 @@
     }
     .url__input {
         width: 80%;
+    }
+    .group__list {
+        width: 100%;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    .group__item {
+        width: 80%;
+        display: flex;
+        flex-flow: row;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+    }
+    .group__item > * {
+        color: #fff;
     }
     .block__list {
         width: 100%;

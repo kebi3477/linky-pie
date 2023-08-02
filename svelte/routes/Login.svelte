@@ -1,7 +1,7 @@
 <script>
     import { navigate } from 'svelte-routing';
-    import Fetch from '../Module/fetch';
-    import Header from './Header.svelte';
+    import Fetch from '../utils/fetch';
+    import Header from '../components/LoginHeader.svelte';
 
     let id = '';
     let password = '';

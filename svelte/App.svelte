@@ -1,9 +1,10 @@
 <script>
     import { Router, Link, Route } from "svelte-routing";
-    import Login from './Login/Login.svelte';
-    import Join from './Login/Join.svelte';
-    import Block from './Block/Block.svelte';
     import Root from "./Root.svelte";
+    import Login from './routes/Login.svelte';
+    import Join from './routes/Join.svelte';
+    import Block from './routes/Block.svelte';
+    import Group from "./routes/Group.svelte";
 
     export let url = "/";
 </script>
@@ -11,6 +12,7 @@
 <main name="web-collector">
     <Router {url}>
         <Route path="block" component={Block}></Route>
+        <Route path="group" component={Group}></Route>
         <Route path="join" component={Join}></Route>
         <Route path="login" component={Login}></Route>
         <Route path="/" component={Root}></Route>

@@ -1,8 +1,8 @@
 <script>
     import { onMount } from "svelte";
     import { navigate } from "svelte-routing/src/history";
-    import Fetch from "./Module/fetch";
-
+    import Fetch from "./utils/fetch";
+    
     async function isLogin() {
         const res = await Fetch.get('/api/users');
         return res.statusCode === 401 ? false : true;            
