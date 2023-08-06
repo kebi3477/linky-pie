@@ -23,10 +23,14 @@ export class Group {
     id: string;
   
     @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ 
+        name: 'user_id'
+    })
     user: User;
   
-    @Column({ length: 100 })
+    @Column({ 
+        length: 100
+     })
     title: string;
 
     @Column({
@@ -37,13 +41,23 @@ export class Group {
     })
     type: GroupType
   
-    @OneToMany(() => Block, (block) => block.group)
-    blocks: Block[];
-  
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
+    @CreateDateColumn({ 
+        name: 'created_at', 
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '생성날짜' 
+    })
     createdAt: Date;
   
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true, comment: '수정날짜' })
+    @UpdateDateColumn({ 
+        name: 'updated_at', 
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '수정날짜' 
+    })
     updatedAt: Date | null;
+
+    @OneToMany(() => Block, (block) => block.group)
+    blocks: Block[];
 }
   

@@ -14,6 +14,11 @@ export class Follower {
     @JoinColumn({ name: 'follow_id' })
     following: User;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
+    @CreateDateColumn({ 
+        name: 'created_at', 
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '생성날짜' 
+    })
     createdAt: Date;
 }

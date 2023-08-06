@@ -21,13 +21,28 @@ export class User {
     @Column({ name: 'type', default: 0, comment: '0:사용자, 1:관리자' })
     type: number;
 
-    @CreateDateColumn({ name: 'created_at', type: 'timestamp', nullable: true, comment: '생성날짜' })
+    @CreateDateColumn({ 
+        name: 'created_at',
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '생성날짜' 
+    })
     createdAt: Date;
     
-    @UpdateDateColumn({ name: 'updated_at', type: 'timestamp', nullable: true, comment: '수정날짜' })
+    @UpdateDateColumn({ 
+        name: 'updated_at', 
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '수정날짜' 
+    })
     updatedAt: Date | null;
     
-    @DeleteDateColumn({ name: 'deleted_at', type: 'timestamp', nullable: true, comment: '삭제날짜' })
+    @DeleteDateColumn({ 
+        name: 'deleted_at',
+        type: 'timestamp', 
+        nullable: true, 
+        comment: '삭제날짜' 
+    })
     deletedAt: Date | null;
 
     @OneToMany(() => Group, (group) => group.user)
