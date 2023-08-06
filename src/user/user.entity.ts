@@ -10,7 +10,7 @@ export enum UserType {
 
 @Entity('users')
 export class User {
-    constructor(id='') {
+    constructor(id:string = '') {
         this.id = id;
     }
 

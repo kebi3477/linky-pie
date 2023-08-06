@@ -14,12 +14,6 @@ export class Retrospective {
     })
     block: Block;
 
-    @Column({ 
-        length: 500,
-        comment: '회고 제목',
-    })
-    title: string;
-
     @Column('text', {
         comment: '회고 본문',
     })

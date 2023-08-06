@@ -6,7 +6,6 @@ import { CreateBlockDTO } from "./block.dto";
 import { Group } from "src/group/group.entity";
 import { User } from "src/user/user.entity";
 
-
 @Injectable()
 export class BlockRepository {
     public constructor(
@@ -36,5 +35,9 @@ export class BlockRepository {
 
     public async getBlockListByGroup(group: Group): Promise<Block[]> {
         return await this.repository.find({ where: { group : group }, order: { createdAt: "DESC" } })
+    }
+
+    public async getBlockByUserId(id: string, userId: string): Promise<Block> {
+        return this.repository.findOne({ where: { id: id, user: new User(userId) } });
     }
 }

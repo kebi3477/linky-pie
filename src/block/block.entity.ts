@@ -1,10 +1,14 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
-import { Retrospective } from '../retrospective/retrospectives.entity';
+import { Retrospective } from '../retrospective/retrospective.entity';
 
 @Entity('blocks')
 export class Block {
+    constructor(id: string = '') {
+        this.id = id;
+    }
+
     @PrimaryGeneratedColumn('uuid', { 
         comment: '블록(웹 링크) 고유 아이디' 
     })

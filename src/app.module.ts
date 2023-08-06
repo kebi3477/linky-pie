@@ -7,6 +7,7 @@ import { UserModule } from './user/user.module';
 import { BlockModule } from './block/block.module';
 import { AuthModule } from './auth/auth.module';
 import { GroupModule } from './group/group.module';
+import { RetrospectiveModule } from './retrospective/retrospective.module';
 
 @Module({
     imports: [
@@ -36,6 +37,7 @@ import { GroupModule } from './group/group.module';
         BlockModule,
         AuthModule,
         GroupModule,
+        RetrospectiveModule,
     ],
     controllers: [],
     providers: [],
