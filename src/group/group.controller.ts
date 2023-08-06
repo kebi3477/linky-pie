@@ -2,7 +2,7 @@ import { Body, Controller, Get, HttpException, HttpStatus, Post, Req, UseGuards 
 import { GroupResponseDto, CreateGroupDTO } from './group.dto';
 import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
 import { RequestWithUser } from 'src/auth/auth.interface';
-import { Group } from 'src/entity/group.entity';
+import { Group } from 'src/group/group.entity';
 import { GroupService } from './group.service';
 import { GroupMessage } from 'src/module/message';
 

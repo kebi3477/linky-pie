@@ -1,7 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { Group } from './group.entity';
-import { User } from './user.entity';
-import { Retrospective } from './retrospectives.entity';
+import { Group } from '../group/group.entity';
+import { User } from '../user/user.entity';
+import { Retrospective } from '../retrospective/retrospectives.entity';
 
 @Entity('blocks')
 export class Block {

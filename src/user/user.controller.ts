@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDTO, UserResponseDto } from './user.dto';
-import { User } from 'src/entity/user.entity';
+import { User } from 'src/user/user.entity';
 import { UserMessage } from './user.message';
 import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
 import { RequestWithUser } from 'src/auth/auth.interface';

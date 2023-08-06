@@ -1,9 +1,11 @@
 import { Entity, Column, ManyToOne, JoinColumn, CreateDateColumn, PrimaryGeneratedColumn } from 'typeorm';
-import { User } from './user.entity';
+import { User } from '../user/user.entity';
 
 @Entity('followers')
 export class Follower {
-    @PrimaryGeneratedColumn()
+    @PrimaryGeneratedColumn({
+        comment: '팔로잉 고유 아이디',
+    })
     id: number;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })

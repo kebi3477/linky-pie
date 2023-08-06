@@ -4,8 +4,8 @@ import { GroupRepository } from './group.repository';
 import { UserRepository } from 'src/user/user.repository';
 import { CreateGroupDTO } from './group.dto';
 import { UserMessage } from 'src/user/user.message';
-import { Group } from 'src/entity/group.entity';
-import { User } from 'src/entity/user.entity';
+import { Group } from 'src/group/group.entity';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class GroupService {

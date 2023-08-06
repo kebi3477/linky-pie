@@ -4,7 +4,7 @@ import { TokenPayload } from './auth.interface';
 import { UserRepository } from 'src/user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/entity/user.entity';
+import { User } from 'src/user/user.entity';
 import { UserMessage } from 'src/user/user.message';
 import * as bcrypt from 'bcrypt';
 

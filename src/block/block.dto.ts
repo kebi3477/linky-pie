@@ -1,7 +1,7 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { Block } from 'src/entity/block.entity';
-import { Group } from 'src/entity/group.entity';
-import { User } from 'src/entity/user.entity';
+import { Block } from 'src/block/block.entity';
+import { Group } from 'src/group/group.entity';
+import { User } from 'src/user/user.entity';
 
 export class CreateBlockDTO {
     @IsNotEmpty()

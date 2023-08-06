@@ -1,7 +1,7 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
 import { BlockService } from './block.service';
 import { BlockResponseDto, CreateBlockDTO } from './block.dto';
-import { Block } from 'src/entity/block.entity';
+import { Block } from 'src/block/block.entity';
 import { BlockMessage } from './block.message';
 import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
 import { RequestWithUser } from 'src/auth/auth.interface';

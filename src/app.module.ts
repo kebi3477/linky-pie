@@ -26,7 +26,7 @@ import { GroupModule } from './group/group.module';
                 username: configService.get('DATABASE_USER'),
                 password: configService.get('DATABASE_PASS'),
                 database: configService.get('DATABASE_NAME'),
-                entities: [__dirname + '/entity/*.entity.{js,ts}'],
+                entities: [__dirname + '/*/*.entity.{js,ts}'],
                 synchronize : true,
                 logging: true,
                 timezone: 'local',

@@ -1,7 +1,7 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
-import { Group } from './group.entity';
-import { Block } from './block.entity';
-import { Follower } from './follower.entity';
+import { Group } from '../group/group.entity';
+import { Block } from '../block/block.entity';
+import { Follower } from '../follower/follower.entity';
 
 export enum UserType {
     User = 0,

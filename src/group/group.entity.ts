@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
-import { User } from './user.entity';
-import { Block } from './block.entity';
+import { User } from '../user/user.entity';
+import { Block } from '../block/block.entity';
 
 export enum GroupType {
     Private = 0,
@@ -10,7 +10,9 @@ export enum GroupType {
 
 @Entity('groups')
 export class Group {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn('uuid', {
+        comment: '그룹 고유 아이디',
+    })
     id: string;
   
     @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })

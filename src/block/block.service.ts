@@ -1,17 +1,17 @@
 import { Injectable } from '@nestjs/common';
 import { BlockRepository } from './block.repository';
 import { CreateBlockDTO } from './block.dto';
-import { Block } from 'src/entity/block.entity';
+import { Block } from 'src/block/block.entity';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { UserRepository } from 'src/user/user.repository';
 import { UserMessage } from 'src/user/user.message';
 import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
-import { Group } from 'src/entity/group.entity';
+import { Group } from 'src/group/group.entity';
 import { GroupRepository } from 'src/group/group.repository';
 import { GroupMessage } from 'src/module/message';
-import { User } from 'src/entity/user.entity';
+import { User } from 'src/user/user.entity';
 
 @Injectable()
 export class BlockService {

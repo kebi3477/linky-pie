@@ -1,6 +1,6 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { Group, GroupType } from 'src/entity/group.entity';
-import { User } from 'src/entity/user.entity';
+import { Group, GroupType } from 'src/group/group.entity';
+import { User } from 'src/user/user.entity';
 
 export class CreateGroupDTO {
     @IsString()

@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { User } from 'src/entity/user.entity';
+import { User } from 'src/user/user.entity';
 
 export class CreateUserDTO {
     @IsNotEmpty()
