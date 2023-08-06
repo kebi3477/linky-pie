@@ -36,29 +36,33 @@ export class UserController {
         return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, user);
     }
 
-    @Post(':userId/follow/:followingUserId')
+    @Post('/follow/:followingUserId')
+    @UseGuards(JwtAuthenticationGuard)
     followUser(
-        @Param('userId') userId: string,
+        @Req() request: RequestWithUser,
         @Param('followingUserId') followingUserId: string,
     ): Promise<void> {
-        return this.service.followUser(userId, followingUserId);
+        return this.service.followUser(request.user.id, followingUserId);
     }
   
     @Delete(':userId/unfollow/:followingUserId')
+    @UseGuards(JwtAuthenticationGuard)
     unfollowUser(
-        @Param('userId') userId: string,
+        @Req() request: RequestWithUser,
         @Param('followingUserId') followingUserId: string,
     ): Promise<void> {
-        return this.service.unfollowUser(userId, followingUserId);
+        return this.service.unfollowUser(request.user.id, followingUserId);
     }
   
-    @Get(':userId/followers')
-    getFollowers(@Param('userId') userId: string): Promise<User[]> {
-        return this.service.getFollowers(userId);
+    @Get('/followers')
+    @UseGuards(JwtAuthenticationGuard)
+    getFollowers(@Req() request: RequestWithUser,): Promise<User[]> {
+        return this.service.getFollowers(request.user.id);
     }
   
-    @Get(':userId/following')
-    getFollowing(@Param('userId') userId: string): Promise<User[]> {
-        return this.service.getFollowing(userId);
+    @Get('/following')
+    @UseGuards(JwtAuthenticationGuard)
+    getFollowing(@Req() request: RequestWithUser,): Promise<User[]> {
+        return this.service.getFollowing(request.user.id);
     }
 }
