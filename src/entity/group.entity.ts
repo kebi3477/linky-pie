@@ -1,13 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  ManyToOne,
-  JoinColumn,
-  CreateDateColumn,
-  UpdateDateColumn,
-  OneToMany,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
 import { User } from './user.entity';
 import { Block } from './block.entity';
 
@@ -29,7 +20,8 @@ export class Group {
     user: User;
   
     @Column({ 
-        length: 100
+        length: 100,
+        comment: '그룹 제목',
      })
     title: string;
 

@@ -5,30 +5,55 @@ import { Retrospective } from './retrospectives.entity';
 
 @Entity('blocks')
 export class Block {
-    @PrimaryGeneratedColumn('uuid')
+    @PrimaryGeneratedColumn('uuid', { 
+        comment: '블록(웹 링크) 고유 아이디' 
+    })
     id: string;
 
-    @Column({ length: 100 })
+    @Column({ 
+        length: 100,
+        comment: '블록 제목' 
+    })
     title: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({
+        type: 'text', 
+        nullable: true, 
+        comment: '블록 부제목' 
+    })
     subtitle: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({
+        type: 'text', 
+        nullable: true, 
+        comment: '블록 요약 본문' 
+    })
     content: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({
+        type: 'text', 
+        nullable: true, 
+        comment: '블록 해시태그' 
+    })
     hashtag: string;
 
-    @Column({ type: 'text', nullable: true })
+    @Column({
+        type: 'text', 
+        nullable: true, 
+        comment: '블록 웹 URL 링크' 
+    })
     link: string;
 
     @ManyToOne(() => Group, (group) => group.blocks)
-    @JoinColumn({ name: 'group_id' })
+    @JoinColumn({ 
+        name: 'group_id'
+    })
     group: Group;
 
     @ManyToOne(() => User, (user) => user.blocks)
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ 
+        name: 'user_id' 
+    })
     user: User;
 
     @CreateDateColumn({ 

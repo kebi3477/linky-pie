@@ -7,11 +7,15 @@ export class Follower {
     id: number;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'user_id' })
+    @JoinColumn({ 
+        name: 'user_id'
+    })
     user: User;
 
     @ManyToOne(() => User, { onDelete: 'CASCADE' })
-    @JoinColumn({ name: 'follow_id' })
+    @JoinColumn({ 
+        name: 'follow_id' 
+    })
     following: User;
 
     @CreateDateColumn({ 
