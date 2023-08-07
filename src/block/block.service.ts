@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { BlockRepository } from './block.repository';
-import { CreateBlockDTO } from './block.dto';
+import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { Block } from 'src/block/block.entity';
 import axios from 'axios';
 import cheerio from 'cheerio';
@@ -79,6 +79,102 @@ export class BlockService {
     }
 
     /**
+     * 블록 조회
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     */
+    public async read(userId: string, blockId: string): Promise<Block> {
+        try {
+            this.logger.log(`[블록 조회] API 호출 [ userId : ${userId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.model.getBlockByUserId(blockId, userId);
+            if (!block) {
+                this.logger.log(`[블록 조회] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+
+            this.logger.log(`[블록 조회] 조회 성공 [ blockId : ${blockId} ] `);
+            return block;
+        } catch (error) {
+            this.logger.error(`[블록 조회] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 블록 수정
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @param updateBlockDTO 블록 수정 DTO
+     * @return 수정한 블록
+     */
+    public async update(userId: string, blockId: string, updateBlockDTO: UpdateBlockDTO): Promise<Block> {
+        try {
+            this.logger.log(`[블록 수정] API 호출 [ userId : ${userId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.model.getBlockByUserId(blockId, userId);
+            if (!block) {
+                this.logger.log(`[블록 수정] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+            
+            Object.assign(block, updateBlockDTO);
+            this.logger.log(`[블록 수정] 수정 성공 [ blockId : ${blockId} ] `);
+
+            return await this.model.save(block);
+        } catch (error) {
+            this.logger.error(`[블록 수정] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 블록 삭제
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     */
+    public async delete(userId: string, blockId: string): Promise<Block> {
+        try {
+            this.logger.log(`[블록 삭제] API 호출 [ userId : ${userId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.model.getBlockByUserId(blockId, userId);
+            if (!block) {
+                this.logger.log(`[블록 삭제] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+
+            await this.model.deleteBlock(blockId);
+            this.logger.log(`[블록 삭제] 삭제 성공 [ blockId : ${blockId} ] `);
+            
+            return block;
+        } catch (error) {
+            this.logger.error(`[블록 삭제] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
      * 블록 목록 조회 (사용자ID)
      * 
      * @param userId 사용자 ID
@@ -88,9 +184,12 @@ export class BlockService {
             try {
                 this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
     
-                const user: User = new User();
-                user.id = userId;
-    
+                const user = await this.userModel.getUser(userId);
+                if (!user) {
+                    this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                    throw new Error(UserMessage.NOT_FOUND);
+                }
+
                 return await this.model.getBlockListByUser(user);
             } catch (error) {
                 console.log(error);
