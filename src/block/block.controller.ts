@@ -16,7 +16,7 @@ export class BlockController {
     async create(@Req() request: RequestWithUser, @Body() createBlockDTO: CreateBlockDTO) {
         try {
             const newBlock: Block = await this.service.create(request.user.id, null, createBlockDTO);
-            const result: BlockResponseDto = new BlockResponseDto();
+            const result: BlockResponseDto<Block> = new BlockResponseDto();
 
             return result.set(HttpStatus.CREATED, BlockMessage.SUCCESS_CREATE, newBlock);
         } catch (error) {
@@ -37,7 +37,7 @@ export class BlockController {
     async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
         try {
             const newBlock: Block = await this.service.read(request.user.id, blockId);
-            const result: BlockResponseDto = new BlockResponseDto();
+            const result: BlockResponseDto<Block> = new BlockResponseDto();
 
             return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, newBlock);
         } catch (error) {
@@ -56,7 +56,7 @@ export class BlockController {
     async update(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() updateBlockDTO: UpdateBlockDTO) {
         try {
             const newBlock: Block = await this.service.update(request.user.id, blockId, updateBlockDTO);
-            const result: BlockResponseDto = new BlockResponseDto();
+            const result: BlockResponseDto<Block> = new BlockResponseDto();
 
             return result.set(HttpStatus.OK, BlockMessage.SUCCESS_UPDATE, newBlock);
         } catch (error) {
@@ -75,7 +75,7 @@ export class BlockController {
     async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
         try {
             const newBlock: Block = await this.service.delete(request.user.id, blockId);
-            const result: BlockResponseDto = new BlockResponseDto();
+            const result: BlockResponseDto<Block> = new BlockResponseDto();
 
             return result.set(HttpStatus.OK, BlockMessage.SUCCESS_DELETE, newBlock);
         } catch (error) {
@@ -94,7 +94,7 @@ export class BlockController {
     async getBlockList(@Req() request: RequestWithUser) {
         try {
             const blockList: Block[] = await this.service.getBlockListByUser(request.user.id);
-            const result: BlockResponseDto = new BlockResponseDto();
+            const result: BlockResponseDto<Block[]> = new BlockResponseDto();
 
             return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, blockList);
         } catch (error) {

@@ -17,7 +17,7 @@ export class RetrospectiveController {
     async create(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() createRetrospectiveDTO: CreateRetrospectiveDTO) {
         try {
             const newBlock: Retrospective = await this.service.create(request.user.id, blockId, createRetrospectiveDTO);
-            const result: RetrospectiveResponseDto = new RetrospectiveResponseDto();
+            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
 
             return result.set(HttpStatus.CREATED, RetrospectiveMessage.SUCCESS_CREATE, newBlock);
         } catch (error) {
@@ -36,7 +36,7 @@ export class RetrospectiveController {
     async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number) {
         try {
             const retrospective: Retrospective = await this.service.read(request.user.id, blockId, retrospectiveId);
-            const result: RetrospectiveResponseDto = new RetrospectiveResponseDto();
+            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
 
             return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_READ, retrospective);
         } catch (error) {
@@ -62,7 +62,7 @@ export class RetrospectiveController {
     ) {
         try {
             const retrospective: Retrospective = await this.service.update(request.user.id, blockId, retrospectiveId, updateRetrospectiveDTO);
-            const result: RetrospectiveResponseDto = new RetrospectiveResponseDto();
+            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
 
             return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_UPDATE, retrospective);
         } catch (error) {
@@ -83,7 +83,7 @@ export class RetrospectiveController {
     async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number) {
         try {
             const retrospective: Retrospective = await this.service.delete(request.user.id, blockId, retrospectiveId);
-            const result: RetrospectiveResponseDto = new RetrospectiveResponseDto();
+            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
 
             return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_DELETE, retrospective);
         } catch (error) {

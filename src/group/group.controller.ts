@@ -16,7 +16,7 @@ export class GroupController {
     async create(@Req() request: RequestWithUser, @Body() createGroupDTO: CreateGroupDTO) {
         try {
             const group: Group = await this.service.create(request.user.id, createGroupDTO);
-            const result: GroupResponseDto = new GroupResponseDto();
+            const result: GroupResponseDto<Group> = new GroupResponseDto();
 
             return result.set(HttpStatus.CREATED, GroupMessage.SUCCESS_CREATE, group);
         } catch (error) {
@@ -33,7 +33,7 @@ export class GroupController {
     async read(@Req() request: RequestWithUser, @Param("group_id") groupId: string) {
         try {
             const group: Group = await this.service.read(request.user.id, groupId);
-            const result: GroupResponseDto = new GroupResponseDto();
+            const result: GroupResponseDto<Group> = new GroupResponseDto();
 
             return result.set(HttpStatus.OK, GroupMessage.SUCCESS_READ, group);
         } catch (error) {
@@ -52,7 +52,7 @@ export class GroupController {
     async update(@Req() request: RequestWithUser, @Param("group_id") groupId: string, @Body() updateGroupDTO: UpdateGroupDTO) {
         try {
             const group: Group = await this.service.update(request.user.id, groupId, updateGroupDTO);
-            const result: GroupResponseDto = new GroupResponseDto();
+            const result: GroupResponseDto<Group> = new GroupResponseDto();
 
             return result.set(HttpStatus.OK, GroupMessage.SUCCESS_UPDATE, group);
         } catch (error) {
@@ -71,7 +71,7 @@ export class GroupController {
     async delete(@Req() request: RequestWithUser, @Param("group_id") groupId: string) {
         try {
             const group: Group = await this.service.delete(request.user.id, groupId);
-            const result: GroupResponseDto = new GroupResponseDto();
+            const result: GroupResponseDto<Group> = new GroupResponseDto();
 
             return result.set(HttpStatus.OK, GroupMessage.SUCCESS_DELETE, group);
         } catch (error) {
@@ -87,12 +87,12 @@ export class GroupController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard)
-    async getBlockList(@Req() request: RequestWithUser) {
+    async getGroupList(@Req() request: RequestWithUser) {
         try {
-            const blockList: Group[] = await this.service.getGroupList(request.user.id);
-            const result: GroupResponseDto = new GroupResponseDto();
+            const groupList: Group[] = await this.service.getGroupList(request.user.id);
+            const result: GroupResponseDto<Group[]> = new GroupResponseDto();
 
-            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_READ, blockList);
+            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_READ, groupList);
         } catch (error) {
             if (error.message === GroupMessage.CONFLICT) {
                 throw new HttpException(GroupMessage.CONFLICT, HttpStatus.CONFLICT);

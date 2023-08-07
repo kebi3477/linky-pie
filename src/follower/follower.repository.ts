@@ -13,6 +13,10 @@ export class FollowerRepository {
         private readonly userRepository: Repository<User>,
     ) {}
 
+    public async getFollower(userId: string, followId: string): Promise<Follower> {
+        return await this.repository.findOne({ where: { user: new User(userId), following: new User(followId) } })
+    }
+
     public async deleteFollower(user: User, following: User): Promise<void> {
         await this.repository.delete({ user, following });
     }
@@ -22,7 +26,7 @@ export class FollowerRepository {
     }
 
     public async getFollowers(userId: string): Promise<User[]> {
-        return this.userRepository
+        return await this.userRepository
                .createQueryBuilder('user')
                .innerJoin('user.followers', 'follower')
                .where('follower.follow_id = :userId', { userId })
@@ -30,7 +34,7 @@ export class FollowerRepository {
     }
 
     public async getFollowing(userId: string): Promise<User[]> {
-        return this.userRepository
+        return await this.userRepository
                .createQueryBuilder('user')
                .innerJoin('user.following', 'following')
                .where('following.user_id = :userId', { userId })

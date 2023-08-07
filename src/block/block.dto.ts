@@ -36,7 +36,7 @@ export class UpdateBlockDTO {
     group?: Group|null;
 }
 
-export class BlockResponseDto {
+export class BlockResponseDto<T> {
     @IsString()
     @IsNotEmpty()
     message!: string;
@@ -45,9 +45,9 @@ export class BlockResponseDto {
     @IsNotEmpty()
     statusCode: number;
 
-    block: Block|Block[];
+    block: T;
 
-    set(status:number, message: string, block: Block|Block[] = null): BlockResponseDto {
+    set(status:number, message: string, block: T = null): BlockResponseDto<T> {
         this.statusCode = status;
         this.message = message;
         this.block = block;

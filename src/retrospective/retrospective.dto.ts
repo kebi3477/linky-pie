@@ -14,7 +14,7 @@ export class UpdateRetrospectiveDTO {
     content: string;
 }
 
-export class RetrospectiveResponseDto {
+export class RetrospectiveResponseDto<T> {
     @IsString()
     @IsNotEmpty()
     message!: string;
@@ -23,9 +23,9 @@ export class RetrospectiveResponseDto {
     @IsNotEmpty()
     statusCode: number;
 
-    retrospective: Retrospective|Retrospective[];
+    retrospective: T;
 
-    set(status:number, message: string, retrospective: Retrospective|Retrospective[] = null): RetrospectiveResponseDto {
+    set(status:number, message: string, retrospective: T = null): RetrospectiveResponseDto<T> {
         this.statusCode = status;
         this.message = message;
         this.retrospective = retrospective;

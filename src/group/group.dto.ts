@@ -22,7 +22,7 @@ export class UpdateGroupDTO {
     type: GroupType
 }
 
-export class GroupResponseDto {
+export class GroupResponseDto<T> {
     @IsString()
     @IsNotEmpty()
     message!: string;
@@ -31,9 +31,9 @@ export class GroupResponseDto {
     @IsNotEmpty()
     statusCode: number;
 
-    group: Group|Group[];
+    group: T;
 
-    set(status:number, message: string, group: Group|Group[] = null): GroupResponseDto {
+    set(status:number, message: string, group: T = null): GroupResponseDto<T> {
         this.statusCode = status;
         this.message = message;
         this.group = group;

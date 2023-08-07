@@ -24,7 +24,7 @@ export class CreateUserDTO {
     type?: number;
 }
 
-export class UserResponseDto {
+export class UserResponseDto<T> {
     @IsString()
     @IsNotEmpty()
     message!: string;
@@ -33,9 +33,9 @@ export class UserResponseDto {
     @IsNotEmpty()
     statusCode: number;
 
-    user: User;
+    user: T;
 
-    set(status:number, message: string, user: User = null): UserResponseDto {
+    set(status:number, message: string, user: T = null): UserResponseDto<T> {
         this.statusCode = status;
         this.message = message;
         this.user = user;

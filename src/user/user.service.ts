@@ -7,6 +7,7 @@ import { UserMessage } from './user.message';
 import { Logger } from 'src/module/logger';
 import { FollowerRepository } from 'src/follower/follower.repository';
 import { Follower } from 'src/follower/follower.entity';
+import { FollowerMessage } from 'src/follower/follower.message';
 
 @Injectable()
 export class UserService {
@@ -37,6 +38,7 @@ export class UserService {
             createUserDTO.password = await bcrypt.hash(createUserDTO.password, this.salt);
             const newUser = this.model.createUser(createUserDTO);
             this.logger.log(`[사용자 생성] 생성 성공  [ userId : ${createUserDTO.id} ]`);
+
             return await this.model.save(newUser);
         } catch (error) {
             this.logger.error(`[사용자 생성] 오류! => ${error.message}`);
@@ -72,20 +74,38 @@ export class UserService {
      * 
      * @param userId 팔로우 하는 사용자 아이디
      * @param followingUserId 팔로잉 받는 사용자 아이디
+     * @returns 팔로우한 사용자 정보
      */
-    async followUser(userId: string, followingUserId: string): Promise<void> {
+    async followUser(userId: string, followId: string): Promise<User> {
         try {
-            this.logger.log(`[팔로잉] API 호출 [ userId : ${userId}, following : ${followingUserId} ]`);
+            this.logger.log(`[팔로잉] API 호출 [ userId : ${userId}, followId : ${followId} ]`);
 
-            const user = new User(userId);
-            const following = new User(followingUserId);
+            const follow: Follower = await this.followerModel.getFollower(userId, followId);
+            if (follow) {
+                this.logger.log(`[팔로잉] 실패 [ userId : ${userId} ] -> 이미 팔로우 중 입니다! `);
+                throw new Error(FollowerMessage.CONFLICT);
+            }
+
+            const user: User = await this.model.getUser(userId);
+            if (!user) {
+                this.logger.log(`[팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const following: User = await this.model.getUser(followId);
+            if (!following) {
+                this.logger.log(`[팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로잉 대상 ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
             const follower = new Follower();
-
             follower.user = user;
             follower.following = following;
 
-            this.logger.log(`[팔로잉] 성공 [ userId : ${userId} ]`);
             await this.followerModel.save(follower);
+            this.logger.log(`[팔로잉] 성공 [ userId : ${userId} ]`);
+
+            return following;
         } catch (error) {
             this.logger.error(`[팔로잉] 오류! => ${error.message}`);
             throw error;
@@ -96,22 +116,80 @@ export class UserService {
      * 언팔로우
      * 
      * @param userId 팔로우 한 사용자 아이디
-     * @param followingUserId 취소할 팔로잉 아이디
+     * @param followId 취소할 팔로잉 아이디
+     * @returns 언팔로우한 사용자 정보
      */
-    async unfollowUser(userId: string, followingUserId: string): Promise<void> {
-        this.logger.log(`[언팔로우] API 호출 [ userId : ${userId}, following : ${followingUserId} ]`);
+    async unfollowUser(userId: string, followId: string): Promise<User> {
+        try {
+            this.logger.log(`[언팔로잉] API 호출 [ userId : ${userId}, followId : ${followId} ]`);
+    
+            const follow: Follower = await this.followerModel.getFollower(userId, followId);
+            if (follow) {
+                this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로우 `);
+                throw new Error(FollowerMessage.NOT_FOUND);
+            }
+    
+            const user: User = await this.model.getUser(userId);
+            if (!user) {
+                this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+    
+            const following: User = await this.model.getUser(followId);
+            if (!following) {
+                this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로잉 대상 ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+    
+            await this.followerModel.deleteFollower(user, following);
+            this.logger.log(`[언팔로잉] 성공 [ userId : ${userId}, followId : ${followId} ]`);
 
-        const user = new User(userId);
-        const following = new User(followingUserId);
-
-        await this.followerModel.deleteFollower(user, following);
+            return following;
+        } catch (error) {
+            this.logger.error(`[언팔로잉] 오류! => ${error.message}`);
+            throw error;
+        }
     }
 
+    /**
+     * 팔로워 목록 조회
+     * 
+     * @param userId 팔로워 조회 할 아이디
+     * @returns 팔로워 목록
+     */
     async getFollowers(userId: string): Promise<User[]> {
-        return this.followerModel.getFollowers(userId);
+        try {
+            const user: User = await this.model.getUser(userId);
+            if (!user) {
+                this.logger.log(`[팔로워 목록 조회] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            return await this.followerModel.getFollowers(userId);
+        } catch (error) {
+            this.logger.error(`[팔로워 목록 조회] 오류! => ${error.message}`);
+            throw error;
+        }
     }
 
+    /**
+     * 팔로잉 목록 조회
+     * 
+     * @param userId 팔로잉 하는 아이디
+     * @returns 팔로잉 목록
+     */
     async getFollowing(userId: string): Promise<User[]> {
-        return this.followerModel.getFollowing(userId);
+        try {
+            const user: User = await this.model.getUser(userId);
+            if (!user) {
+                this.logger.log(`[팔로잉 목록 조회] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            return await this.followerModel.getFollowing(userId);
+        } catch (error) {
+            this.logger.error(`[팔로잉 목록 조회] 오류! => ${error.message}`);
+            throw error;
+        }
     }
 }

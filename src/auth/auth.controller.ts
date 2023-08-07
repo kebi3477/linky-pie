@@ -5,6 +5,7 @@ import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserMessage } from 'src/user/user.message';
 import { RequestWithUser } from './auth.interface';
+import { User } from 'src/user/user.entity';
 
 @Controller('auth')
 export class AuthController {
@@ -15,9 +16,9 @@ export class AuthController {
     @UseGuards(LocalAuthenticationGuard)
     async login(@Req() request: RequestWithUser, @Res() response: Response) {
         try {
-            const user = request.user;
+            const user: User = request.user;
             const cookie = this.service.getCookieWithJwtToken(user.id);
-            const result: UserResponseDto = new UserResponseDto();
+            const result: UserResponseDto<User> = new UserResponseDto();
 
             response.setHeader('Set-Cookie', cookie);
             user.password = undefined;
