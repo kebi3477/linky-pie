@@ -15,7 +15,10 @@ export class Group {
     })
     id: string;
   
-    @ManyToOne(() => User, (user) => user.groups, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, (user) => user.groups, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'user_id'
     })

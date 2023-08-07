@@ -68,9 +68,9 @@ export class BlockService {
             createBlockDTO.content = res.body;
             createBlockDTO.hashtag = res.hashtag;
         
-            this.logger.log(`[블록 생성] 생성 시작 [ title : ${res.title} ] `);
+            this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
             const newBlock: Block = this.model.createBlock(createBlockDTO);
-            this.logger.log(`[블록 생성] 생성 성공 [ id : ${newBlock.id} ] `);
+            this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
             return await this.model.save(newBlock);
         } catch (error) {
             this.logger.error(`[블록 생성] 에러! [ error : ${error.message} ] `);
@@ -100,7 +100,7 @@ export class BlockService {
                 throw new Error(BlockMessage.NOT_FOUND);
             }
 
-            this.logger.log(`[블록 조회] 조회 성공 [ blockId : ${blockId} ] `);
+            this.logger.log(`[블록 조회] 성공 [ blockId : ${blockId} ] `);
             return block;
         } catch (error) {
             this.logger.error(`[블록 조회] 에러! [ error : ${error.message} ] `);
@@ -133,7 +133,7 @@ export class BlockService {
             }
             
             Object.assign(block, updateBlockDTO);
-            this.logger.log(`[블록 수정] 수정 성공 [ blockId : ${blockId} ] `);
+            this.logger.log(`[블록 수정] 성공 [ blockId : ${blockId} ] `);
 
             return await this.model.save(block);
         } catch (error) {
@@ -165,7 +165,7 @@ export class BlockService {
             }
 
             await this.model.deleteBlock(blockId);
-            this.logger.log(`[블록 삭제] 삭제 성공 [ blockId : ${blockId} ] `);
+            this.logger.log(`[블록 삭제] 성공 [ blockId : ${blockId} ] `);
             
             return block;
         } catch (error) {

@@ -8,7 +8,10 @@ export class Retrospective {
     })
     id: number;
 
-    @ManyToOne(() => Block, (block) => block.retrospectives, { onDelete: 'CASCADE' })
+    @ManyToOne(() => Block, (block) => block.retrospectives, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'block_id' 
     })

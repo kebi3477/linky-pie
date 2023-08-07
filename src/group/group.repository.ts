@@ -1,11 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Block } from "src/block/block.entity";
 import { Repository } from "typeorm";
 import { CreateGroupDTO } from "./group.dto";
 import { Group } from "src/group/group.entity";
 import { User } from "src/user/user.entity";
-
 
 @Injectable()
 export class GroupRepository {
@@ -30,7 +28,7 @@ export class GroupRepository {
         return await this.repository.save(block);
     }
 
-    public async getGroupListByUser(user: User): Promise<Group[]> {
-        return await this.repository.find({ where: { user : user }, order: { createdAt: "DESC" } })
+    public async getGroupListByUserId(userId: string): Promise<Group[]> {
+        return await this.repository.find({ where: { user : new User(userId) }, order: { createdAt: "DESC" } })
     }
 }

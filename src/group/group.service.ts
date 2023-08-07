@@ -2,10 +2,11 @@ import { Injectable } from '@nestjs/common';
 import { Logger } from 'src/module/logger';
 import { GroupRepository } from './group.repository';
 import { UserRepository } from 'src/user/user.repository';
-import { CreateGroupDTO } from './group.dto';
+import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { UserMessage } from 'src/user/user.message';
 import { Group } from 'src/group/group.entity';
 import { User } from 'src/user/user.entity';
+import { GroupMessage } from 'src/module/message';
 
 @Injectable()
 export class GroupService {
@@ -46,6 +47,104 @@ export class GroupService {
     }
 
     /**
+     * 그룹 조회
+     * 
+     * @param userId 사용자ID
+     * @param groupId 그룹ID
+     * @returns 조회한 그룹
+     */
+    public async read(userId: string, groupId: string): Promise<Group> {
+        try {
+            this.logger.log(`[블록 그룹 조회] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 그룹 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const group = await this.model.getGroup(groupId);
+            if (!group) {
+                this.logger.log(`[블록 그룹 조회] 실패 [ groupId : ${groupId} ] -> 그룹을 찾을 수 없음`);
+                throw new Error(GroupMessage.NOT_FOUND);
+            }
+        
+            return group;
+        } catch (error) {
+            this.logger.error(`[블록 그룹 조회] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 그룹 수정
+     * 
+     * @param userId 사용자ID
+     * @param groupId 그룹ID
+     * @param updateGroupDTO 그룹 수정 DTO
+     * @returns 수정한 그룹
+     */
+    public async update(userId: string, groupId: string, updateGroupDTO: UpdateGroupDTO): Promise<Group> {
+        try {
+            this.logger.log(`[블록 그룹 수정] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 그룹 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const group = await this.model.getGroup(groupId);
+            if (!group) {
+                this.logger.log(`[블록 그룹 수정] 실패 [ groupId : ${groupId} ] -> 그룹을 찾을 수 없음`);
+                throw new Error(GroupMessage.NOT_FOUND);
+            }
+
+            Object.assign(group, updateGroupDTO);
+            await this.model.save(group);
+            this.logger.log(`[블록 그룹 수정] 성공 [ groupId : ${groupId} ] `);
+        
+            return group;
+        } catch (error) {
+            this.logger.error(`[블록 그룹 수정] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 그룹 삭제
+     * 
+     * @param userId 사용자ID
+     * @param groupId 그룹ID
+     * @returns 삭제한 그룹
+     */
+    public async delete(userId: string, groupId: string): Promise<Group> {
+        try {
+            this.logger.log(`[블록 그룹 삭제] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
+
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 그룹 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const group = await this.model.getGroup(groupId);
+            if (!group) {
+                this.logger.log(`[블록 그룹 삭제] 실패 [ groupId : ${groupId} ] -> 그룹을 찾을 수 없음`);
+                throw new Error(GroupMessage.NOT_FOUND);
+            }
+
+            await this.model.deleteGroup(groupId);
+            this.logger.log(`[블록 그룹 삭제] 성공 [ groupId : ${groupId} ] `);
+        
+            return group;
+        } catch (error) {
+            this.logger.error(`[블록 그룹 삭제] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+    
+    /**
      * 그룹 목록 조회
      * 
      * @param userId 사용자ID
@@ -55,10 +154,7 @@ export class GroupService {
         try {
             this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = new User();
-            user.id = userId;
-
-            return await this.model.getGroupListByUser(user);
+            return await this.model.getGroupListByUserId(userId);
         } catch (error) {
             console.log(error);
             throw error;

@@ -8,13 +8,19 @@ export class Follower {
     })
     id: number;
 
-    @ManyToOne(() => User, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'user_id'
     })
     user: User;
 
-    @ManyToOne(() => User, { onDelete: 'CASCADE' })
+    @ManyToOne(() => User, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'follow_id' 
     })

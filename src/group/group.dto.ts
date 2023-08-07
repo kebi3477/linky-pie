@@ -13,6 +13,15 @@ export class CreateGroupDTO {
     user: User
 }
 
+export class UpdateGroupDTO {
+    @IsString()
+    @IsNotEmpty()
+    title: string;
+
+    @IsInt()
+    type: GroupType
+}
+
 export class GroupResponseDto {
     @IsString()
     @IsNotEmpty()

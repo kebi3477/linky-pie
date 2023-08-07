@@ -48,13 +48,19 @@ export class Block {
     })
     link: string;
 
-    @ManyToOne(() => Group, (group) => group.blocks)
+    @ManyToOne(() => Group, (group) => group.blocks, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'group_id'
     })
     group: Group;
 
-    @ManyToOne(() => User, (user) => user.blocks)
+    @ManyToOne(() => User, (user) => user.blocks, { 
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE' 
+    })
     @JoinColumn({ 
         name: 'user_id' 
     })
