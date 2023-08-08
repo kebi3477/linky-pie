@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { BlockRepository } from './block.repository';
 import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
-import { Block } from 'src/block/block.entity';
+import { Block } from './block.entity';
 import axios from 'axios';
 import cheerio from 'cheerio';
-import { UserRepository } from 'src/user/user.repository';
-import { UserMessage } from 'src/user/user.message';
+import { UserRepository } from '../user/user.repository';
+import { UserMessage } from '../user/user.message';
 import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
-import { Group } from 'src/group/group.entity';
-import { GroupRepository } from 'src/group/group.repository';
-import { GroupMessage } from 'src/module/message';
-import { User } from 'src/user/user.entity';
+import { Group } from '../group/group.entity';
+import { GroupRepository } from '../group/group.repository';
 
 @Injectable()
 export class BlockService {
@@ -160,7 +158,7 @@ export class BlockService {
 
             const block: Block = await this.model.getBlockByUserId(blockId, userId);
             if (!block) {
-                this.logger.log(`[블록 삭제] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+                this.logger.log(`[블록 삭제] 실패 [ blockId : ${blockId}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
                 throw new Error(BlockMessage.NOT_FOUND);
             }
 

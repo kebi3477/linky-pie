@@ -1,10 +1,10 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Block } from "src/block/block.entity";
 import { Repository } from "typeorm";
+import { Block } from "./block.entity";
 import { CreateBlockDTO } from "./block.dto";
-import { Group } from "src/group/group.entity";
-import { User } from "src/user/user.entity";
+import { Group } from "../group/group.entity";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class BlockRepository {

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from 'src/module/logger';
+import { Logger } from '../module/logger';
 import { TokenPayload } from './auth.interface';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from '../user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from 'src/user/user.entity';
-import { UserMessage } from 'src/user/user.message';
+import { User } from '../user/user.entity';
+import { UserMessage } from '../user/user.message';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()

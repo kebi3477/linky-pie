@@ -1,11 +1,11 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
 import { BlockService } from './block.service';
 import { BlockResponseDto, CreateBlockDTO, UpdateBlockDTO } from './block.dto';
-import { Block } from 'src/block/block.entity';
+import { Block } from './block.entity';
 import { BlockMessage } from './block.message';
-import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
-import { RequestWithUser } from 'src/auth/auth.interface';
-import { UserMessage } from 'src/user/user.message';
+import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
+import { RequestWithUser } from '../auth/auth.interface';
+import { UserMessage } from '../user/user.message';
 
 @Controller('blocks')
 export class BlockController {

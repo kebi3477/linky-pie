@@ -2,8 +2,8 @@ import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { CreateGroupDTO } from "./group.dto";
-import { Group } from "src/group/group.entity";
-import { User } from "src/user/user.entity";
+import { Group } from "./group.entity";
+import { User } from "../user/user.entity";
 
 @Injectable()
 export class GroupRepository {

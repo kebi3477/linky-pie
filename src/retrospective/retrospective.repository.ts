@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm";
 import { Retrospective } from "./retrospective.entity";
 import { Repository, UpdateResult } from "typeorm";
 import { CreateRetrospectiveDTO } from "./retrospective.dto";
-import { Block } from "src/block/block.entity";
+import { Block } from "../block/block.entity";
 
 @Injectable()
 export class RetrospectiveRepository {

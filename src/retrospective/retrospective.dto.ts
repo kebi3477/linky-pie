@@ -1,5 +1,5 @@
 import { IsInt, IsNotEmpty, IsString } from "class-validator";
-import { Block } from "src/block/block.entity";
+import { Block } from "../block/block.entity";
 import { Retrospective } from "./retrospective.entity";
 
 export class CreateRetrospectiveDTO {

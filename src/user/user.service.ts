@@ -2,12 +2,12 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 import { CreateUserDTO } from './user.dto';
-import { User } from 'src/user/user.entity';
+import { User } from './user.entity';
 import { UserMessage } from './user.message';
-import { Logger } from 'src/module/logger';
-import { FollowerRepository } from 'src/follower/follower.repository';
-import { Follower } from 'src/follower/follower.entity';
-import { FollowerMessage } from 'src/follower/follower.message';
+import { Logger } from '../module/logger';
+import { FollowerRepository } from '../follower/follower.repository';
+import { Follower } from '../follower/follower.entity';
+import { FollowerMessage } from '../follower/follower.message';
 
 @Injectable()
 export class UserService {
