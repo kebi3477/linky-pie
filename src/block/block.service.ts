@@ -10,6 +10,10 @@ import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
 import { Group } from '../group/group.entity';
 import { GroupRepository } from '../group/group.repository';
+import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
+import { User } from 'src/user/user.entity';
+import { UserLikesBlockRepository } from 'src/userLikesBlock/userLikesBlock.repository';
+import { UserLikesBLockMessage } from 'src/userLikesBlock/userLikesBlock.message';
 
 @Injectable()
 export class BlockService {
@@ -18,7 +22,8 @@ export class BlockService {
     constructor(
         private readonly model: BlockRepository,
         private readonly userModel: UserRepository,
-        private readonly groupModel: GroupRepository
+        private readonly groupModel: GroupRepository,
+        private readonly userLikesBlockModel: UserLikesBlockRepository
     ) {}
 
     /**
@@ -209,6 +214,105 @@ export class BlockService {
             blockGroup.id = blockGroupId;
 
             return await this.model.getBlockListByGroup(blockGroup);
+        } catch (error) {
+            console.log(error);
+            throw error;
+        }
+    }
+
+    /**
+     * 블록 좋아요 생성
+     * 
+     * @param userId 사용자 ID
+     * @param blockId 블록 ID
+     * @returns 좋아요 정보
+     */
+    public async createLikes(userId: string, blockId: string): Promise<UserLikesBlock> {
+        try {
+            this.logger.log(`[블록 좋아요] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 좋아요] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.model.getBlock(blockId);
+            if (!block) {
+                this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+
+            const isExisted: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
+            if (isExisted) {
+                this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 이미 좋아요를 했습니다.`);
+                throw new Error(UserLikesBLockMessage.CONFLICT);
+            }
+        
+            this.logger.log(`[블록 좋아요] 시작 [ blockId : ${blockId} ]`);
+            const likes: UserLikesBlock = this.userLikesBlockModel.create(userId, blockId);
+            this.logger.log(`[블록 좋아요] 성공 [ id : ${likes.id} ] `);
+            return await this.userLikesBlockModel.save(likes);
+        } catch (error) {
+            this.logger.error(`[블록 좋아요] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 블록 좋아요 취소
+     * 
+     * @param userId 
+     * @param blockId 
+     * @returns 좋아요 정보
+     */
+    public async deleteLikes(userId: string, blockId: string): Promise<UserLikesBlock> {
+        try {
+            this.logger.log(`[블록 좋아요 취소] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 좋아요 취소] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.model.getBlock(blockId);
+            if (!block) {
+                this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+
+            const likes: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
+            if (!likes) {
+                this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 좋아요를 찾을 수 없습니다.`);
+                throw new Error(UserLikesBLockMessage.NOT_FOUND);
+            }
+        
+            this.logger.log(`[블록 좋아요 취소] 시작 [ blockId : ${blockId} ]`);
+            this.userLikesBlockModel.delete(likes.id);
+            this.logger.log(`[블록 좋아요 취소] 성공 [ id : ${likes.id} ] `);
+
+            return likes;
+        } catch (error) {
+            this.logger.error(`[블록 좋아요 취소] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 좋아요한 블록 목록 조회
+     * 
+     * @param userId 블록 그룹 ID
+     * @returns Block[]
+     */
+    public async getLikesBlockList(userId: string): Promise<Block[]> {
+        try {
+            this.logger.log(`[좋아요 블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+
+            const userLikesBlocks: UserLikesBlock[] = await this.userLikesBlockModel.getBlocksByUser(userId);
+            const likedBlocks: Block[] = userLikesBlocks.map(ulb => ulb.block);
+
+            return likedBlocks;
         } catch (error) {
             console.log(error);
             throw error;

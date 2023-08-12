@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
 import { Retrospective } from '../retrospective/retrospective.entity';
@@ -84,4 +84,7 @@ export class Block {
 
     @OneToMany(() => Retrospective, (retrospective) => retrospective.block)
     retrospectives: Retrospective[];
+
+    @ManyToMany(() => User, user => user.likedBlocks)
+    likedByUsers: User[];
 }

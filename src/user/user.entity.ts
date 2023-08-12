@@ -1,4 +1,4 @@
-import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany } from 'typeorm';
+import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { Group } from '../group/group.entity';
 import { Block } from '../block/block.entity';
 import { Follower } from '../follower/follower.entity';
@@ -80,6 +80,10 @@ export class User {
 
     @OneToMany(() => Follower, (follower) => follower.following)
     following: Follower[];
+
+    @ManyToMany(() => Block, block => block.likedByUsers)
+    @JoinTable()
+    likedBlocks: Block[];
 
     static of(params: Partial<User>): User {
         const user = new User();

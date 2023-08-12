@@ -9,10 +9,12 @@ import { Group } from 'src/group/group.entity';
 import { UserRepository } from 'src/user/user.repository';
 import { User } from 'src/user/user.entity';
 import { GroupRepository } from 'src/group/group.repository';
+import { UserLikesBlockRepository } from 'src/userLikesBlock/userLikesBlock.repository';
+import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Block, User, Group]),
+        TypeOrmModule.forFeature([Block, User, Group, UserLikesBlock]),
     ],
     controllers: [ BlockController ],
     providers: [
@@ -20,6 +22,7 @@ import { GroupRepository } from 'src/group/group.repository';
         BlockRepository,
         UserRepository,
         GroupRepository,
+        UserLikesBlockRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe

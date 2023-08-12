@@ -6,6 +6,8 @@ import { BlockMessage } from './block.message';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
 import { UserMessage } from '../user/user.message';
+import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
+import { UserLikesBLockMessage } from 'src/userLikesBlock/userLikesBlock.message';
 
 @Controller('blocks')
 export class BlockController {
@@ -32,7 +34,7 @@ export class BlockController {
         }
     }
 
-    @Get('/:block_id')
+    @Get('/:block_id([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})')
     @UseGuards(JwtAuthenticationGuard)
     async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
         try {
@@ -94,6 +96,65 @@ export class BlockController {
     async getBlockList(@Req() request: RequestWithUser) {
         try {
             const blockList: Block[] = await this.service.getBlockListByUser(request.user.id);
+            const result: BlockResponseDto<Block[]> = new BlockResponseDto();
+
+            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, blockList);
+        } catch (error) {
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else {
+                throw new HttpException(BlockMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @Post('/:block_id/likes')
+    @UseGuards(JwtAuthenticationGuard)
+    async createLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+        try {
+            const like: UserLikesBlock = await this.service.createLikes(request.user.id, blockId);
+            const result: BlockResponseDto<UserLikesBlock> = new BlockResponseDto();
+
+            return result.set(HttpStatus.CREATED, UserLikesBLockMessage.SUCCESS_CREATE, like);
+        } catch (error) {
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else if (error.message === BlockMessage.NOT_FOUND) {
+                throw new HttpException(BlockMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else if (error.message === UserLikesBLockMessage.CONFLICT) {
+                throw new HttpException(UserLikesBLockMessage.CONFLICT, HttpStatus.CONFLICT);
+            } else {
+                throw new HttpException(BlockMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @Delete('/:block_id/likes')
+    @UseGuards(JwtAuthenticationGuard)
+    async deleteLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+        try {
+            const like: UserLikesBlock = await this.service.deleteLikes(request.user.id, blockId);
+            const result: BlockResponseDto<UserLikesBlock> = new BlockResponseDto();
+
+            return result.set(HttpStatus.OK, UserLikesBLockMessage.SUCCESS_DELETE, like);
+        } catch (error) {
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else if (error.message === BlockMessage.NOT_FOUND) {
+                throw new HttpException(BlockMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else if (error.message === UserLikesBLockMessage.NOT_FOUND) {
+                throw new HttpException(UserLikesBLockMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else {
+                throw new HttpException(BlockMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @Get('/likes')
+    @UseGuards(JwtAuthenticationGuard)
+    async getLikesBlockList(@Req() request: RequestWithUser) {
+        try {
+            const blockList: Block[] = await this.service.getLikesBlockList(request.user.id);
             const result: BlockResponseDto<Block[]> = new BlockResponseDto();
 
             return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, blockList);
