@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { GroupResponseDto, CreateGroupDTO, UpdateGroupDTO } from './group.dto';
-import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
-import { RequestWithUser } from 'src/auth/auth.interface';
-import { Group } from 'src/group/group.entity';
+import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
+import { RequestWithUser } from '../auth/auth.interface';
+import { Group } from '../group/group.entity';
 import { GroupService } from './group.service';
-import { GroupMessage } from 'src/module/message';
-import { UserMessage } from 'src/user/user.message';
+import { GroupMessage } from '../module/message';
+import { UserMessage } from '../user/user.message';
 
 @Controller('groups')
 export class GroupController {

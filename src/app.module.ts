@@ -8,6 +8,7 @@ import { BlockModule } from './block/block.module';
 import { AuthModule } from './auth/auth.module';
 import { GroupModule } from './group/group.module';
 import { RetrospectiveModule } from './retrospective/retrospective.module';
+import { BlockCommentModule } from './blockComment/blockComment.module';
 
 @Module({
     imports: [
@@ -38,6 +39,7 @@ import { RetrospectiveModule } from './retrospective/retrospective.module';
         AuthModule,
         GroupModule,
         RetrospectiveModule,
+        BlockCommentModule,
     ],
     controllers: [],
     providers: [],

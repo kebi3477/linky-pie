@@ -2,6 +2,7 @@ import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, Dele
 import { Group } from '../group/group.entity';
 import { Block } from '../block/block.entity';
 import { Follower } from '../follower/follower.entity';
+import { BlockComment } from '../blockComment/blockComment.entity';
 
 export enum UserType {
     User = 0,
@@ -74,6 +75,9 @@ export class User {
 
     @OneToMany(() => Block, (block) => block.user)
     blocks: Block[]
+
+    @OneToMany(() => BlockComment, (block) => block.user)
+    blockComments: BlockComment[]
 
     @OneToMany(() => Follower, (follower) => follower.user)
     followers: Follower[];

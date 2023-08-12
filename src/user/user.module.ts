@@ -4,9 +4,9 @@ import { UserService } from './user.service';
 import { UserRepository } from './user.repository';
 import { APP_PIPE } from '@nestjs/core';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
-import { FollowerRepository } from 'src/follower/follower.repository';
-import { Follower } from 'src/follower/follower.entity';
+import { User } from '../user/user.entity';
+import { FollowerRepository } from '../follower/follower.repository';
+import { Follower } from '../follower/follower.entity';
 
 @Module({
     imports: [ 

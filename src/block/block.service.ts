@@ -10,10 +10,10 @@ import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
 import { Group } from '../group/group.entity';
 import { GroupRepository } from '../group/group.repository';
-import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
-import { User } from 'src/user/user.entity';
-import { UserLikesBlockRepository } from 'src/userLikesBlock/userLikesBlock.repository';
-import { UserLikesBLockMessage } from 'src/userLikesBlock/userLikesBlock.message';
+import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
+import { User } from '../user/user.entity';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
+import { UserLikesBLockMessage } from '../userLikesBlock/userLikesBlock.message';
 
 @Injectable()
 export class BlockService {

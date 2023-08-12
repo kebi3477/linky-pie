@@ -1,12 +1,12 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
 import { RetrospectiveService } from './retrospective.service';
-import { JwtAuthenticationGuard } from 'src/auth/jwt.strategy';
-import { RequestWithUser } from 'src/auth/auth.interface';
+import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
+import { RequestWithUser } from '../auth/auth.interface';
 import { CreateRetrospectiveDTO, RetrospectiveResponseDto, UpdateRetrospectiveDTO } from './retrospective.dto';
 import { Retrospective } from './retrospective.entity';
 import { RetrospectiveMessage } from './retrospective.message';
-import { UserMessage } from 'src/user/user.message';
-import { BlockMessage } from 'src/block/block.message';
+import { UserMessage } from '../user/user.message';
+import { BlockMessage } from '../block/block.message';
 
 @Controller('blocks/:block_id/retrospectives')
 export class RetrospectiveController {

@@ -1,11 +1,11 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
-import { UserResponseDto } from 'src/user/user.dto';
+import { UserResponseDto } from '../user/user.dto';
 import { LocalAuthenticationGuard } from './local.strategy';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
-import { UserMessage } from 'src/user/user.message';
+import { UserMessage } from '../user/user.message';
 import { RequestWithUser } from './auth.interface';
-import { User } from 'src/user/user.entity';
+import { User } from '../user/user.entity';
 
 @Controller('auth')
 export class AuthController {

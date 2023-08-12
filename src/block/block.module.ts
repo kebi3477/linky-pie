@@ -3,14 +3,14 @@ import { BlockService } from './block.service';
 import { BlockController } from './block.controller';
 import { BlockRepository } from './block.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Block } from 'src/block/block.entity';
+import { Block } from '../block/block.entity';
 import { APP_PIPE } from '@nestjs/core';
-import { Group } from 'src/group/group.entity';
-import { UserRepository } from 'src/user/user.repository';
-import { User } from 'src/user/user.entity';
-import { GroupRepository } from 'src/group/group.repository';
-import { UserLikesBlockRepository } from 'src/userLikesBlock/userLikesBlock.repository';
-import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
+import { Group } from '../group/group.entity';
+import { UserRepository } from '../user/user.repository';
+import { User } from '../user/user.entity';
+import { GroupRepository } from '../group/group.repository';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
+import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 
 @Module({
     imports: [

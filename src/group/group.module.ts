@@ -2,12 +2,12 @@ import { Module, ValidationPipe } from '@nestjs/common';
 import { GroupService } from './group.service';
 import { GroupController } from './group.controller';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Block } from 'src/block/block.entity';
-import { Group } from 'src/group/group.entity';
+import { Block } from '../block/block.entity';
+import { Group } from '../group/group.entity';
 import { APP_PIPE } from '@nestjs/core';
 import { GroupRepository } from './group.repository';
-import { UserRepository } from 'src/user/user.repository';
-import { User } from 'src/user/user.entity';
+import { UserRepository } from '../user/user.repository';
+import { User } from '../user/user.entity';
 
 @Module({
     imports: [

@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
-import { Logger } from 'src/module/logger';
+import { Logger } from '../module/logger';
 import { GroupRepository } from './group.repository';
-import { UserRepository } from 'src/user/user.repository';
+import { UserRepository } from '../user/user.repository';
 import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
-import { UserMessage } from 'src/user/user.message';
-import { Group } from 'src/group/group.entity';
-import { User } from 'src/user/user.entity';
-import { GroupMessage } from 'src/module/message';
+import { UserMessage } from '../user/user.message';
+import { Group } from '../group/group.entity';
+import { User } from '../user/user.entity';
+import { GroupMessage } from '../module/message';
 
 @Injectable()
 export class GroupService {

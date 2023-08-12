@@ -2,11 +2,14 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
 import { Retrospective } from '../retrospective/retrospective.entity';
+import { BlockComment } from '../blockComment/blockComment.entity';
 
 @Entity('blocks')
 export class Block {
     constructor(id: string = '') {
-        this.id = id;
+        if (id !== '') {
+            this.id = id;
+        }
     }
 
     @PrimaryGeneratedColumn('uuid', { 
@@ -84,6 +87,9 @@ export class Block {
 
     @OneToMany(() => Retrospective, (retrospective) => retrospective.block)
     retrospectives: Retrospective[];
+
+    @OneToMany(() => BlockComment, (blockComment) => blockComment.block)
+    blockComment: BlockComment[];
 
     @ManyToMany(() => User, user => user.likedBlocks)
     likedByUsers: User[];

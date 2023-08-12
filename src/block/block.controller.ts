@@ -6,8 +6,8 @@ import { BlockMessage } from './block.message';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
 import { UserMessage } from '../user/user.message';
-import { UserLikesBlock } from 'src/userLikesBlock/userLikesBlock.entity';
-import { UserLikesBLockMessage } from 'src/userLikesBlock/userLikesBlock.message';
+import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
+import { UserLikesBLockMessage } from '../userLikesBlock/userLikesBlock.message';
 
 @Controller('blocks')
 export class BlockController {

@@ -2,8 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { UserLikesBlock } from './userLikesBlock.entity';
-import { Block } from 'src/block/block.entity';
-import { User } from 'src/user/user.entity';
+import { Block } from '../block/block.entity';
+import { User } from '../user/user.entity';
 
 @Injectable()
 export class UserLikesBlockRepository {
