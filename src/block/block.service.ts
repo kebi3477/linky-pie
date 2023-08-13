@@ -183,22 +183,22 @@ export class BlockService {
      * @param userId 사용자 ID
      * @returns Block[]
      */
-        public async getBlockListByUser(userId: string): Promise<Block[]> {
-            try {
-                this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
-    
-                const user = await this.userModel.getUser(userId);
-                if (!user) {
-                    this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                    throw new Error(UserMessage.NOT_FOUND);
-                }
+    public async getBlockListByUser(userId: string): Promise<Block[]> {
+        try {
+            this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
-                return await this.model.getBlockListByUser(user);
-            } catch (error) {
-                console.log(error);
-                throw error;
+            const user = await this.userModel.getUser(userId);
+            if (!user) {
+                this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
             }
+
+            return await this.model.getBlockListByUser(user);
+        } catch (error) {
+            console.log(error);
+            throw error;
         }
+    }
 
     /**
      * 블록 목록 조회

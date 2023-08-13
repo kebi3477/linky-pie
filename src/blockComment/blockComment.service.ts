@@ -21,6 +21,14 @@ export class BlockCommentService {
         private readonly blockModel: BlockRepository,
     ) {}
 
+    /**
+     * 댓글 생성
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @param createBlockCommentDTO 댓글 생성 DTO
+     * @returns 생성한 댓글
+     */
     public async create(userId: string, blockId: string, createBlockCommentDTO: CreateBlockCommentDTO): Promise<BlockComment> {
         try {
             this.logger.log(`[댓글 생성] API 호출 [ userId : ${userId} ]`);
@@ -50,6 +58,15 @@ export class BlockCommentService {
         }
     }
 
+    /**
+     * 댓글 수정
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @param commentId 댓글ID
+     * @param updateBlockCommentDTO 댓글 수정 DTO
+     * @returns 수정한 댓글 정보
+     */
     public async update(userId: string, blockId: string, commentId: number, updateBlockCommentDTO: UpdateBlockCommentDTO): Promise<BlockComment> {
         try {
             this.logger.log(`[댓글 수정] API 호출 [ commentId : ${commentId}, userId : ${userId} ]`);
@@ -82,6 +99,14 @@ export class BlockCommentService {
         }
     }
 
+    /**
+     * 댓글 삭제
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @param commentId 댓글ID
+     * @returns 삭제한 댓글 정보
+     */
     public async delete(userId: string, blockId: string, commentId: number): Promise<BlockComment> {
         try {
             this.logger.log(`[댓글 삭제] API 호출 [ commentId : ${commentId}, userId : ${userId} ]`);
@@ -114,6 +139,13 @@ export class BlockCommentService {
         }
     }
 
+    /**
+     * 댓글 목록 조회
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @returns 블록ID로 조회한 댓글 목록
+     */
     public async getList(userId: string, blockId: string): Promise<BlockComment[]> {
         try {
             this.logger.log(`[댓글 목록 조회] API 호출 [ blockId : ${blockId}, userId : ${userId} ]`);

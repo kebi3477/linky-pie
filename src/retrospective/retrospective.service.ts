@@ -98,6 +98,7 @@ export class RetrospectiveService {
      * 
      * @param userId 사용자ID
      * @param blockId 블록ID
+     * @param updateRetrospectiveDTO 회고 수정 DTO
      * @returns 생성한 Block
      */
     public async update(userId: string, blockId: string, retrospectiveId: number, updateRetrospectiveDTO: UpdateRetrospectiveDTO): Promise<Retrospective> {
@@ -132,6 +133,14 @@ export class RetrospectiveService {
         }
     }
 
+    /**
+     * 회고 삭제
+     * 
+     * @param userId 사용자ID
+     * @param blockId 블록ID
+     * @param retrospectiveId 회고ID
+     * @returns 
+     */
     public async delete(userId: string, blockId: string, retrospectiveId: number): Promise<Retrospective> {
         try {
             this.logger.log(`[회고 삭제] API 호출 [ retrospectiveId : ${retrospectiveId}, userId : ${userId} ]`);
