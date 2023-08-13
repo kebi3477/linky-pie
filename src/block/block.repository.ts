@@ -13,16 +13,16 @@ export class BlockRepository {
         private readonly repository: Repository<Block>,
     ) {}
 
-    public create(block: CreateBlockDTO): Block {
-        return this.repository.create(block);
+    public create(createBlockDTO: CreateBlockDTO): Block {
+        return this.repository.create(createBlockDTO);
     }
     
     public async read(id: string): Promise<Block> {
-        return this.repository.findOne({ where: { id: id } });
+        return this.repository.findOne({ where: { id } });
     }
 
     public async delete(id: string): Promise<void> {
-        await this.repository.delete({id : id});
+        await this.repository.delete({ id });
     }
 
     public async save(block: Block) {
@@ -30,14 +30,14 @@ export class BlockRepository {
     }
 
     public async getBlockListByUser(user: User): Promise<Block[]> {
-        return await this.repository.find({ where: { user : user }, order: { createdAt: "DESC" } })
+        return await this.repository.find({ where: { user }, order: { createdAt: "DESC" } })
     }
 
     public async getBlockListByGroup(group: Group): Promise<Block[]> {
-        return await this.repository.find({ where: { group : group }, order: { createdAt: "DESC" } })
+        return await this.repository.find({ where: { group }, order: { createdAt: "DESC" } })
     }
 
     public async getBlockByUserId(blockId: string, userId: string): Promise<Block> {
-        return this.repository.findOne({ where: { id: blockId, user: new User(userId) } });
+        return this.repository.findOne({ where: { id: blockId, user: { id: userId } } });
     }
 }

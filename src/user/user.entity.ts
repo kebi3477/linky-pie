@@ -12,10 +12,6 @@ export enum UserType {
 
 @Entity('users')
 export class User {
-    constructor(id:string = '') {
-        this.id = id;
-    }
-
     @PrimaryColumn({ 
         name: 'id', 
         length: 50, 

@@ -11,16 +11,16 @@ export class UserRepository {
         private readonly repository: Repository<User>,
     ) {}
 
-    public create(user: CreateUserDTO): User {
-        return this.repository.create(user);
+    public create(createUserDTO: CreateUserDTO): User {
+        return this.repository.create(createUserDTO);
     }
     
     public async read(id: string): Promise<User> {
-        return this.repository.findOne({ where: { id: id } });
+        return this.repository.findOne({ where: { id } });
     }
 
     public async delete(id: string): Promise<void> {
-        await this.repository.delete({id : id});
+        await this.repository.delete({ id });
     }
 
     public async save(user: User) {

@@ -14,7 +14,7 @@ export class FollowerRepository {
     ) {}
 
     public async getFollower(userId: string, followId: string): Promise<Follower> {
-        return await this.repository.findOne({ where: { user: new User(userId), following: new User(followId) } })
+        return await this.repository.findOne({ where: { user: { id : userId }, following: { id : followId } } })
     }
 
     public async deleteFollower(user: User, following: User): Promise<void> {

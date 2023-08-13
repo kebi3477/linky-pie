@@ -6,12 +6,6 @@ import { BlockComment } from '../blockComment/blockComment.entity';
 
 @Entity('blocks')
 export class Block {
-    constructor(id: string = '') {
-        if (id !== '') {
-            this.id = id;
-        }
-    }
-
     @PrimaryGeneratedColumn('uuid', { 
         comment: '블록(웹 링크) 고유 아이디' 
     })

@@ -12,16 +12,16 @@ export class GroupRepository {
         private readonly repository: Repository<Group>,
     ) {}
 
-    public create(blockGroup: CreateGroupDTO): Group {
-        return this.repository.create(blockGroup);
+    public create(createGroupDTO: CreateGroupDTO): Group {
+        return this.repository.create(createGroupDTO);
     }
     
     public async read(id: string): Promise<Group> {
-        return this.repository.findOne({ where: { id: id } });
+        return this.repository.findOne({ where: { id } });
     }
 
     public async delete(id: string): Promise<void> {
-        await this.repository.delete({id : id});
+        await this.repository.delete({ id });
     }
 
     public async save(block: Group) {
@@ -29,6 +29,6 @@ export class GroupRepository {
     }
 
     public async getGroupListByUserId(userId: string): Promise<Group[]> {
-        return await this.repository.find({ where: { user : new User(userId) }, order: { createdAt: "DESC" } })
+        return await this.repository.find({ where: { user : { id: userId } }, order: { createdAt: "DESC" } })
     }
 }

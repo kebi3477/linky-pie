@@ -16,15 +16,15 @@ export class BlockCommentRepository {
     }
     
     public async read(id: number): Promise<BlockComment> {
-        return this.repository.findOne({ where: { id: id } });
+        return this.repository.findOne({ where: { id } });
     }
 
     public async update(id: number, content: string): Promise<UpdateResult> {
-        return this.repository.update(id, { content: content });
+        return this.repository.update(id, { content });
     }
 
     public async delete(userId: string, blockId: string, id: number): Promise<void> {
-        await this.repository.delete({ id : id, user: { id: userId }, block: { id: blockId } });
+        await this.repository.delete({ id, user: { id: userId }, block: { id: blockId } });
     }
 
     public async save(retrospective: BlockComment) {
