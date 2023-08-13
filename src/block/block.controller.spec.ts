@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { BlockController } from './block.controller';
 import { BlockService } from './block.service';
-import { BlockResponseDto, CreateBlockDTO, UpdateBlockDTO } from './block.dto';
+import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { Block } from './block.entity';
 import { BlockMessage } from './block.message';

@@ -1,5 +1,5 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { Group, GroupType } from '../group/group.entity';
+import { IsString, IsNotEmpty, IsInt } from 'class-validator';
+import { GroupType } from '../group/group.entity';
 import { User } from '../user/user.entity';
 
 export class CreateGroupDTO {
@@ -20,23 +20,4 @@ export class UpdateGroupDTO {
 
     @IsInt()
     type: GroupType
-}
-
-export class GroupResponseDto<T> {
-    @IsString()
-    @IsNotEmpty()
-    message!: string;
-
-    @IsInt()
-    @IsNotEmpty()
-    statusCode: number;
-
-    group: T;
-
-    set(status:number, message: string, group: T = null): GroupResponseDto<T> {
-        this.statusCode = status;
-        this.message = message;
-        this.group = group;
-        return this;
-    }
 }

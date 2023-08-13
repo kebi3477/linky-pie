@@ -1,5 +1,5 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { GroupResponseDto, CreateGroupDTO, UpdateGroupDTO } from './group.dto';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
 import { Group } from '../group/group.entity';
@@ -8,17 +8,15 @@ import { GroupMessage } from '../module/message';
 import { UserMessage } from '../user/user.message';
 
 @Controller('groups')
+@UseInterceptors(ClassSerializerInterceptor)
 export class GroupController {
     constructor(private readonly service: GroupService) {}
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    async create(@Req() request: RequestWithUser, @Body() createGroupDTO: CreateGroupDTO) {
+    async create(@Req() request: RequestWithUser, @Body() createGroupDTO: CreateGroupDTO): Promise<Group> {
         try {
-            const group: Group = await this.service.create(request.user.id, createGroupDTO);
-            const result: GroupResponseDto<Group> = new GroupResponseDto();
-
-            return result.set(HttpStatus.CREATED, GroupMessage.SUCCESS_CREATE, group);
+            return await this.service.create(request.user.id, createGroupDTO);
         } catch (error) {
             if (error.message === GroupMessage.CONFLICT) {
                 throw new HttpException(GroupMessage.CONFLICT, HttpStatus.CONFLICT);
@@ -30,12 +28,9 @@ export class GroupController {
 
     @Get("/:group_id")
     @UseGuards(JwtAuthenticationGuard)
-    async read(@Req() request: RequestWithUser, @Param("group_id") groupId: string) {
+    async read(@Req() request: RequestWithUser, @Param("group_id") groupId: string): Promise<Group> {
         try {
-            const group: Group = await this.service.read(request.user.id, groupId);
-            const result: GroupResponseDto<Group> = new GroupResponseDto();
-
-            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_READ, group);
+            return await this.service.read(request.user.id, groupId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -49,12 +44,9 @@ export class GroupController {
 
     @Put("/:group_id")
     @UseGuards(JwtAuthenticationGuard)
-    async update(@Req() request: RequestWithUser, @Param("group_id") groupId: string, @Body() updateGroupDTO: UpdateGroupDTO) {
+    async update(@Req() request: RequestWithUser, @Param("group_id") groupId: string, @Body() updateGroupDTO: UpdateGroupDTO): Promise<Group> {
         try {
-            const group: Group = await this.service.update(request.user.id, groupId, updateGroupDTO);
-            const result: GroupResponseDto<Group> = new GroupResponseDto();
-
-            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_UPDATE, group);
+            return await this.service.update(request.user.id, groupId, updateGroupDTO);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -68,12 +60,9 @@ export class GroupController {
 
     @Delete("/:group_id")
     @UseGuards(JwtAuthenticationGuard)
-    async delete(@Req() request: RequestWithUser, @Param("group_id") groupId: string) {
+    async delete(@Req() request: RequestWithUser, @Param("group_id") groupId: string): Promise<Group> {
         try {
-            const group: Group = await this.service.delete(request.user.id, groupId);
-            const result: GroupResponseDto<Group> = new GroupResponseDto();
-
-            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_DELETE, group);
+            return await this.service.delete(request.user.id, groupId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -87,12 +76,9 @@ export class GroupController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard)
-    async getGroupList(@Req() request: RequestWithUser) {
+    async getGroupList(@Req() request: RequestWithUser): Promise<Group[]> {
         try {
-            const groupList: Group[] = await this.service.getGroupList(request.user.id);
-            const result: GroupResponseDto<Group[]> = new GroupResponseDto();
-
-            return result.set(HttpStatus.OK, GroupMessage.SUCCESS_READ, groupList);
+            return await this.service.getGroupList(request.user.id);
         } catch (error) {
             if (error.message === GroupMessage.CONFLICT) {
                 throw new HttpException(GroupMessage.CONFLICT, HttpStatus.CONFLICT);

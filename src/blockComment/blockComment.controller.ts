@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { BlockCommentService } from './blockComment.service';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
@@ -8,6 +8,7 @@ import { UserMessage } from '../user/user.message';
 import { BlockMessage } from '../block/block.message';
 
 @Controller('blocks/:block_id/comments')
+@UseInterceptors(ClassSerializerInterceptor)
 export class BlockCommentController {
     constructor(private readonly service: BlockCommentService) {}
 

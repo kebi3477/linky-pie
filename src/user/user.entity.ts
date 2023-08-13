@@ -3,6 +3,7 @@ import { Group } from '../group/group.entity';
 import { Block } from '../block/block.entity';
 import { Follower } from '../follower/follower.entity';
 import { BlockComment } from '../blockComment/blockComment.entity';
+import { Exclude } from 'class-transformer';
 
 export enum UserType {
     User = 0,
@@ -22,6 +23,7 @@ export class User {
     })
     id: string;
     
+    @Exclude()
     @Column({ 
         name: 'password', 
         nullable: false, 

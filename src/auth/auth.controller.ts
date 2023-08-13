@@ -1,5 +1,4 @@
 import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
-import { UserResponseDto } from '../user/user.dto';
 import { LocalAuthenticationGuard } from './local.strategy';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
@@ -14,15 +13,13 @@ export class AuthController {
     @Post('/login')
     @HttpCode(HttpStatus.OK)
     @UseGuards(LocalAuthenticationGuard)
-    async login(@Req() request: RequestWithUser, @Res() response: Response) {
+    async login(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response<any, Record<string, any>>> {
         try {
             const user: User = request.user;
             const cookie = this.service.getCookieWithJwtToken(user.id);
-            const result: UserResponseDto<User> = new UserResponseDto();
 
             response.setHeader('Set-Cookie', cookie);
-            user.password = undefined;
-            return response.send(result.set(HttpStatus.OK, UserMessage.SUCCESS_LOGIN, user))
+            return response.send(user);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -33,7 +30,8 @@ export class AuthController {
     }
 
     @Post('logout')
-    async logout(@Req() request: RequestWithUser, @Res() response: Response) {
+    @HttpCode(HttpStatus.OK)
+    async logout(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response<any, Record<string, any>>> {
         response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
         return response.sendStatus(HttpStatus.OK);
     }

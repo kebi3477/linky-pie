@@ -1,5 +1,4 @@
-import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max, IsEmpty } from 'class-validator';
-import { Block } from '../block/block.entity';
+import { IsString, IsNotEmpty } from 'class-validator';
 import { Group } from '../group/group.entity';
 import { User } from '../user/user.entity';
 
@@ -34,23 +33,4 @@ export class UpdateBlockDTO {
     hashtag: string;
 
     group?: Group|null;
-}
-
-export class BlockResponseDto<T> {
-    @IsString()
-    @IsNotEmpty()
-    message!: string;
-
-    @IsInt()
-    @IsNotEmpty()
-    statusCode: number;
-
-    block: T;
-
-    set(status:number, message: string, block: T = null): BlockResponseDto<T> {
-        this.statusCode = status;
-        this.message = message;
-        this.block = block;
-        return this;
-    }
 }

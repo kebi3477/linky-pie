@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDTO, UserResponseDto } from './user.dto';
+import { CreateUserDTO } from './user.dto';
 import { User } from '../user/user.entity';
 import { UserMessage } from './user.message';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
@@ -8,16 +8,14 @@ import { RequestWithUser } from '../auth/auth.interface';
 import { FollowerMessage } from '../follower/follower.message';
 
 @Controller('users')
+@UseInterceptors(ClassSerializerInterceptor)
 export class UserController {
     constructor(private readonly service: UserService) {}
 
     @Post()
-    async create(@Body() createUserDTO: CreateUserDTO) {
+    async create(@Body() createUserDTO: CreateUserDTO): Promise<User> {
         try {
-            const newUser: User = await this.service.create(createUserDTO);
-            const result: UserResponseDto<User> = new UserResponseDto();
-
-            return result.set(HttpStatus.CREATED, UserMessage.SUCCESS_CREATE, newUser);
+            return await this.service.create(createUserDTO);
         } catch (error) {
             if (error.message === UserMessage.CONFLICT) {
                 throw new HttpException(UserMessage.CONFLICT, HttpStatus.CONFLICT);
@@ -29,13 +27,9 @@ export class UserController {
 
     @Get('/me')
     @UseGuards(JwtAuthenticationGuard)
-    async readMe(@Req() request: RequestWithUser) {
+    async readMe(@Req() request: RequestWithUser): Promise<User> {
         try {
-            const user = request.user;
-            const result: UserResponseDto<User> = new UserResponseDto();
-            
-            user.password = undefined;
-            return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, user);
+            return await this.service.getById(request.user.id);
         } catch (error) {
             throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
         }
@@ -43,12 +37,9 @@ export class UserController {
 
     @Post('/follow/:follow_id')
     @UseGuards(JwtAuthenticationGuard)
-    async followUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string) {
+    async followUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string): Promise<User> {
         try {
-            const user: User = await this.service.followUser(request.user.id, followId);
-            const result: UserResponseDto<User> = new UserResponseDto();
-
-            return result.set(HttpStatus.OK, UserMessage.SUCCESS_FOLLOW, user);
+            return await this.service.followUser(request.user.id, followId);
         } catch (error) {
             if (error.message === FollowerMessage.CONFLICT) {
                 throw new HttpException(FollowerMessage.CONFLICT, HttpStatus.CONFLICT);
@@ -62,12 +53,9 @@ export class UserController {
   
     @Delete('/unfollow/:follow_id')
     @UseGuards(JwtAuthenticationGuard)
-    async unfollowUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string) {
+    async unfollowUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string): Promise<User> {
         try {
-            const user: User = await this.service.unfollowUser(request.user.id, followId);
-            const result: UserResponseDto<User> = new UserResponseDto();
-
-            return result.set(HttpStatus.OK, UserMessage.SUCCESS_UNFOLLOW, user);
+            return await this.service.unfollowUser(request.user.id, followId);
         } catch (error) {
             if (error.message === FollowerMessage.CONFLICT) {
                 throw new HttpException(FollowerMessage.CONFLICT, HttpStatus.CONFLICT);
@@ -81,12 +69,9 @@ export class UserController {
   
     @Get('/followers')
     @UseGuards(JwtAuthenticationGuard)
-    async getFollowers(@Req() request: RequestWithUser) {
+    async getFollowers(@Req() request: RequestWithUser): Promise<User[]> {
         try {
-            const users: User[] = await this.service.getFollowers(request.user.id);
-            const result: UserResponseDto<User[]> = new UserResponseDto();
-
-            return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, users);
+            return await this.service.getFollowers(request.user.id);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -98,12 +83,9 @@ export class UserController {
   
     @Get('/followings')
     @UseGuards(JwtAuthenticationGuard)
-    async getFollowing(@Req() request: RequestWithUser) {
+    async getFollowing(@Req() request: RequestWithUser): Promise<User[]> {
         try {
-            const users: User[] = await this.service.getFollowing(request.user.id);
-            const result: UserResponseDto<User[]> = new UserResponseDto();
-
-            return result.set(HttpStatus.OK, UserMessage.SUCCESS_READ, users);
+            return await this.service.getFollowing(request.user.id);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);

@@ -23,22 +23,3 @@ export class CreateUserDTO {
     @Max(1)
     type?: number;
 }
-
-export class UserResponseDto<T> {
-    @IsString()
-    @IsNotEmpty()
-    message!: string;
-
-    @IsInt()
-    @IsNotEmpty()
-    statusCode: number;
-
-    user: T;
-
-    set(status:number, message: string, user: T = null): UserResponseDto<T> {
-        this.statusCode = status;
-        this.message = message;
-        this.user = user;
-        return this;
-    }
-}

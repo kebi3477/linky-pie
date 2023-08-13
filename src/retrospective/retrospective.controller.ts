@@ -1,25 +1,23 @@
-import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { RetrospectiveService } from './retrospective.service';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
-import { CreateRetrospectiveDTO, RetrospectiveResponseDto, UpdateRetrospectiveDTO } from './retrospective.dto';
+import { CreateRetrospectiveDTO, UpdateRetrospectiveDTO } from './retrospective.dto';
 import { Retrospective } from './retrospective.entity';
 import { RetrospectiveMessage } from './retrospective.message';
 import { UserMessage } from '../user/user.message';
 import { BlockMessage } from '../block/block.message';
 
 @Controller('blocks/:block_id/retrospectives')
+@UseInterceptors(ClassSerializerInterceptor)
 export class RetrospectiveController {
     constructor(private readonly service: RetrospectiveService) {}
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    async create(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() createRetrospectiveDTO: CreateRetrospectiveDTO) {
+    async create(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() createRetrospectiveDTO: CreateRetrospectiveDTO): Promise<Retrospective> {
         try {
-            const newBlock: Retrospective = await this.service.create(request.user.id, blockId, createRetrospectiveDTO);
-            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
-
-            return result.set(HttpStatus.CREATED, RetrospectiveMessage.SUCCESS_CREATE, newBlock);
+            return await this.service.create(request.user.id, blockId, createRetrospectiveDTO);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -33,12 +31,9 @@ export class RetrospectiveController {
 
     @Get('/:retrospective_id')
     @UseGuards(JwtAuthenticationGuard)
-    async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number) {
+    async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number): Promise<Retrospective> {
         try {
-            const retrospective: Retrospective = await this.service.read(request.user.id, blockId, retrospectiveId);
-            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
-
-            return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_READ, retrospective);
+            return await this.service.read(request.user.id, blockId, retrospectiveId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -59,12 +54,9 @@ export class RetrospectiveController {
         @Param('block_id') blockId: string,
         @Param('retrospective_id') retrospectiveId: number, 
         @Body() updateRetrospectiveDTO: UpdateRetrospectiveDTO,
-    ) {
+    ): Promise<Retrospective> {
         try {
-            const retrospective: Retrospective = await this.service.update(request.user.id, blockId, retrospectiveId, updateRetrospectiveDTO);
-            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
-
-            return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_UPDATE, retrospective);
+            return await this.service.update(request.user.id, blockId, retrospectiveId, updateRetrospectiveDTO);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -80,12 +72,9 @@ export class RetrospectiveController {
 
     @Delete('/:retrospective_id')
     @UseGuards(JwtAuthenticationGuard)
-    async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number) {
+    async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Param('retrospective_id') retrospectiveId: number): Promise<Retrospective> {
         try {
-            const retrospective: Retrospective = await this.service.delete(request.user.id, blockId, retrospectiveId);
-            const result: RetrospectiveResponseDto<Retrospective> = new RetrospectiveResponseDto();
-
-            return result.set(HttpStatus.OK, RetrospectiveMessage.SUCCESS_DELETE, retrospective);
+            return await this.service.delete(request.user.id, blockId, retrospectiveId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);

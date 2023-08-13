@@ -1,6 +1,6 @@
-import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
 import { BlockService } from './block.service';
-import { BlockResponseDto, CreateBlockDTO, UpdateBlockDTO } from './block.dto';
+import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { Block } from './block.entity';
 import { BlockMessage } from './block.message';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
@@ -10,17 +10,15 @@ import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 import { UserLikesBLockMessage } from '../userLikesBlock/userLikesBlock.message';
 
 @Controller('blocks')
+@UseInterceptors(ClassSerializerInterceptor)
 export class BlockController {
     constructor(private readonly service: BlockService) {}
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    async create(@Req() request: RequestWithUser, @Body() createBlockDTO: CreateBlockDTO) {
+    async create(@Req() request: RequestWithUser, @Body() createBlockDTO: CreateBlockDTO): Promise<Block> {
         try {
-            const newBlock: Block = await this.service.create(request.user.id, null, createBlockDTO);
-            const result: BlockResponseDto<Block> = new BlockResponseDto();
-
-            return result.set(HttpStatus.CREATED, BlockMessage.SUCCESS_CREATE, newBlock);
+            return await this.service.create(request.user.id, null, createBlockDTO);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -36,12 +34,9 @@ export class BlockController {
 
     @Get('/:block_id([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})')
     @UseGuards(JwtAuthenticationGuard)
-    async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+    async read(@Req() request: RequestWithUser, @Param('block_id') blockId: string): Promise<Block> {
         try {
-            const newBlock: Block = await this.service.read(request.user.id, blockId);
-            const result: BlockResponseDto<Block> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, newBlock);
+            return await this.service.read(request.user.id, blockId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -55,12 +50,9 @@ export class BlockController {
 
     @Put('/:block_id')
     @UseGuards(JwtAuthenticationGuard)
-    async update(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() updateBlockDTO: UpdateBlockDTO) {
+    async update(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() updateBlockDTO: UpdateBlockDTO): Promise<Block> {
         try {
-            const newBlock: Block = await this.service.update(request.user.id, blockId, updateBlockDTO);
-            const result: BlockResponseDto<Block> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_UPDATE, newBlock);
+            return await this.service.update(request.user.id, blockId, updateBlockDTO);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -74,12 +66,9 @@ export class BlockController {
 
     @Delete('/:block_id')
     @UseGuards(JwtAuthenticationGuard)
-    async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+    async delete(@Req() request: RequestWithUser, @Param('block_id') blockId: string): Promise<Block> {
         try {
-            const newBlock: Block = await this.service.delete(request.user.id, blockId);
-            const result: BlockResponseDto<Block> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_DELETE, newBlock);
+            return await this.service.delete(request.user.id, blockId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -93,12 +82,9 @@ export class BlockController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard)
-    async getBlockList(@Req() request: RequestWithUser) {
+    async getBlockList(@Req() request: RequestWithUser): Promise<Block[]> {
         try {
-            const blockList: Block[] = await this.service.getBlockListByUser(request.user.id);
-            const result: BlockResponseDto<Block[]> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, blockList);
+            return await this.service.getBlockListByUser(request.user.id);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -110,12 +96,9 @@ export class BlockController {
 
     @Post('/:block_id/likes')
     @UseGuards(JwtAuthenticationGuard)
-    async createLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+    async createLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string): Promise<UserLikesBlock> {
         try {
-            const like: UserLikesBlock = await this.service.createLikes(request.user.id, blockId);
-            const result: BlockResponseDto<UserLikesBlock> = new BlockResponseDto();
-
-            return result.set(HttpStatus.CREATED, UserLikesBLockMessage.SUCCESS_CREATE, like);
+            return await this.service.createLikes(request.user.id, blockId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -131,12 +114,9 @@ export class BlockController {
 
     @Delete('/:block_id/likes')
     @UseGuards(JwtAuthenticationGuard)
-    async deleteLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string) {
+    async deleteLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string): Promise<UserLikesBlock> {
         try {
-            const like: UserLikesBlock = await this.service.deleteLikes(request.user.id, blockId);
-            const result: BlockResponseDto<UserLikesBlock> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, UserLikesBLockMessage.SUCCESS_DELETE, like);
+            return await this.service.deleteLikes(request.user.id, blockId);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
@@ -152,12 +132,9 @@ export class BlockController {
 
     @Get('/likes')
     @UseGuards(JwtAuthenticationGuard)
-    async getLikesBlockList(@Req() request: RequestWithUser) {
+    async getLikesBlockList(@Req() request: RequestWithUser): Promise<Block[]> {
         try {
-            const blockList: Block[] = await this.service.getLikesBlockList(request.user.id);
-            const result: BlockResponseDto<Block[]> = new BlockResponseDto();
-
-            return result.set(HttpStatus.OK, BlockMessage.SUCCESS_READ, blockList);
+            return await this.service.getLikesBlockList(request.user.id);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
