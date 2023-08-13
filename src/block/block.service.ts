@@ -38,7 +38,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.getUser(userId);
+            const user = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -59,7 +59,7 @@ export class BlockService {
             const res = JSON.parse(msg);
             
             if (groupId !== null) {
-                const group = await this.groupModel.getGroup(groupId);
+                const group: Group = await this.groupModel.read(groupId);
                 createBlockDTO.group = group;
             } else {
                 createBlockDTO.group = null;
@@ -72,7 +72,7 @@ export class BlockService {
             createBlockDTO.hashtag = res.hashtag;
         
             this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
-            const newBlock: Block = this.model.createBlock(createBlockDTO);
+            const newBlock: Block = this.model.create(createBlockDTO);
             this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
             return await this.model.save(newBlock);
         } catch (error) {
@@ -91,7 +91,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.getUser(userId);
+            const user = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -123,7 +123,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 수정] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.getUser(userId);
+            const user = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -155,7 +155,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 삭제] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.getUser(userId);
+            const user = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -167,7 +167,7 @@ export class BlockService {
                 throw new Error(BlockMessage.NOT_FOUND);
             }
 
-            await this.model.deleteBlock(blockId);
+            await this.model.delete(blockId);
             this.logger.log(`[블록 삭제] 성공 [ blockId : ${blockId} ] `);
             
             return block;
@@ -187,7 +187,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.getUser(userId);
+            const user = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -231,13 +231,13 @@ export class BlockService {
         try {
             this.logger.log(`[블록 좋아요] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 좋아요] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const block: Block = await this.model.getBlock(blockId);
+            const block: Block = await this.model.read(blockId);
             if (!block) {
                 this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
                 throw new Error(BlockMessage.NOT_FOUND);
@@ -270,13 +270,13 @@ export class BlockService {
         try {
             this.logger.log(`[블록 좋아요 취소] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 좋아요 취소] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const block: Block = await this.model.getBlock(blockId);
+            const block: Block = await this.model.read(blockId);
             if (!block) {
                 this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
                 throw new Error(BlockMessage.NOT_FOUND);

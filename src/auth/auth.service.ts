@@ -30,7 +30,7 @@ export class AuthService {
         try {
             this.logger.log(`[로그인] API 호출 [ userId : ${id} ]`);
 
-            const user = await this.userModel.getUser(id);
+            const user = await this.userModel.read(id);
             if (!user) {
                 this.logger.log(`[로그인] 실패 [ userId : ${id} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -59,7 +59,7 @@ export class AuthService {
             try {
                 this.logger.log(`[사용자 조회] API 호출 [ userId : ${id} ]`);
     
-                const user = await this.userModel.getUser(id);
+                const user = await this.userModel.read(id);
                 if (!user) {
                     this.logger.log(`[사용자 조회] 실패 [ userId : ${id} ] -> 존재하지 않는 사용자ID `);
                     throw new Error(UserMessage.NOT_FOUND);

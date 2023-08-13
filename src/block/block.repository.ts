@@ -13,15 +13,15 @@ export class BlockRepository {
         private readonly repository: Repository<Block>,
     ) {}
 
-    public createBlock(block: CreateBlockDTO): Block {
+    public create(block: CreateBlockDTO): Block {
         return this.repository.create(block);
     }
     
-    public async getBlock(id: string): Promise<Block> {
+    public async read(id: string): Promise<Block> {
         return this.repository.findOne({ where: { id: id } });
     }
 
-    public async deleteBlock(id: string): Promise<void> {
+    public async delete(id: string): Promise<void> {
         await this.repository.delete({id : id});
     }
 

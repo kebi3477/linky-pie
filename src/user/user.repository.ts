@@ -11,15 +11,15 @@ export class UserRepository {
         private readonly repository: Repository<User>,
     ) {}
 
-    public createUser(user: CreateUserDTO): User {
+    public create(user: CreateUserDTO): User {
         return this.repository.create(user);
     }
     
-    public async getUser(id: string): Promise<User> {
+    public async read(id: string): Promise<User> {
         return this.repository.findOne({ where: { id: id } });
     }
 
-    public async deleteUser(id: string): Promise<void> {
+    public async delete(id: string): Promise<void> {
         await this.repository.delete({id : id});
     }
 

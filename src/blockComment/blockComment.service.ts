@@ -33,7 +33,7 @@ export class BlockCommentService {
         try {
             this.logger.log(`[댓글 생성] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[댓글 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -71,7 +71,7 @@ export class BlockCommentService {
         try {
             this.logger.log(`[댓글 수정] API 호출 [ commentId : ${commentId}, userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[댓글 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -111,7 +111,7 @@ export class BlockCommentService {
         try {
             this.logger.log(`[댓글 삭제] API 호출 [ commentId : ${commentId}, userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[댓글 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -150,7 +150,7 @@ export class BlockCommentService {
         try {
             this.logger.log(`[댓글 목록 조회] API 호출 [ blockId : ${blockId}, userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[댓글 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);

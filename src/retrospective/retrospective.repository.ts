@@ -12,19 +12,19 @@ export class RetrospectiveRepository {
         private readonly repository: Repository<Retrospective>,
     ) {}
 
-    public createRetrospective(retrospective: CreateRetrospectiveDTO): Retrospective {
+    public create(retrospective: CreateRetrospectiveDTO): Retrospective {
         return this.repository.create(retrospective);
     }
     
-    public async getRetrospective(blockId: string, id: number): Promise<Retrospective> {
+    public async read(blockId: string, id: number): Promise<Retrospective> {
         return this.repository.findOne({ where: { id: id, block: new Block(blockId) } });
     }
 
-    public async updateRetrospective(id: number, content: string): Promise<UpdateResult> {
+    public async update(id: number, content: string): Promise<UpdateResult> {
         return this.repository.update(id, { content: content });
     }
 
-    public async deleteRetrospective(id: number): Promise<void> {
+    public async delete(id: number): Promise<void> {
         await this.repository.delete({ id : id });
     }
 

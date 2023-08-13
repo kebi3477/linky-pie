@@ -33,7 +33,7 @@ export class RetrospectiveService {
         try {
             this.logger.log(`[회고 생성] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[회고 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -47,7 +47,7 @@ export class RetrospectiveService {
 
             createRetrospectiveDTO.block = block;
         
-            const newRetrospective: Retrospective = this.model.createRetrospective(createRetrospectiveDTO);
+            const newRetrospective: Retrospective = this.model.create(createRetrospectiveDTO);
             this.logger.log(`[회고 생성] 성공 [ id : ${newRetrospective.id} ] `);
             return await this.model.save(newRetrospective);
         } catch (error) {
@@ -67,7 +67,7 @@ export class RetrospectiveService {
         try {
             this.logger.log(`[회고 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[회고 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -79,7 +79,7 @@ export class RetrospectiveService {
                 throw new Error(BlockMessage.NOT_FOUND);
             }
         
-            const retrospective: Retrospective = await this.model.getRetrospective(blockId, retrospectiveId);
+            const retrospective: Retrospective = await this.model.read(blockId, retrospectiveId);
             if (!retrospective) {
                 this.logger.log(`[회고 수정] 실패 [ blockId : ${blockId}] -> 회고를 찾을 수 없음`);
                 throw new Error(RetrospectiveMessage.NOT_FOUND);
@@ -105,7 +105,7 @@ export class RetrospectiveService {
         try {
             this.logger.log(`[회고 수정] API 호출 [ retrospectiveId : ${retrospectiveId}, userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[회고 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -117,7 +117,7 @@ export class RetrospectiveService {
                 throw new Error(BlockMessage.NOT_FOUND);
             }
 
-            const retrospective: Retrospective = await this.model.getRetrospective(blockId, retrospectiveId);
+            const retrospective: Retrospective = await this.model.read(blockId, retrospectiveId);
             if (!retrospective) {
                 this.logger.log(`[회고 수정] 실패 [ blockId : ${blockId}] -> 회고를 찾을 수 없음`);
                 throw new Error(RetrospectiveMessage.NOT_FOUND);
@@ -145,7 +145,7 @@ export class RetrospectiveService {
         try {
             this.logger.log(`[회고 삭제] API 호출 [ retrospectiveId : ${retrospectiveId}, userId : ${userId} ]`);
 
-            const user: User = await this.userModel.getUser(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[회고 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -157,13 +157,13 @@ export class RetrospectiveService {
                 throw new Error(BlockMessage.NOT_FOUND);
             }
 
-            const retrospective: Retrospective = await this.model.getRetrospective(blockId, retrospectiveId);
+            const retrospective: Retrospective = await this.model.read(blockId, retrospectiveId);
             if (!retrospective) {
                 this.logger.log(`[회고 삭제] 실패 [ blockId : ${blockId}] -> 회고를 찾을 수 없음`);
                 throw new Error(RetrospectiveMessage.NOT_FOUND);
             } 
             
-            await this.model.deleteRetrospective(retrospectiveId);
+            await this.model.delete(retrospectiveId);
             this.logger.log(`[회고 삭제] 성공 [ id : ${retrospectiveId} ] `);
             
             return retrospective;

@@ -12,15 +12,15 @@ export class GroupRepository {
         private readonly repository: Repository<Group>,
     ) {}
 
-    public createGroup(blockGroup: CreateGroupDTO): Group {
+    public create(blockGroup: CreateGroupDTO): Group {
         return this.repository.create(blockGroup);
     }
     
-    public async getGroup(id: string): Promise<Group> {
+    public async read(id: string): Promise<Group> {
         return this.repository.findOne({ where: { id: id } });
     }
 
-    public async deleteGroup(id: string): Promise<void> {
+    public async delete(id: string): Promise<void> {
         await this.repository.delete({id : id});
     }
 

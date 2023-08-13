@@ -29,14 +29,14 @@ export class UserService {
         try {
             this.logger.log(`[사용자 생성] API 호출 [ userId : ${createUserDTO.id} ]`);
 
-            const existingUser: User = await this.model.getUser(createUserDTO.id);
+            const existingUser: User = await this.model.read(createUserDTO.id);
             if (existingUser) {
                 this.logger.log(`[사용자 생성] 생성 실패  [ userId : ${createUserDTO.id} ] -> 중복된 사용자 ID`);
                 throw new Error(UserMessage.CONFLICT);
             }
             
             createUserDTO.password = await bcrypt.hash(createUserDTO.password, this.salt);
-            const newUser = this.model.createUser(createUserDTO);
+            const newUser = this.model.create(createUserDTO);
             this.logger.log(`[사용자 생성] 생성 성공  [ userId : ${createUserDTO.id} ]`);
 
             return await this.model.save(newUser);
@@ -56,7 +56,7 @@ export class UserService {
         try {
             this.logger.log(`[사용자 조회] API 호출 [ userId : ${id} ]`);
 
-            const user = await this.model.getUser(id);
+            const user = await this.model.read(id);
             if (!user) {
                 this.logger.log(`[사용자 조회] 실패 [ userId : ${id} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -86,13 +86,13 @@ export class UserService {
                 throw new Error(FollowerMessage.CONFLICT);
             }
 
-            const user: User = await this.model.getUser(userId);
+            const user: User = await this.model.read(userId);
             if (!user) {
                 this.logger.log(`[팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const following: User = await this.model.getUser(followId);
+            const following: User = await this.model.read(followId);
             if (!following) {
                 this.logger.log(`[팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로잉 대상 ID `);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -129,13 +129,13 @@ export class UserService {
                 throw new Error(FollowerMessage.NOT_FOUND);
             }
     
-            const user: User = await this.model.getUser(userId);
+            const user: User = await this.model.read(userId);
             if (!user) {
                 this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
             }
     
-            const following: User = await this.model.getUser(followId);
+            const following: User = await this.model.read(followId);
             if (!following) {
                 this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로잉 대상 ID `);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -159,7 +159,7 @@ export class UserService {
      */
     async getFollowers(userId: string): Promise<User[]> {
         try {
-            const user: User = await this.model.getUser(userId);
+            const user: User = await this.model.read(userId);
             if (!user) {
                 this.logger.log(`[팔로워 목록 조회] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -180,7 +180,7 @@ export class UserService {
      */
     async getFollowing(userId: string): Promise<User[]> {
         try {
-            const user: User = await this.model.getUser(userId);
+            const user: User = await this.model.read(userId);
             if (!user) {
                 this.logger.log(`[팔로잉 목록 조회] 실패 [ userId : ${userId} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
