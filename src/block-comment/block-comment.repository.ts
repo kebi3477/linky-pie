@@ -1,8 +1,8 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository, UpdateResult } from "typeorm";
-import { BlockComment } from "./blockComment.entity";
-import { CreateBlockCommentDTO } from "./blockComment.dto";
+import { BlockComment } from "./block-comment.entity";
+import { CreateBlockCommentDTO } from "./block-comment.dto";
 
 @Injectable()
 export class BlockCommentRepository {

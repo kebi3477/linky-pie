@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty } from 'class-validator';
-import { Group } from '../group/group.entity';
+import { BlockGroup } from '../block-group/block-group.entity';
 import { User } from '../user/user.entity';
 
 export class CreateBlockDTO {
@@ -15,7 +15,7 @@ export class CreateBlockDTO {
 
     hashtag: string;
 
-    group?: Group|null;
+    blockGroup?: BlockGroup|null;
     
     user: User;
 }
@@ -32,5 +32,5 @@ export class UpdateBlockDTO {
 
     hashtag: string;
 
-    group?: Group|null;
+    blockGroup?: BlockGroup|null;
 }

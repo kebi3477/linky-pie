@@ -1,23 +1,23 @@
 import { IsString, IsNotEmpty, IsInt } from 'class-validator';
-import { GroupType } from '../group/group.entity';
+import { BlockGroupType } from './block-group.entity';
 import { User } from '../user/user.entity';
 
-export class CreateGroupDTO {
+export class CreateBlockGroupDTO {
     @IsString()
     @IsNotEmpty()
     title: string;
 
     @IsInt()
-    type: GroupType
+    type: BlockGroupType
 
     user: User
 }
 
-export class UpdateGroupDTO {
+export class UpdateBlockGroupDTO {
     @IsString()
     @IsNotEmpty()
     title: string;
 
     @IsInt()
-    type: GroupType
+    type: BlockGroupType
 }

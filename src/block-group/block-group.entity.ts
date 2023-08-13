@@ -2,20 +2,20 @@ import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDa
 import { User } from '../user/user.entity';
 import { Block } from '../block/block.entity';
 
-export enum GroupType {
+export enum BlockGroupType {
     Private = 0,
     FollowersOnly = 1,
     Public = 2,
 }
 
-@Entity('groups')
-export class Group {
+@Entity('block_groups')
+export class BlockGroup {
     @PrimaryGeneratedColumn('uuid', {
         comment: '그룹 고유 아이디',
     })
     id: string;
   
-    @ManyToOne(() => User, (user) => user.groups, { 
+    @ManyToOne(() => User, (user) => user.blockGroups, { 
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE' 
     })
@@ -32,11 +32,11 @@ export class Group {
 
     @Column({
         type: 'enum',
-        enum: GroupType,
-        default: GroupType.Private,
+        enum: BlockGroupType,
+        default: BlockGroupType.Private,
         comment: '공개 범위 (0: 비공개, 1: 팔로워만, 2: 전체 공개)',
     })
-    type: GroupType
+    type: BlockGroupType
   
     @CreateDateColumn({ 
         name: 'created_at', 

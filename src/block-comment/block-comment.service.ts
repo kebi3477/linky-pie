@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { BlockCommentRepository } from './blockComment.repository';
+import { BlockCommentRepository } from './block-comment.repository';
 import { Logger } from '../module/logger';
-import { CreateBlockCommentDTO, UpdateBlockCommentDTO } from './blockComment.dto';
+import { CreateBlockCommentDTO, UpdateBlockCommentDTO } from './block-comment.dto';
 import { UserRepository } from '../user/user.repository';
 import { BlockRepository } from '../block/block.repository';
-import { BlockComment } from './blockComment.entity';
+import { BlockComment } from './block-comment.entity';
 import { User } from '../user/user.entity';
 import { UserMessage } from '../user/user.message';
 import { Block } from '../block/block.entity';
 import { BlockMessage } from '../block/block.message';
-import { BlockCommentMessage } from './blockComment.message';
+import { BlockCommentMessage } from './block-comment.message';
 
 @Injectable()
 export class BlockCommentService {

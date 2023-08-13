@@ -1,8 +1,8 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
-import { Group } from '../group/group.entity';
+import { BlockGroup } from '../block-group/block-group.entity';
 import { User } from '../user/user.entity';
 import { Retrospective } from '../retrospective/retrospective.entity';
-import { BlockComment } from '../blockComment/blockComment.entity';
+import { BlockComment } from '../block-comment/block-comment.entity';
 
 @Entity('blocks')
 export class Block {
@@ -45,14 +45,14 @@ export class Block {
     })
     link: string;
 
-    @ManyToOne(() => Group, (group) => group.blocks, { 
+    @ManyToOne(() => BlockGroup, (group) => group.blocks, { 
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE' 
     })
     @JoinColumn({ 
         name: 'group_id'
     })
-    group: Group;
+    group: BlockGroup;
 
     @ManyToOne(() => User, (user) => user.blocks, { 
         onUpdate: 'CASCADE',

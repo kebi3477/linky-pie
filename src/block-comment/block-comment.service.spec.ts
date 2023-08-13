@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockCommentService } from './blockComment.service';
+import { BlockCommentService } from './block-comment.service';
 
 describe('BlockCommentService', () => {
     let service: BlockCommentService;

@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { BlockService } from './block.service';
 import { BlockRepository } from './block.repository';
 import { UserRepository } from '../user/user.repository';
-import { GroupRepository } from '../group/group.repository';
+import { GroupRepository } from '../block-group/block-group.repository';
 import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { Block } from './block.entity';
 import { User } from '../user/user.entity';
@@ -15,6 +15,7 @@ describe('BlockService', () => {
     const MOCK_GROUP_ID = 'group_id';
     const MOCK_BLOCK_ID = 'block_id';
     const mockBlock = new Block();
+    const mockUser = new User();
 
     const mockBlockModel = {
         createBlock: jest.fn().mockReturnValue(mockBlock),
@@ -27,7 +28,7 @@ describe('BlockService', () => {
     };
 
     const mockUserModel = {
-        getUser: jest.fn().mockResolvedValue(new User(MOCK_USER_ID))
+        getUser: jest.fn().mockResolvedValue({ id: MOCK_USER_ID })
     };
 
     const mockGroupModel = {

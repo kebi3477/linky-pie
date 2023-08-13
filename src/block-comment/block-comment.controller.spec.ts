@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { BlockCommentController } from './blockComment.controller';
-import { BlockCommentService } from './blockComment.service';
+import { BlockCommentController } from './block-comment.controller';
+import { BlockCommentService } from './block-comment.service';
 import { Block } from '../block/block.entity';
-import { CreateBlockCommentDTO } from './blockComment.dto';
+import { CreateBlockCommentDTO } from './block-comment.dto';
 
 describe('BlockCommentController', () => {
     let controller: BlockCommentController;

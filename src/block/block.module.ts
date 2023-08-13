@@ -5,16 +5,16 @@ import { BlockRepository } from './block.repository';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Block } from '../block/block.entity';
 import { APP_PIPE } from '@nestjs/core';
-import { Group } from '../group/group.entity';
+import { BlockGroup } from '../block-group/block-group.entity';
 import { UserRepository } from '../user/user.repository';
 import { User } from '../user/user.entity';
-import { GroupRepository } from '../group/group.repository';
+import { GroupRepository } from '../block-group/block-group.repository';
 import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Block, User, Group, UserLikesBlock]),
+        TypeOrmModule.forFeature([Block, User, BlockGroup, UserLikesBlock]),
     ],
     controllers: [ BlockController ],
     providers: [

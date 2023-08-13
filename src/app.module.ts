@@ -6,9 +6,9 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
 import { BlockModule } from './block/block.module';
 import { AuthModule } from './auth/auth.module';
-import { GroupModule } from './group/group.module';
+import { GroupModule } from './block-group/block-group.module';
 import { RetrospectiveModule } from './retrospective/retrospective.module';
-import { BlockCommentModule } from './blockComment/blockComment.module';
+import { BlockCommentModule } from './block-comment/block-comment.module';
 
 @Module({
     imports: [

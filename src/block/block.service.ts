@@ -8,8 +8,8 @@ import { UserRepository } from '../user/user.repository';
 import { UserMessage } from '../user/user.message';
 import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
-import { Group } from '../group/group.entity';
-import { GroupRepository } from '../group/group.repository';
+import { BlockGroup } from '../block-group/block-group.entity';
+import { GroupRepository } from '../block-group/block-group.repository';
 import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 import { User } from '../user/user.entity';
 import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
@@ -59,10 +59,10 @@ export class BlockService {
             const res = JSON.parse(msg);
             
             if (groupId !== null) {
-                const group: Group = await this.groupModel.read(groupId);
-                createBlockDTO.group = group;
+                const group: BlockGroup = await this.groupModel.read(groupId);
+                createBlockDTO.blockGroup = group;
             } else {
-                createBlockDTO.group = null;
+                createBlockDTO.blockGroup = null;
             }
 
             createBlockDTO.user = user;
@@ -210,7 +210,7 @@ export class BlockService {
         try {
             this.logger.log(`[블록 목록 조회] API 호출 [ blockGroupId : ${blockGroupId} ]`);
 
-            const blockGroup: Group = new Group();
+            const blockGroup: BlockGroup = new BlockGroup();
             blockGroup.id = blockGroupId;
 
             return await this.model.getBlockListByGroup(blockGroup);

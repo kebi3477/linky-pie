@@ -1,9 +1,9 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Param, Post, Put, Req, UseGuards, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
-import { BlockCommentService } from './blockComment.service';
+import { BlockCommentService } from './block-comment.service';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
-import { CreateBlockCommentDTO, UpdateBlockCommentDTO } from './blockComment.dto';
-import { BlockCommentMessage } from './blockComment.message';
+import { CreateBlockCommentDTO, UpdateBlockCommentDTO } from './block-comment.dto';
+import { BlockCommentMessage } from './block-comment.message';
 import { UserMessage } from '../user/user.message';
 import { BlockMessage } from '../block/block.message';
 

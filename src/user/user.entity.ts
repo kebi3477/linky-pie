@@ -1,8 +1,8 @@
 import { Entity, Column, PrimaryColumn, CreateDateColumn, UpdateDateColumn, DeleteDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
-import { Group } from '../group/group.entity';
+import { BlockGroup } from '../block-group/block-group.entity';
 import { Block } from '../block/block.entity';
 import { Follower } from '../follower/follower.entity';
-import { BlockComment } from '../blockComment/blockComment.entity';
+import { BlockComment } from '../block-comment/block-comment.entity';
 import { Exclude } from 'class-transformer';
 
 export enum UserType {
@@ -67,12 +67,12 @@ export class User {
         comment: '삭제날짜' 
     })
     deletedAt: Date | null;
-
-    @OneToMany(() => Group, (group) => group.user)
-    groups: Group[]
-
+    
     @OneToMany(() => Block, (block) => block.user)
     blocks: Block[]
+
+    @OneToMany(() => BlockGroup, (blockGroup) => blockGroup.user)
+    blockGroups: BlockGroup[]
 
     @OneToMany(() => BlockComment, (block) => block.user)
     blockComments: BlockComment[]

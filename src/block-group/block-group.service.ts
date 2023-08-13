@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../module/logger';
-import { GroupRepository } from './group.repository';
+import { GroupRepository } from './block-group.repository';
 import { UserRepository } from '../user/user.repository';
-import { CreateGroupDTO, UpdateGroupDTO } from './group.dto';
+import { CreateBlockGroupDTO, UpdateBlockGroupDTO } from './block-group.dto';
 import { UserMessage } from '../user/user.message';
-import { Group } from '../group/group.entity';
+import { BlockGroup } from './block-group.entity';
 import { User } from '../user/user.entity';
 import { GroupMessage } from '../module/message';
 
@@ -21,10 +21,10 @@ export class GroupService {
      * 그룹 생성
      * 
      * @param userId 사용자ID
-     * @param createGroupDTO 그룹 생성 DTO
+     * @param CreateBlockGroupDTO 그룹 생성 DTO
      * @returns 생성한 그룹
      */
-    public async create(userId: string, createGroupDTO: CreateGroupDTO): Promise<Group> {
+    public async create(userId: string, CreateBlockGroupDTO: CreateBlockGroupDTO): Promise<BlockGroup> {
         try {
             this.logger.log(`[블록 그룹 생성] API 호출 [ userId : ${userId} ]`);
 
@@ -34,10 +34,10 @@ export class GroupService {
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            createGroupDTO.user = user;
+            CreateBlockGroupDTO.user = user;
         
-            this.logger.log(`[블록 그룹 생성] 생성 시작 [ title : ${createGroupDTO.title} ] `);
-            const newBlockGroup: Group = this.model.create(createGroupDTO);
+            this.logger.log(`[블록 그룹 생성] 생성 시작 [ title : ${CreateBlockGroupDTO.title} ] `);
+            const newBlockGroup: BlockGroup = this.model.create(CreateBlockGroupDTO);
             this.logger.log(`[블록 그룹 생성] 생성 성공 [ id : ${newBlockGroup.id} ] `);
             return await this.model.save(newBlockGroup);
         } catch (error) {
@@ -53,7 +53,7 @@ export class GroupService {
      * @param groupId 그룹ID
      * @returns 조회한 그룹
      */
-    public async read(userId: string, groupId: string): Promise<Group> {
+    public async read(userId: string, groupId: string): Promise<BlockGroup> {
         try {
             this.logger.log(`[블록 그룹 조회] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
 
@@ -81,10 +81,10 @@ export class GroupService {
      * 
      * @param userId 사용자ID
      * @param groupId 그룹ID
-     * @param updateGroupDTO 그룹 수정 DTO
+     * @param UpdateBlockGroupDTO 그룹 수정 DTO
      * @returns 수정한 그룹
      */
-    public async update(userId: string, groupId: string, updateGroupDTO: UpdateGroupDTO): Promise<Group> {
+    public async update(userId: string, groupId: string, UpdateBlockGroupDTO: UpdateBlockGroupDTO): Promise<BlockGroup> {
         try {
             this.logger.log(`[블록 그룹 수정] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
 
@@ -100,7 +100,7 @@ export class GroupService {
                 throw new Error(GroupMessage.NOT_FOUND);
             }
 
-            Object.assign(group, updateGroupDTO);
+            Object.assign(group, UpdateBlockGroupDTO);
             await this.model.save(group);
             this.logger.log(`[블록 그룹 수정] 성공 [ groupId : ${groupId} ] `);
         
@@ -118,7 +118,7 @@ export class GroupService {
      * @param groupId 그룹ID
      * @returns 삭제한 그룹
      */
-    public async delete(userId: string, groupId: string): Promise<Group> {
+    public async delete(userId: string, groupId: string): Promise<BlockGroup> {
         try {
             this.logger.log(`[블록 그룹 삭제] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
 
@@ -150,7 +150,7 @@ export class GroupService {
      * @param userId 사용자ID
      * @returns 그룹 목록
      */
-    public async getGroupList(userId: string): Promise<Group[]> {
+    public async getGroupList(userId: string): Promise<BlockGroup[]> {
         try {
             this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 

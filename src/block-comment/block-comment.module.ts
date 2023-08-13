@@ -1,9 +1,9 @@
 import { Module, ValidationPipe } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { BlockComment } from './blockComment.entity';
-import { BlockCommentController } from './blockComment.controller';
-import { BlockCommentService } from './blockComment.service';
-import { BlockCommentRepository } from './blockComment.repository';
+import { BlockComment } from './block-comment.entity';
+import { BlockCommentController } from './block-comment.controller';
+import { BlockCommentService } from './block-comment.service';
+import { BlockCommentRepository } from './block-comment.repository';
 import { UserRepository } from '../user/user.repository';
 import { BlockRepository } from '../block/block.repository';
 import { User } from '../user/user.entity';

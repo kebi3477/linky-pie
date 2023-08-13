@@ -1,22 +1,22 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
-import { CreateGroupDTO } from "./group.dto";
-import { Group } from "./group.entity";
+import { CreateBlockGroupDTO } from "./block-group.dto";
+import { BlockGroup } from "./block-group.entity";
 import { User } from "../user/user.entity";
 
 @Injectable()
 export class GroupRepository {
     public constructor(
-        @InjectRepository(Group)
-        private readonly repository: Repository<Group>,
+        @InjectRepository(BlockGroup)
+        private readonly repository: Repository<BlockGroup>,
     ) {}
 
-    public create(createGroupDTO: CreateGroupDTO): Group {
-        return this.repository.create(createGroupDTO);
+    public create(CreateBlockGroupDTO: CreateBlockGroupDTO): BlockGroup {
+        return this.repository.create(CreateBlockGroupDTO);
     }
     
-    public async read(id: string): Promise<Group> {
+    public async read(id: string): Promise<BlockGroup> {
         return this.repository.findOne({ where: { id } });
     }
 
@@ -24,11 +24,11 @@ export class GroupRepository {
         await this.repository.delete({ id });
     }
 
-    public async save(block: Group) {
+    public async save(block: BlockGroup) {
         return await this.repository.save(block);
     }
 
-    public async getGroupListByUserId(userId: string): Promise<Group[]> {
+    public async getGroupListByUserId(userId: string): Promise<BlockGroup[]> {
         return await this.repository.find({ where: { user : { id: userId } }, order: { createdAt: "DESC" } })
     }
 }
