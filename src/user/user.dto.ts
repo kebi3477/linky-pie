@@ -1,5 +1,5 @@
 import { IsString, IsNotEmpty, MaxLength, IsOptional, IsInt, Min, Max } from 'class-validator';
-import { User } from '../user/user.entity';
+import { Provider, User, UserType } from '../user/user.entity';
 
 export class CreateUserDTO {
     @IsNotEmpty()
@@ -17,9 +17,7 @@ export class CreateUserDTO {
     @MaxLength(20)
     name: string;
   
-    @IsOptional()
-    @IsInt()
-    @Min(0)
-    @Max(1)
-    type?: number;
+    type?: UserType;
+
+    provider?: Provider;
 }

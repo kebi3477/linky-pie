@@ -3,7 +3,7 @@ import { LocalAuthenticationGuard } from './local.strategy';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserMessage } from '../user/user.message';
-import { KakaoRequest, RequestWithUser } from './auth.interface';
+import { GoogleRequest, KakaoRequest, RequestWithUser } from './auth.interface';
 import { User } from '../user/user.entity';
 import { KakaoStrategy } from './kakao.strategy';
 import { AuthGuard } from '@nestjs/passport';
@@ -47,6 +47,24 @@ export class AuthController {
     async kakaoRedirect(@Req() req: KakaoRequest, @Res() response: Response) {
         try {
             const cookie = await this.service.kakaoLogin(req);
+
+            response.setHeader('Set-Cookie', cookie);
+            response.redirect('/');
+            return response.send(req);
+        } catch (error) {
+            throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Get('/google')
+    @UseGuards(AuthGuard('google'))
+    async googleAuth(@Req() req: GoogleRequest) {}
+
+    @Get('/google/redirect')
+    @UseGuards(AuthGuard('google'))
+    async googleRedirect(@Req() req: GoogleRequest, @Res() response: Response) {
+        try {
+            const cookie = await this.service.googleLogin(req);
 
             response.setHeader('Set-Cookie', cookie);
             response.redirect('/');

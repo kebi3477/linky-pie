@@ -1,15 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../module/logger';
-import { KakaoRequest, TokenPayload } from './auth.interface';
+import { GoogleRequest, KakaoRequest, TokenPayload } from './auth.interface';
 import { UserRepository } from '../user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
-import { User } from '../user/user.entity';
+import { Provider, User, UserType } from '../user/user.entity';
 import { UserMessage } from '../user/user.message';
 import * as bcrypt from 'bcrypt';
-import { KakaoLoginAuthOutputDTO } from './auth.dto';
 import { CreateUserDTO } from 'src/user/user.dto';
-import { emit } from 'process';
 
 @Injectable()
 export class AuthService {
@@ -121,7 +119,8 @@ export class AuthService {
             createUserDTO.id = email;
             createUserDTO.name = nickname;
             createUserDTO.password = '';
-            createUserDTO.type = 0;
+            createUserDTO.type = UserType.User;
+            createUserDTO.provider = Provider.Kakao;
     
             this.logger.log(`[카카오 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
             const user: User = this.userModel.create(createUserDTO); 
@@ -130,6 +129,42 @@ export class AuthService {
             return this.getCookieWithJwtToken(email);  
         } catch (error) {
             this.logger.error(`[카카오 로그인] 오류! => ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
+     * 구글 로그인
+     * 
+     * @param req 구글 요청 값
+     * @returns 
+     */
+    async googleLogin(req: GoogleRequest): Promise<string> {
+        try {
+            this.logger.log(`[구글 로그인] API 호출`);
+
+            const { user: { email, name } } = req;
+    
+            const findUser: User = await this.userModel.read(email);
+            if (findUser) {
+                this.logger.log(`[구글 로그인] 이미 존재하는 이메일`);
+                return this.getCookieWithJwtToken(findUser.id);
+            }
+    
+            const createUserDTO: CreateUserDTO = new CreateUserDTO();
+            createUserDTO.id = email;
+            createUserDTO.name = `${name}`;
+            createUserDTO.password = '';
+            createUserDTO.type = UserType.User;
+            createUserDTO.provider = Provider.Google;
+    
+            this.logger.log(`[구글 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
+            const user: User = this.userModel.create(createUserDTO); 
+            await this.userModel.save(user); 
+    
+            return this.getCookieWithJwtToken(email);  
+        } catch (error) {
+            this.logger.error(`[구글 로그인] 오류! => ${error.message}`);
             throw error;
         }
     }

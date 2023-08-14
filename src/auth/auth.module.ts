@@ -9,6 +9,7 @@ import { User } from '../user/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KakaoStrategy } from './kakao.strategy';
+import { GoogleStrategy } from './google.strategy';
 
 @Module({
     imports: [ 
@@ -33,6 +34,7 @@ import { KakaoStrategy } from './kakao.strategy';
         LocalStrategy,
         JwtStrategy,
         KakaoStrategy,
+        GoogleStrategy,
     ]
 })
 

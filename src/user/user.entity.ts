@@ -6,8 +6,14 @@ import { BlockComment } from '../block-comment/block-comment.entity';
 import { Exclude } from 'class-transformer';
 
 export enum UserType {
-    User = 0,
-    Manager = 1
+    User,
+    Manager,
+}
+
+export enum Provider {
+    Local,
+    Google,
+    Kakao,
 }
 
 @Entity('users')
@@ -40,9 +46,17 @@ export class User {
         name: 'type', 
         enum: UserType,
         default: UserType.User,
-        comment: '0:사용자, 1:관리자' 
+        comment: '사용자 분류' 
     })
-    type: number;
+    type: UserType;
+
+    @Column({ 
+        name: 'provider',
+        enum: Provider, 
+        default: Provider.Local,
+        comment: '로그인 출처'  
+    })
+    provider: Provider;
 
     @CreateDateColumn({ 
         name: 'created_at',

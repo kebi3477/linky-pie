@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
 import { CreateUserDTO } from './user.dto';
-import { User } from './user.entity';
+import { Provider, User } from './user.entity';
 import { UserMessage } from './user.message';
 import { Logger } from '../module/logger';
 import { FollowerRepository } from '../follower/follower.repository';
@@ -36,6 +36,8 @@ export class UserService {
             }
             
             createUserDTO.password = await bcrypt.hash(createUserDTO.password, this.salt);
+            createUserDTO.provider = Provider.Local;
+            
             const newUser = this.model.create(createUserDTO);
             this.logger.log(`[사용자 생성] 생성 성공  [ userId : ${createUserDTO.id} ]`);
 
