@@ -6,6 +6,7 @@ import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { Block } from './block.entity';
 import { BlockMessage } from './block.message';
 import { HttpStatus } from '@nestjs/common';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 
 describe('BlockController', () => {
     let controller: BlockController;
@@ -15,22 +16,28 @@ describe('BlockController', () => {
     const MOCK_BLOCK_ID = "block_id";
     const mockBlock = new Block();
     
+    const mockUserLikesBlockModel = {
+        create: jest.fn(),
+        read: jest.fn(),
+        delete: jest.fn(),
+        save: jest.fn(),
+        getBlocksByUser: jest.fn(),
+    }
+
     beforeEach(async () => {
         const mockBlockService = {
-            create: jest.fn().mockImplementation((userId, groupId, createBlockDTO) => Promise.resolve(new Block())),
-            read: jest.fn().mockResolvedValue(new Block()),
-            update: jest.fn().mockResolvedValue(new Block()),
-            delete: jest.fn().mockResolvedValue(new Block()),
-            getBlockListByUser: jest.fn().mockResolvedValue(Array<Block>),
+            create: jest.fn().mockImplementation((userId, groupId, createBlockDTO) => Promise.resolve(new Block())).mockReturnValue(new Block()),
+            read: jest.fn().mockResolvedValue(new Block()).mockReturnValue(new Block()),
+            update: jest.fn().mockResolvedValue(new Block()).mockReturnValue(new Block()),
+            delete: jest.fn().mockResolvedValue(new Block()).mockReturnValue(new Block()),
+            getBlockListByUser: jest.fn().mockResolvedValue(Array<Block>).mockReturnValue(new Block()),
         };
 
         const module: TestingModule = await Test.createTestingModule({
             controllers: [BlockController],
             providers: [
-                {
-                    provide: BlockService,
-                    useValue: mockBlockService
-                },
+                { provide: BlockService, useValue: mockBlockService },
+                { provide: UserLikesBlockRepository, useValue: mockUserLikesBlockModel },
             ],
         }).overrideGuard(JwtAuthenticationGuard)
         .useValue({ canActivate: jest.fn().mockReturnValue(true) })
@@ -49,17 +56,11 @@ describe('BlockController', () => {
             const req = { user: { id: MOCK_USER_ID } };
             const mockDto = new CreateBlockDTO();
     
-            const mockBlockResponseDto = {
-                block: mockBlock,
-                message: BlockMessage.SUCCESS_CREATE,
-                statusCode: HttpStatus.CREATED,
-            };
-
             const result = await controller.create(req as any, mockDto);
     
             expect(result).toBeDefined();
             expect(service.create).toHaveBeenCalledWith(MOCK_USER_ID, null, mockDto);
-            expect(result).toEqual(mockBlockResponseDto);
+            expect(result).toEqual(mockBlock);
         });
     });
     
@@ -67,33 +68,21 @@ describe('BlockController', () => {
         it('should read a block and return it', async () => {
             const req = { user: { id: MOCK_USER_ID } };
     
-            const mockBlockResponseDto = {
-                block: mockBlock,
-                message: BlockMessage.SUCCESS_READ,
-                statusCode: HttpStatus.OK,
-            };
-
             const result = await controller.read(req as any, MOCK_BLOCK_ID);
     
             expect(result).toBeDefined();
             expect(service.read).toHaveBeenCalledWith(MOCK_USER_ID, MOCK_BLOCK_ID);
-            expect(result).toEqual(mockBlockResponseDto);
+            expect(result).toEqual(mockBlock);
         });
 
         it('should return block list', async () => {
             const req = { user: { id: MOCK_USER_ID } };
 
-            const mockBlockResponseDto = {
-                block: Array<Block>,
-                message: BlockMessage.SUCCESS_READ,
-                statusCode: HttpStatus.OK,
-            };
-
             const result = await controller.getBlockList(req as any);
     
             expect(result).toBeDefined();
             expect(service.getBlockListByUser).toHaveBeenCalledWith(MOCK_USER_ID);
-            expect(result).toEqual(mockBlockResponseDto);
+            expect(result).toEqual(mockBlock);
         });
     });
 
@@ -102,17 +91,11 @@ describe('BlockController', () => {
             const req = { user: { id: MOCK_USER_ID } };
             const mockDto = new UpdateBlockDTO();
 
-            const mockBlockResponseDto = {
-                block: mockBlock,
-                message: BlockMessage.SUCCESS_UPDATE,
-                statusCode: HttpStatus.OK,
-            };
-
             const result = await controller.update(req as any, MOCK_BLOCK_ID, mockDto);
     
             expect(result).toBeDefined();
             expect(service.update).toHaveBeenCalledWith(MOCK_USER_ID, MOCK_BLOCK_ID, mockDto);
-            expect(result).toEqual(mockBlockResponseDto);
+            expect(result).toEqual(mockBlock);
         });
     });
 
@@ -120,17 +103,11 @@ describe('BlockController', () => {
         it('should delete a block and return it', async () => {
             const req = { user: { id: MOCK_USER_ID } };
 
-            const mockBlockResponseDto = {
-                block: mockBlock,
-                message: BlockMessage.SUCCESS_DELETE,
-                statusCode: HttpStatus.OK,
-            };
-
-            const result = await controller.delete(req as any, MOCK_BLOCK_ID);
+            const result: Block = await controller.delete(req as any, MOCK_BLOCK_ID);
     
             expect(result).toBeDefined();
             expect(service.delete).toHaveBeenCalledWith(MOCK_USER_ID, MOCK_BLOCK_ID);
-            expect(result).toEqual(mockBlockResponseDto);
+            expect(result).toEqual(mockBlock);
         });
     });
 });

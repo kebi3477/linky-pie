@@ -6,6 +6,7 @@ import { GroupRepository } from '../block-group/block-group.repository';
 import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { Block } from './block.entity';
 import { User } from '../user/user.entity';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 
 describe('BlockService', () => {
     let service: BlockService;
@@ -18,9 +19,9 @@ describe('BlockService', () => {
     const mockUser = new User();
 
     const mockBlockModel = {
-        createBlock: jest.fn().mockReturnValue(mockBlock),
-        getBlock: jest.fn().mockReturnValue(mockBlock),
-        deleteBlock: jest.fn(),
+        create: jest.fn().mockReturnValue(mockBlock),
+        read: jest.fn().mockReturnValue(mockBlock),
+        delete: jest.fn(),
         save: jest.fn().mockReturnValue(mockBlock),
         getBlockListByUser: jest.fn().mockReturnValue(Array<Block>),
         getBlockListByGroup: jest.fn().mockReturnValue(Array<Block>),
@@ -28,12 +29,20 @@ describe('BlockService', () => {
     };
 
     const mockUserModel = {
-        getUser: jest.fn().mockResolvedValue({ id: MOCK_USER_ID })
+        read: jest.fn().mockResolvedValue({ id: MOCK_USER_ID })
     };
 
     const mockGroupModel = {
-        getGroup: jest.fn()
+        read: jest.fn()
     };
+
+    const mockUserLikesBlockModel = {
+        create: jest.fn(),
+        read: jest.fn(),
+        delete: jest.fn(),
+        save: jest.fn(),
+        getBlocksByUser: jest.fn(),
+    }
 
     const mockGetContentsByURL = jest.fn().mockResolvedValue("expected contents");
     const mockCallChatGPT = jest.fn().mockResolvedValue(JSON.stringify({
@@ -50,6 +59,8 @@ describe('BlockService', () => {
                 { provide: BlockRepository, useValue: mockBlockModel },
                 { provide: UserRepository, useValue: mockUserModel },
                 { provide: GroupRepository, useValue: mockGroupModel },
+                { provide: UserLikesBlockRepository, useValue: mockUserLikesBlockModel },
+                
             ]
         }).compile();
     
@@ -67,18 +78,19 @@ describe('BlockService', () => {
     describe('create', () => {
         it('should create a block and return it', async () => {
             const mockCreateBlockDTO = new CreateBlockDTO();
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
         
             const result = await service.create(mockUser.id, MOCK_GROUP_ID, mockCreateBlockDTO);
             
-            expect(userModel.getUser).toHaveBeenCalledTimes(1);
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(userModel.read).toHaveBeenCalledTimes(1);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
             expect(result).toBeDefined();
             expect(result).toEqual(mockBlock);
         });
     
         it('should throw an error when user does not exist', async () => {
-            mockUserModel.getUser.mockResolvedValueOnce(null);
+            mockUserModel.read.mockResolvedValueOnce(null);
     
             await expect(service.create('invalidUserId', MOCK_GROUP_ID, new CreateBlockDTO())).rejects.toThrow();
         });
@@ -87,21 +99,23 @@ describe('BlockService', () => {
 
     describe('read', () => {
         it('should read a block and return it', async () => {
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
     
             const result = await service.read(mockUser.id, MOCK_BLOCK_ID);
             
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
             expect(result).toBeDefined();
             expect(result).toEqual(mockBlock);
         });
 
         it('should read block list by user id and return it', async () => {
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
     
             const result = await service.getBlockListByUser(mockUser.id);
             
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
             expect(result).toBeDefined();
             expect(result).toEqual(Array<Block>);
         });
@@ -116,10 +130,12 @@ describe('BlockService', () => {
         it('should return an empty array when there are no blocks for the user', async () => {
             mockBlockModel.getBlockListByUser.mockReturnValueOnce([]);
     
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
+
             const result = await service.getBlockListByUser(mockUser.id);
             
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
             expect(result).toBeDefined();
             expect(result).toEqual([]);
         });
@@ -128,11 +144,12 @@ describe('BlockService', () => {
     describe('update', () => {
         it('should update a block and return it', async () => {
             const mockUpdateBlockDTO = new UpdateBlockDTO();
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
     
             const result = await service.update(mockUser.id, MOCK_BLOCK_ID, mockUpdateBlockDTO);
             
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
             expect(mockBlockModel.getBlockByUserId).toHaveBeenCalledWith(MOCK_BLOCK_ID, MOCK_USER_ID);
             expect(result).toBeDefined();
             expect(result).toEqual(mockBlock);
@@ -147,12 +164,13 @@ describe('BlockService', () => {
 
     describe('delete', () => {
         it('should delete a block and return it', async () => {
-            const mockUser = new User(MOCK_USER_ID);
+            const mockUser = new User();
+            mockUser.id = MOCK_USER_ID;
     
             const result = await service.delete(mockUser.id, MOCK_BLOCK_ID);
             
-            expect(userModel.getUser).toHaveBeenCalledWith(MOCK_USER_ID);
-            expect(mockBlockModel.deleteBlock).toHaveBeenCalledWith(MOCK_BLOCK_ID);
+            expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
+            expect(mockBlockModel.delete).toHaveBeenCalledWith(MOCK_BLOCK_ID);
             expect(result).toBeDefined();
             expect(result).toEqual(mockBlock);
         });
