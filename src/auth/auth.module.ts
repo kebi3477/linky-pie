@@ -8,6 +8,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { User } from '../user/user.entity';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { KakaoStrategy } from './kakao.strategy';
 
 @Module({
     imports: [ 
@@ -31,6 +32,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
         UserRepository,
         LocalStrategy,
         JwtStrategy,
+        KakaoStrategy,
     ]
 })
 

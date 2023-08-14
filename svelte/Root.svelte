@@ -4,7 +4,7 @@
     import Fetch from "./utils/fetch";
     
     async function isLogin() {
-        const res = await Fetch.get('/api/users');
+        const res = await Fetch.get('/api/users/me');
         return res.statusCode === 401 ? false : true;            
     }
 

@@ -3,8 +3,10 @@ import { LocalAuthenticationGuard } from './local.strategy';
 import { AuthService } from './auth.service';
 import { Response } from 'express';
 import { UserMessage } from '../user/user.message';
-import { RequestWithUser } from './auth.interface';
+import { KakaoRequest, RequestWithUser } from './auth.interface';
 import { User } from '../user/user.entity';
+import { KakaoStrategy } from './kakao.strategy';
+import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -36,4 +38,21 @@ export class AuthController {
         return response.sendStatus(HttpStatus.OK);
     }
 
+    @Get('/kakao')
+    @UseGuards(AuthGuard('kakao'))
+    async kakaoAuth(@Req() req: KakaoRequest) {}
+
+    @Get('/kakao/redirect')
+    @UseGuards(AuthGuard('kakao'))
+    async kakaoRedirect(@Req() req: KakaoRequest, @Res() response: Response) {
+        try {
+            const cookie = await this.service.kakaoLogin(req);
+
+            response.setHeader('Set-Cookie', cookie);
+            response.redirect('/');
+            return response.send(req);
+        } catch (error) {
+            throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
 }
