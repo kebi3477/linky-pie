@@ -1,15 +1,15 @@
 import { Injectable } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PassportStrategy } from "@nestjs/passport";
-import { Strategy, Profile } from "passport-kakao";
+import { Strategy, Profile } from "passport-naver";
 
 @Injectable()
-export class KakaoStrategy extends PassportStrategy(Strategy) {
+export class NaverStrategy extends PassportStrategy(Strategy) {
     constructor(private readonly configService: ConfigService) {
         super({
-            clientID: configService.get('KAKAO_REST_API_KEY'),
-            clientSecret: '',
-            callbackURL: configService.get('KAKAO_REDIRECT_URL')
+            clientID: process.env.NAVER_CLIENT_ID,
+            clientSecret: process.env.NAVER_CLIENT_SECRET,
+            callbackURL: process.env.NAVER_REDIRECT_URL
         })
     }
 
@@ -20,8 +20,8 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
         try {
             const { _json } = profile;
             const user = {
-                email: _json.kakao_account.email,
-                name: _json.properties.nickname,
+                email: _json.email,
+                name: _json.nickname,
             };
 
             done(null, user);

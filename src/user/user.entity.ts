@@ -14,6 +14,7 @@ export enum Provider {
     Local,
     Google,
     Kakao,
+    Naver,
 }
 
 @Entity('users')

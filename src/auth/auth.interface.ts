@@ -10,7 +10,7 @@ export class RequestWithUser {
 
 type KakaoUser = {
     email: string,
-    nickname: string;
+    name: string;
 }
 
 export type KakaoRequest = Request & { user: KakaoUser }
@@ -22,3 +22,10 @@ type GoogleUser = {
 };
   
 export type GoogleRequest = Request & { user: GoogleUser };
+
+type NaverUser = {
+    email: string;
+    name: string;
+};
+  
+export type NaverRequest = Request & { user: NaverUser };

@@ -10,6 +10,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KakaoStrategy } from './kakao.strategy';
 import { GoogleStrategy } from './google.strategy';
+import { NaverStrategy } from './naver.strategy';
 
 @Module({
     imports: [ 
@@ -35,6 +36,7 @@ import { GoogleStrategy } from './google.strategy';
         JwtStrategy,
         KakaoStrategy,
         GoogleStrategy,
+        NaverStrategy,
     ]
 })
 

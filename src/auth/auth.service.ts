@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../module/logger';
-import { GoogleRequest, KakaoRequest, TokenPayload } from './auth.interface';
+import { GoogleRequest, KakaoRequest, NaverRequest, TokenPayload } from './auth.interface';
 import { UserRepository } from '../user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -107,7 +107,7 @@ export class AuthService {
         try {
             this.logger.log(`[카카오 로그인] API 호출`);
 
-            const { user: { email, nickname } } = req;
+            const { user: { email, name } } = req;
     
             const findUser: User = await this.userModel.read(email);
             if (findUser) {
@@ -117,7 +117,7 @@ export class AuthService {
     
             const createUserDTO: CreateUserDTO = new CreateUserDTO();
             createUserDTO.id = email;
-            createUserDTO.name = nickname;
+            createUserDTO.name = name;
             createUserDTO.password = '';
             createUserDTO.type = UserType.User;
             createUserDTO.provider = Provider.Kakao;
@@ -165,6 +165,42 @@ export class AuthService {
             return this.getCookieWithJwtToken(email);  
         } catch (error) {
             this.logger.error(`[구글 로그인] 오류! => ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
+     * 네이버 로그인
+     * 
+     * @param req 네이버 요청 값
+     * @returns 
+     */
+    async naverLogin(req: NaverRequest): Promise<string> {
+        try {
+            this.logger.log(`[네이버 로그인] API 호출`);
+
+            const { user: { email, name } } = req;
+    
+            const findUser: User = await this.userModel.read(email);
+            if (findUser) {
+                this.logger.log(`[네이버 로그인] 이미 존재하는 이메일`);
+                return this.getCookieWithJwtToken(findUser.id);
+            }
+    
+            const createUserDTO: CreateUserDTO = new CreateUserDTO();
+            createUserDTO.id = email;
+            createUserDTO.name = `${name}`;
+            createUserDTO.password = '';
+            createUserDTO.type = UserType.User;
+            createUserDTO.provider = Provider.Naver;
+    
+            this.logger.log(`[네이버 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
+            const user: User = this.userModel.create(createUserDTO); 
+            await this.userModel.save(user); 
+    
+            return this.getCookieWithJwtToken(email);  
+        } catch (error) {
+            this.logger.error(`[네이버 로그인] 오류! => ${error.message}`);
             throw error;
         }
     }
