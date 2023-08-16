@@ -78,10 +78,8 @@ describe('BlockService', () => {
     describe('create', () => {
         it('should create a block and return it', async () => {
             const mockCreateBlockDTO = new CreateBlockDTO();
-            const mockUser = new User();
-            mockUser.id = MOCK_USER_ID;
         
-            const result = await service.create(mockUser.id, MOCK_GROUP_ID, mockCreateBlockDTO);
+            const result = await service.create(MOCK_USER_ID, MOCK_GROUP_ID, mockCreateBlockDTO);
             
             expect(userModel.read).toHaveBeenCalledTimes(1);
             expect(userModel.read).toHaveBeenCalledWith(MOCK_USER_ID);
@@ -90,13 +88,14 @@ describe('BlockService', () => {
         });
     
         it('should throw an error when user does not exist', async () => {
+            const mockCreateBlockDTO = new CreateBlockDTO();
+
             mockUserModel.read.mockResolvedValueOnce(null);
     
-            await expect(service.create('invalidUserId', MOCK_GROUP_ID, new CreateBlockDTO())).rejects.toThrow();
+            await expect(service.create('invalidUserId', MOCK_GROUP_ID, mockCreateBlockDTO)).rejects.toThrow();
         });
     });
     
-
     describe('read', () => {
         it('should read a block and return it', async () => {
             const mockUser = new User();

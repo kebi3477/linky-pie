@@ -6,6 +6,7 @@ import { CreateBlockCommentDTO, UpdateBlockCommentDTO } from './block-comment.dt
 import { BlockCommentMessage } from './block-comment.message';
 import { UserMessage } from '../user/user.message';
 import { BlockMessage } from '../block/block.message';
+import { BlockComment } from './block-comment.entity';
 
 @Controller('blocks/:block_id/comments')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -14,7 +15,11 @@ export class BlockCommentController {
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    public async create(@Req() request: RequestWithUser, @Param('block_id') blockId: string, @Body() createBlockCommentDTO: CreateBlockCommentDTO) {
+    public async create(
+        @Req() request: RequestWithUser, 
+        @Param('block_id') blockId: string, 
+        @Body() createBlockCommentDTO: CreateBlockCommentDTO
+    ): Promise<BlockComment> {
         try {            
             return await this.service.create(request.user.id, blockId, createBlockCommentDTO);
         } catch (error) {
@@ -35,7 +40,7 @@ export class BlockCommentController {
         @Param('block_id') blockId: string, 
         @Param('comment_id') commentId: number, 
         @Body() updateBlockCommentDTO: UpdateBlockCommentDTO
-    ) {
+    ): Promise<BlockComment> {
         try {            
             return await this.service.update(request.user.id, blockId, commentId, updateBlockCommentDTO);
         } catch (error) {
@@ -57,7 +62,7 @@ export class BlockCommentController {
         @Req() request: RequestWithUser, 
         @Param('block_id') blockId: string, 
         @Param('comment_id') commentId: number
-    ) {
+    ): Promise<BlockComment> {
         try {            
             return await this.service.delete(request.user.id, blockId, commentId);
         } catch (error) {
@@ -78,7 +83,7 @@ export class BlockCommentController {
     public async getList(
         @Req() request: RequestWithUser, 
         @Param('block_id') blockId: string
-    ) {
+    ): Promise<BlockComment[]> {
         try {            
             return await this.service.getList(request.user.id, blockId);
         } catch (error) {

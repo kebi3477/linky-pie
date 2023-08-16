@@ -4,8 +4,6 @@ import { BlockService } from './block.service';
 import { CreateBlockDTO, UpdateBlockDTO } from './block.dto';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { Block } from './block.entity';
-import { BlockMessage } from './block.message';
-import { HttpStatus } from '@nestjs/common';
 import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 
 describe('BlockController', () => {
