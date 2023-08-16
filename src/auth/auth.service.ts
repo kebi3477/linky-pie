@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Logger } from '../module/logger';
-import { GoogleRequest, KakaoRequest, NaverRequest, TokenPayload } from './auth.interface';
+import { SocialRequest, TokenPayload } from './auth.interface';
 import { UserRepository } from '../user/user.repository';
 import { JwtService } from '@nestjs/jwt';
 import { ConfigService } from '@nestjs/config';
@@ -18,37 +18,6 @@ export class AuthService {
         private readonly jwtService: JwtService,
         private readonly configService: ConfigService
     ) {}
-
-    
-    /**
-     * 로그인
-     * 
-     * @param id 사용자ID
-     * @param password 사용자 PW
-     * @returns 로그인 사용자 정보
-     */
-    public async login(id: string, password: string): Promise<User> {
-        try {
-            this.logger.log(`[로그인] API 호출 [ userId : ${id} ]`);
-
-            const user = await this.userModel.read(id);
-            if (!user) {
-                this.logger.log(`[로그인] 실패 [ userId : ${id} ] -> 존재하지 않는 사용자ID `);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-    
-            const isMatch: boolean = await bcrypt.compare(password, user.password);
-            if (!isMatch) {
-                this.logger.log(`[로그인] 실패 [ userId : ${id} ] -> 잘못된 비밀번호`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-            
-            this.logger.log(`[로그인] 성공 [ userId : ${id} ]`);
-            return user;
-        } catch (error) {
-            throw error;
-        }
-    }
 
     /**
      * 아이디로 사용자 조회
@@ -103,11 +72,11 @@ export class AuthService {
      * @param req 카카오 요청 값
      * @returns 
      */
-    async kakaoLogin(req: KakaoRequest): Promise<string> {
+    async kakaoLogin(req: SocialRequest): Promise<string> {
         try {
             this.logger.log(`[카카오 로그인] API 호출`);
 
-            const { user: { email, name } } = req;
+            const { user: { email, name, image } } = req;
     
             const findUser: User = await this.userModel.read(email);
             if (findUser) {
@@ -115,18 +84,14 @@ export class AuthService {
                 return this.getCookieWithJwtToken(findUser.id);
             }
     
-            const createUserDTO: CreateUserDTO = new CreateUserDTO();
-            createUserDTO.id = email;
-            createUserDTO.name = name;
-            createUserDTO.password = '';
-            createUserDTO.type = UserType.User;
-            createUserDTO.provider = Provider.Kakao;
-    
-            this.logger.log(`[카카오 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
-            const user: User = this.userModel.create(createUserDTO); 
-            await this.userModel.save(user); 
-    
-            return this.getCookieWithJwtToken(email);  
+            const isCreated: boolean = await this.createUser(email, name, image, Provider.Kakao);
+            if (isCreated) {
+                this.logger.log(`[카카오 로그인] 가입 성공! 로그인 요청`);
+                return this.getCookieWithJwtToken(email);  
+            }
+
+            this.logger.log(`[카카오 로그인] 가입 실패!`);
+            return "";
         } catch (error) {
             this.logger.error(`[카카오 로그인] 오류! => ${error.message}`);
             throw error;
@@ -139,30 +104,26 @@ export class AuthService {
      * @param req 구글 요청 값
      * @returns 
      */
-    async googleLogin(req: GoogleRequest): Promise<string> {
+    async googleLogin(req: SocialRequest): Promise<string> {
         try {
             this.logger.log(`[구글 로그인] API 호출`);
 
-            const { user: { email, name } } = req;
+            const { user: { email, name, image } } = req;
     
             const findUser: User = await this.userModel.read(email);
             if (findUser) {
-                this.logger.log(`[구글 로그인] 이미 존재하는 이메일`);
+                this.logger.log(`[구글 로그인] 로그인 요청`);
                 return this.getCookieWithJwtToken(findUser.id);
             }
     
-            const createUserDTO: CreateUserDTO = new CreateUserDTO();
-            createUserDTO.id = email;
-            createUserDTO.name = `${name}`;
-            createUserDTO.password = '';
-            createUserDTO.type = UserType.User;
-            createUserDTO.provider = Provider.Google;
-    
-            this.logger.log(`[구글 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
-            const user: User = this.userModel.create(createUserDTO); 
-            await this.userModel.save(user); 
-    
-            return this.getCookieWithJwtToken(email);  
+            const isCreated: boolean = await this.createUser(email, name, image, Provider.Google);
+            if (isCreated) {
+                this.logger.log(`[구글 로그인] 가입 성공! 로그인 요청`);
+                return this.getCookieWithJwtToken(email);  
+            }
+
+            this.logger.log(`[구글 로그인] 가입 실패!`);
+            return "";
         } catch (error) {
             this.logger.error(`[구글 로그인] 오류! => ${error.message}`);
             throw error;
@@ -175,11 +136,11 @@ export class AuthService {
      * @param req 네이버 요청 값
      * @returns 
      */
-    async naverLogin(req: NaverRequest): Promise<string> {
+    async naverLogin(req: SocialRequest): Promise<string> {
         try {
             this.logger.log(`[네이버 로그인] API 호출`);
 
-            const { user: { email, name } } = req;
+            const { user: { email, name, image } } = req;
     
             const findUser: User = await this.userModel.read(email);
             if (findUser) {
@@ -187,21 +148,53 @@ export class AuthService {
                 return this.getCookieWithJwtToken(findUser.id);
             }
     
-            const createUserDTO: CreateUserDTO = new CreateUserDTO();
-            createUserDTO.id = email;
-            createUserDTO.name = `${name}`;
-            createUserDTO.password = '';
-            createUserDTO.type = UserType.User;
-            createUserDTO.provider = Provider.Naver;
-    
-            this.logger.log(`[네이버 로그인] 사용자 생성  [ userId : ${createUserDTO.id} ]`);
-            const user: User = this.userModel.create(createUserDTO); 
-            await this.userModel.save(user); 
+            const isCreated: boolean = await this.createUser(email, name, image, Provider.Naver);
+            if (isCreated) {
+                this.logger.log(`[네이버 로그인] 가입 성공! 로그인 요청`);
+                return this.getCookieWithJwtToken(email);  
+            }
     
             return this.getCookieWithJwtToken(email);  
         } catch (error) {
             this.logger.error(`[네이버 로그인] 오류! => ${error.message}`);
             throw error;
+        }
+    }
+
+    /**
+     * 소셜 가입 (사용자 생성)
+     * 
+     * @param email 사용자 아이디 
+     * @param name 사용자 이름
+     * @param image 사용자 이미지
+     * @param provider 사용자 가입 경로
+     * @returns 
+     */
+    async createUser(email: string, name: string, image: string, provider: Provider): Promise<boolean> {
+        try {
+            this.logger.log(`[소셜 가입] API 호출`);
+
+            const createUserDTO: CreateUserDTO = new CreateUserDTO();
+            createUserDTO.id = email;
+            createUserDTO.name = name;
+            createUserDTO.image = image;
+            createUserDTO.type = UserType.User;
+            createUserDTO.provider = provider;
+
+            this.logger.log(`[소셜 가입] 사용자 생성 [ userId : ${email} ]`);
+            const user: User = this.userModel.create(createUserDTO); 
+            const newUser: User = await this.userModel.save(user); 
+
+            if (newUser) {
+                this.logger.log(`[소셜 가입] 성공 [ userId : ${email} ]`);
+                return true;
+            } else {
+                this.logger.log(`[소셜 가입] 실패 [ userId : ${email} ]`);
+                return false;
+            }
+        } catch (error) {
+            this.logger.error(`[소셜 가입] 오류! => ${error.message}`);
+            return false;
         }
     }
 }

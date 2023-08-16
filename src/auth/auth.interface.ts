@@ -8,24 +8,10 @@ export class RequestWithUser {
     user: User;
 }
 
-type KakaoUser = {
-    email: string,
+type SocialUser = {
+    email: string;
     name: string;
+    image: string;
 }
 
-export type KakaoRequest = Request & { user: KakaoUser }
-
-type GoogleUser = {
-    email: string;
-    name: string;
-    photo: string;
-};
-  
-export type GoogleRequest = Request & { user: GoogleUser };
-
-type NaverUser = {
-    email: string;
-    name: string;
-};
-  
-export type NaverRequest = Request & { user: NaverUser };
+export type SocialRequest = Request & { user: SocialUser };

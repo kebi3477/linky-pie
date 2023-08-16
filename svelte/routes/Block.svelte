@@ -11,7 +11,7 @@
     let loading;
 
     async function loginCheck() {
-        const res = await Fetch.get('/api/users');
+        const res = await Fetch.get('/api/users/me');
 
         if (res.statusCode === 401) {
             alert('로그인이 필요합니다!');

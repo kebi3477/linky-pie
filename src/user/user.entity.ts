@@ -26,15 +26,6 @@ export class User {
     })
     id: string;
     
-    @Exclude()
-    @Column({ 
-        name: 'password', 
-        nullable: false, 
-        length: 300, 
-        comment: '비밀번호' 
-    })
-    password: string;
-    
     @Column({ 
         name: 'name', 
         nullable: false, 
@@ -42,6 +33,14 @@ export class User {
         comment: '닉네임' 
     })
     name!: string;
+
+    @Column({
+        name: 'image',
+        nullable: true,
+        length: 100,
+        comment: '프로필 사진 경로'
+    })
+    image: string;
 
     @Column({ 
         name: 'type', 

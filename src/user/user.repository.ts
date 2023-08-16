@@ -23,7 +23,7 @@ export class UserRepository {
         await this.repository.delete({ id });
     }
 
-    public async save(user: User) {
+    public async save(user: User): Promise<User> {
         return await this.repository.save(user);
     }
 }

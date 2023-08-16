@@ -22,6 +22,7 @@ export class KakaoStrategy extends PassportStrategy(Strategy) {
             const user = {
                 email: _json.kakao_account.email,
                 name: _json.properties.nickname,
+                image: _json.properties.profile_image,
             };
 
             done(null, user);

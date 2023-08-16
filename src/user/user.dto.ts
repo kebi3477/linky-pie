@@ -10,12 +10,11 @@ export class CreateUserDTO {
     @IsNotEmpty()
     @IsString()
     @MaxLength(20)
-    password: string;
-  
-    @IsNotEmpty()
-    @IsString()
-    @MaxLength(20)
     name: string;
+
+    @IsString()
+    @MaxLength(100)
+    image: string;
   
     type?: UserType;
 

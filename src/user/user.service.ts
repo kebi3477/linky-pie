@@ -34,10 +34,7 @@ export class UserService {
                 this.logger.log(`[사용자 생성] 생성 실패  [ userId : ${createUserDTO.id} ] -> 중복된 사용자 ID`);
                 throw new Error(UserMessage.CONFLICT);
             }
-            
-            createUserDTO.password = await bcrypt.hash(createUserDTO.password, this.salt);
-            createUserDTO.provider = Provider.Local;
-            
+                        
             const newUser = this.model.create(createUserDTO);
             this.logger.log(`[사용자 생성] 생성 성공  [ userId : ${createUserDTO.id} ]`);
 

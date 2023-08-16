@@ -49,7 +49,6 @@ export class BlockCommentService {
             createBlockCommentDTO.block = block;
         
             const comment: BlockComment = this.model.create(createBlockCommentDTO);
-            comment.user.password = null;
             this.logger.log(`[댓글 생성] 성공 [ id : ${comment.id} ] `);
             return await this.model.save(comment);
         } catch (error) {
