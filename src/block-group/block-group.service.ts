@@ -6,7 +6,7 @@ import { CreateBlockGroupDTO, UpdateBlockGroupDTO } from './block-group.dto';
 import { UserMessage } from '../user/user.message';
 import { BlockGroup } from './block-group.entity';
 import { User } from '../user/user.entity';
-import { GroupMessage } from '../module/message';
+import { GroupMessage } from './block-group.message';
 
 @Injectable()
 export class GroupService {
@@ -28,7 +28,7 @@ export class GroupService {
         try {
             this.logger.log(`[블록 그룹 생성] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[블록 그룹 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
@@ -150,13 +150,19 @@ export class GroupService {
      * @param userId 사용자ID
      * @returns 그룹 목록
      */
-    public async getGroupList(userId: string): Promise<BlockGroup[]> {
+    public async getList(userId: string): Promise<BlockGroup[]> {
         try {
             this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
+            const user = await this.userModel.read(userId);
+            if (!user) {
+                this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
             return await this.model.getGroupListByUserId(userId);
         } catch (error) {
-            console.log(error);
+            this.logger.error(`[블록 목록 조회] 에러! [ error : ${error.message} ] `);
             throw error;
         }
     }

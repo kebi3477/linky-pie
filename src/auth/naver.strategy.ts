@@ -7,9 +7,9 @@ import { Strategy, Profile } from "passport-naver";
 export class NaverStrategy extends PassportStrategy(Strategy) {
     constructor(private readonly configService: ConfigService) {
         super({
-            clientID: process.env.NAVER_CLIENT_ID,
-            clientSecret: process.env.NAVER_CLIENT_SECRET,
-            callbackURL: process.env.NAVER_REDIRECT_URL
+            clientID: configService.get('NAVER_CLIENT_ID'),
+            clientSecret: configService.get('NAVER_CLIENT_SECRET'),
+            callbackURL: configService.get('NAVER_REDIRECT_URL')
         })
     }
 

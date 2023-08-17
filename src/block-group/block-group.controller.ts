@@ -4,7 +4,7 @@ import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
 import { BlockGroup } from './block-group.entity';
 import { GroupService } from './block-group.service';
-import { GroupMessage } from '../module/message';
+import { GroupMessage } from './block-group.message';
 import { UserMessage } from '../user/user.message';
 
 @Controller('groups')
@@ -14,12 +14,12 @@ export class BlockGroupController {
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    async create(@Req() request: RequestWithUser, @Body() CreateBlockGroupDTO: CreateBlockGroupDTO): Promise<BlockGroup> {
+    async create(@Req() request: RequestWithUser, @Body() createBlockGroupDTO: CreateBlockGroupDTO): Promise<BlockGroup> {
         try {
-            return await this.service.create(request.user.id, CreateBlockGroupDTO);
+            return await this.service.create(request.user.id, createBlockGroupDTO);
         } catch (error) {
-            if (error.message === GroupMessage.CONFLICT) {
-                throw new HttpException(GroupMessage.CONFLICT, HttpStatus.CONFLICT);
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
             } else {
                 throw new HttpException(GroupMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
             }
@@ -76,12 +76,12 @@ export class BlockGroupController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard)
-    async getGroupList(@Req() request: RequestWithUser): Promise<BlockGroup[]> {
+    async getList(@Req() request: RequestWithUser): Promise<BlockGroup[]> {
         try {
-            return await this.service.getGroupList(request.user.id);
+            return await this.service.getList(request.user.id);
         } catch (error) {
-            if (error.message === GroupMessage.CONFLICT) {
-                throw new HttpException(GroupMessage.CONFLICT, HttpStatus.CONFLICT);
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
             } else {
                 throw new HttpException(GroupMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
             }
