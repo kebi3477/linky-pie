@@ -12,7 +12,7 @@
         if (await isLogin()) {
             navigate("/block", { replace: true });
         } else {
-            navigate("/login", { replace: true });
+            navigate("/intro", { replace: true });
         }
     })
 </script>

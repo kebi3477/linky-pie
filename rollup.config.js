@@ -4,6 +4,8 @@ import resolve from '@rollup/plugin-node-resolve';
 import livereload from 'rollup-plugin-livereload';
 import { terser } from 'rollup-plugin-terser';
 import css from 'rollup-plugin-css-only';
+import svg from "rollup-plugin-svg";
+import url from 'rollup-plugin-url'
 
 const production = !process.env.ROLLUP_WATCH;
 
@@ -46,6 +48,14 @@ export default {
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
 		css({ output: 'bundle.css' }),
+		svg({ base64: true }),
+
+		url({
+			limit: 0, 
+			include: ['**/*.woff', '**/*.woff2'],
+			emitFiles: true,
+			destDir: 'client/build'
+		}),
 
 		// If you have external dependencies installed from
 		// npm, you'll most likely need these plugins. In
