@@ -1,8 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BlockGroup } from '../block-group/block-group.entity';
 import { User } from '../user/user.entity';
 import { Retrospective } from '../retrospective/retrospective.entity';
 import { BlockComment } from '../block-comment/block-comment.entity';
+import { BlockSeries } from 'src/block-series/block-series.entity';
+import { BlockSeriesBlock } from 'src/block-series-block/block-series-block.entity';
 
 @Entity('blocks')
 export class Block {
@@ -84,6 +86,9 @@ export class Block {
 
     @OneToMany(() => BlockComment, (blockComment) => blockComment.block)
     blockComment: BlockComment[];
+
+    @OneToMany(() => BlockSeriesBlock, bsb => bsb.block)
+    blockSeriesConnection: BlockSeriesBlock[];
 
     @ManyToMany(() => User, user => user.likedBlocks)
     likedByUsers: User[];

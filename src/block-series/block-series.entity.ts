@@ -1,6 +1,7 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, ManyToMany, JoinTable, OneToMany, } from 'typeorm';
 import { User } from '../user/user.entity';
 import { Block } from '../block/block.entity';
+import { BlockSeriesBlock } from 'src/block-series-block/block-series-block.entity';
 
 @Entity('block_series')
 export class BlockSeries {
@@ -13,9 +14,7 @@ export class BlockSeries {
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE' 
     })
-    @JoinColumn({ 
-        name: 'user_id'
-    })
+    @JoinColumn({ name: 'user_id' })
     user: User;
   
     @Column({ 
@@ -39,5 +38,7 @@ export class BlockSeries {
         comment: '수정날짜' 
     })
     updatedAt: Date | null;
+
+    @OneToMany(() => BlockSeriesBlock, bsb => bsb.blockSeries)
+    blocksConnection: BlockSeriesBlock[];
 }
-  

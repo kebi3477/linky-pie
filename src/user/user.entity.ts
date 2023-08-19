@@ -98,7 +98,7 @@ export class User {
     following: Follower[];
 
     @ManyToMany(() => Block, block => block.likedByUsers)
-    @JoinTable()
+    // @JoinTable()
     likedBlocks: Block[];
 
     static of(params: Partial<User>): User {

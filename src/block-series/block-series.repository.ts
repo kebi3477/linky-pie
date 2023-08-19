@@ -15,8 +15,8 @@ export class BlockSeriesRepository {
         return this.repository.create(CreateBlockSeriesDTO);
     }
     
-    public async read(id: string): Promise<BlockSeries> {
-        return this.repository.findOne({ where: { id } });
+    public async read(id: string, userId: string): Promise<BlockSeries> {
+        return this.repository.findOne({ where: { id, user: { id: userId } } });
     }
 
     public async delete(id: string): Promise<void> {

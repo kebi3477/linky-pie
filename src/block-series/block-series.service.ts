@@ -7,6 +7,13 @@ import { BlockSeries } from './block-series.entity';
 import { User } from 'src/user/user.entity';
 import { UserMessage } from 'src/user/user.message';
 import { BlockSeriesMessage } from './block-series.message';
+import { BlockSeriesBlockRepository } from 'src/block-series-block/block-series-block.repository';
+import { BlockSeriesBlock } from 'src/block-series-block/block-series-block.entity';
+import { CreateBlockSeriesBlockDTO, UpdateBlockSeriesBlockDTO } from 'src/block-series-block/block-series-block.dto';
+import { BlockSeriesBlockMessage } from 'src/block-series-block/block-series-block.message';
+import { Block } from 'src/block/block.entity';
+import { BlockRepository } from 'src/block/block.repository';
+import { BlockMessage } from 'src/block/block.message';
 
 @Injectable()
 export class BlockSeriesService {
@@ -14,7 +21,9 @@ export class BlockSeriesService {
 
     constructor(
         private readonly model: BlockSeriesRepository,
-        private readonly userModel: UserRepository
+        private readonly userModel: UserRepository,
+        private readonly blockModel: BlockRepository,
+        private readonly blockSeriesBlockModel: BlockSeriesBlockRepository
     ) {}
 
     /**
@@ -57,13 +66,13 @@ export class BlockSeriesService {
         try {
             this.logger.log(`[시리즈 조회] API 호출 [ userId : ${userId}, seriesId : ${seriesId} ]`);
 
-            const user = await this.userModel.read(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[시리즈 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const series = await this.model.read(seriesId);
+            const series: BlockSeries = await this.model.read(seriesId, userId);
             if (!series) {
                 this.logger.log(`[시리즈 조회] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
                 throw new Error(BlockSeriesMessage.NOT_FOUND);
@@ -88,13 +97,13 @@ export class BlockSeriesService {
         try {
             this.logger.log(`[시리즈 수정] API 호출 [ userId : ${userId}, seriesId : ${seriesId} ]`);
 
-            const user = await this.userModel.read(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[시리즈 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const series = await this.model.read(seriesId);
+            const series: BlockSeries = await this.model.read(seriesId, userId);
             if (!series) {
                 this.logger.log(`[시리즈 수정] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
                 throw new Error(BlockSeriesMessage.NOT_FOUND);
@@ -122,13 +131,13 @@ export class BlockSeriesService {
         try {
             this.logger.log(`[시리즈 삭제] API 호출 [ userId : ${userId}, seriesId : ${seriesId} ]`);
 
-            const user = await this.userModel.read(userId);
+            const user: User = await this.userModel.read(userId);
             if (!user) {
                 this.logger.log(`[시리즈 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            const series = await this.model.read(seriesId);
+            const series: BlockSeries = await this.model.read(seriesId, userId);
             if (!series) {
                 this.logger.log(`[시리즈 삭제] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
                 throw new Error(BlockSeriesMessage.NOT_FOUND);
@@ -163,6 +172,172 @@ export class BlockSeriesService {
             return await this.model.getSeriesListByUserId(userId);
         } catch (error) {
             this.logger.error(`[블록 목록 조회] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 시리즈에 블록 추가
+     * 
+     * @param userId 사용자ID
+     * @param seriesId 시리즈ID
+     * @param blockId 블록ID
+     * @returns 
+     */
+    public async createSeriesBlock(userId: string, seriesId: string, blockId: string, createBlockSeriesBlockDTO: CreateBlockSeriesBlockDTO): Promise<BlockSeriesBlock> {
+        try {
+            this.logger.log(`[시리즈 블록 생성] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.read(userId);
+            if (!user) {
+                this.logger.log(`[시리즈 블록 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const series: BlockSeries = await this.model.read(seriesId, userId);
+            if (!series) {
+                this.logger.log(`[시리즈 블록 생성] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
+                throw new Error(BlockSeriesMessage.NOT_FOUND);
+            }
+
+            const block: Block = await this.blockModel.read(blockId);
+            if (!block) {
+                this.logger.log(`[시리즈 블록 생성] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
+                throw new Error(BlockMessage.NOT_FOUND);
+            }
+
+            const seriesBlock: BlockSeriesBlock = await this.blockSeriesBlockModel.read(seriesId, blockId);
+            if (seriesBlock) {
+                this.logger.log(`[시리즈 블록 생성] 실패 [ seriesId : ${seriesId}, blockId : ${blockId} ] -> 이미 시리즈 블록으로 들어가 있음`);
+                throw new Error(BlockSeriesBlockMessage.CONFLICT);
+            }
+
+            this.logger.log(`[시리즈 블록 생성] 생성 시작 [ userId : ${userId} ] `);
+
+            createBlockSeriesBlockDTO.blockSeries = series;
+            createBlockSeriesBlockDTO.block = block;
+            
+            const newBlockseriesBlock: BlockSeriesBlock = this.blockSeriesBlockModel.create(createBlockSeriesBlockDTO);
+            this.logger.log(`[시리즈 블록 생성] 생성 성공 `);
+
+            return await this.blockSeriesBlockModel.save(newBlockseriesBlock);
+        } catch (error) {
+            this.logger.error(`[시리즈 블록 생성] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 시리즈 블록 수정
+     * 
+     * @param userId 사용자ID
+     * @param seriesId 시리즈ID
+     * @param blockId 블록ID
+     * @returns 
+     */
+    public async updateSeriesBlock(userId: string, seriesId: string, blockId: string, updateBlockSeriesBlockDTO: UpdateBlockSeriesBlockDTO): Promise<BlockSeriesBlock> {
+        try {
+            this.logger.log(`[시리즈 블록 수정] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.read(userId);
+            if (!user) {
+                this.logger.log(`[시리즈 블록 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const series: BlockSeries = await this.model.read(seriesId, userId);
+            if (!series) {
+                this.logger.log(`[시리즈 블록 수정] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
+                throw new Error(BlockSeriesMessage.NOT_FOUND);
+            }
+
+            const seriesBlock: BlockSeriesBlock = await this.blockSeriesBlockModel.read(seriesId, blockId);
+            if (!seriesBlock) {
+                this.logger.log(`[시리즈 블록 수정] 실패 [ seriesId : ${seriesId}, blockId : ${blockId} ] -> 시리즈의 블록을 찾을 수 없음`);
+                throw new Error(BlockSeriesBlockMessage.NOT_FOUND);
+            }
+
+            this.logger.log(`[시리즈 블록 수정] 수정 시작 [ userId : ${userId} ] `);
+            Object.assign(seriesBlock, updateBlockSeriesBlockDTO);
+            await this.blockSeriesBlockModel.save(seriesBlock);
+
+            this.logger.log(`[시리즈 블록 수정] 수정 성공 [ seriesId : ${seriesId} ] `);
+
+            return seriesBlock;
+        } catch (error) {
+            this.logger.error(`[시리즈 블록 수정] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 시리즈 블록 삭제
+     * 
+     * @param userId 사용자ID
+     * @param seriesId 시리즈ID
+     * @param blockId 블록ID
+     * @returns 
+     */
+    public async deleteSeriesBlock(userId: string, seriesId: string, blockId: string): Promise<BlockSeriesBlock> {
+        try {
+            this.logger.log(`[시리즈 블록 삭제] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.read(userId);
+            if (!user) {
+                this.logger.log(`[시리즈 블록 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const series: BlockSeries = await this.model.read(seriesId, userId);
+            if (!series) {
+                this.logger.log(`[시리즈 블록 삭제] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
+                throw new Error(BlockSeriesMessage.NOT_FOUND);
+            }
+
+            const seriesBlock: BlockSeriesBlock = await this.blockSeriesBlockModel.read(seriesId, blockId);
+            if (!seriesBlock) {
+                this.logger.log(`[시리즈 블록 삭제] 실패 [ seriesId : ${seriesId}, blockId : ${blockId} ] -> 시리즈의 블록을 찾을 수 없음`);
+                throw new Error(BlockSeriesBlockMessage.NOT_FOUND);
+            }
+
+            this.logger.log(`[시리즈 블록 삭제] 삭제 시작 [ userId : ${userId} ] `);
+            await this.blockSeriesBlockModel.delete(seriesId, blockId);
+            this.logger.log(`[시리즈 블록 삭제] 삭제 성공 [ seriesId : ${seriesId} ] `);
+
+            return seriesBlock;
+        } catch (error) {
+            this.logger.error(`[시리즈 블록 삭제] 에러! [ error : ${error.message} ] `);
+            throw error;
+        }
+    }
+
+    /**
+     * 시리즈 블록 삭제
+     * 
+     * @param userId 사용자ID
+     * @param seriesId 시리즈ID
+     * @returns 
+     */
+    public async getListSeriesBlocks(userId: string, seriesId: string): Promise<Block[]> {
+        try {
+            this.logger.log(`[시리즈 블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.userModel.read(userId);
+            if (!user) {
+                this.logger.log(`[시리즈 블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            const series: BlockSeries = await this.model.read(seriesId, userId);
+            if (!series) {
+                this.logger.log(`[시리즈 블록 목록 조회] 실패 [ seriesId : ${seriesId} ] -> 시리즈를 찾을 수 없음`);
+                throw new Error(BlockSeriesMessage.NOT_FOUND);
+            }
+
+            this.logger.log(`[시리즈 블록 목록 조회] 시작 [ userId : ${userId} ] `);
+            return await this.blockSeriesBlockModel.getListSeriesBlocks(seriesId);
+        } catch (error) {
+            this.logger.error(`[시리즈 블록 목록] 에러! [ error : ${error.message} ] `);
             throw error;
         }
     }
