@@ -1,4 +1,5 @@
 <script>
+    import { onMount } from 'svelte';
     import { Router, Link, Route } from "svelte-routing";
     import notoSansKR from './public/fonts/NotoSans-Regular.woff2';
 
@@ -8,10 +9,21 @@
     import Block from './routes/Block.svelte';
     import Group from "./routes/Group.svelte";
     import Intro from './routes/Intro.svelte';
+
+    import simbol from './public/images/simbol.svg';
     
+
+    onMount(() => {
+        document.documentElement.lang = 'ko';
+    });
+
     export let url = "/";
 </script>
 
+<svelte:head>
+    <title>Linky Pie 🥧</title>
+    <link rel="shortcut icon" href="{simbol}">
+</svelte:head>
 <main name="web-collector">
     <Router {url}>
         <Route path="block" component={Block}></Route>

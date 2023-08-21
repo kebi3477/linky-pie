@@ -1,11 +1,11 @@
 <script>
     import { createEventDispatcher } from 'svelte';
 
-    import logo from '../public/images/logo.svg';
-    import kakaoIcon from '../public/images/kakao-icon.svg';
-    import naverIcon from '../public/images/naver-icon.svg';
-    import googleIcon from '../public/images/google-icon.svg';
-    import closeIcon from '../public/images/close-icon.svg';
+    import logo from '../../public/images/logo.svg';
+    import kakaoIcon from '../../public/images/icons/kakao-icon.svg';
+    import naverIcon from '../../public/images/icons/naver-icon.svg';
+    import googleIcon from '../../public/images/icons/google-icon.svg';
+    import closeIcon from '../../public/images/icons/close-icon.svg';
     
     const dispatch = createEventDispatcher();
 
@@ -76,7 +76,7 @@
     }
     .login__text {
         color: #fff;
-        font-family: 'Ramche';
+        font-family: 'Ramche', sans-serif;
     }
     .login__text--big {
         margin-top: 20px;
