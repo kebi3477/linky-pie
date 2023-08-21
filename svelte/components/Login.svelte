@@ -1,11 +1,20 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
+
     import logo from '../public/images/logo.svg';
     import kakaoIcon from '../public/images/kakao-icon.svg';
     import naverIcon from '../public/images/naver-icon.svg';
     import googleIcon from '../public/images/google-icon.svg';
+    import closeIcon from '../public/images/close-icon.svg';
     
+    const dispatch = createEventDispatcher();
+
     function navigateTo(login) {
         window.location.href = `/api/auth/${login}`;
+    }
+
+    function closePopup() {
+        dispatch('close');
     }
 
     export let isShown = false;
@@ -13,6 +22,9 @@
 
 <div class="login" style="display: {isShown ? 'flex' : 'none'}">
     <div class="login__content">
+        <button class="close__button" on:click={closePopup}>
+            <img src="{closeIcon}" class="close__image" alt="close" >
+        </button>
         <img src="{logo}" alt="logo" class="login__logo"/>
         <p class="login__text login__text--big">링크를<br>공유하다.</p>
         <div class="login__buttons">
@@ -47,9 +59,16 @@
     }
     .login__content {
         background: #1F1F1F;
-        padding: 50px;
+        padding: 40px;
         border-radius: 5px;
-        width: 500px;
+        width: 450px;
+        position: relative;
+    }
+    .close__button {
+        position: absolute;
+        right: 22px;
+        top: 26px;
+        cursor: pointer;
     }
     .login__logo {
         width: 100px;
@@ -57,30 +76,32 @@
     }
     .login__text {
         color: #fff;
+        font-family: 'Ramche';
     }
     .login__text--big {
         margin-top: 20px;
-        font-size: 47px;
+        font-size: 39px;
+        line-height: 60px;
     }
     .login__text--regular {
         padding: 10px 0;
-        font-size: 20px;
+        font-size: 16px;
         margin-left: 5px;
     }
     .login__buttons {
         margin-top: 70px;
         display: flex;
         flex-flow: column;
-        gap: 20px;
+        gap: 17px;
     }
     .login__button {
         width: 100%;
-        padding: 10px 15px;
+        padding: 18px 25px;
         border: none;
-        border-radius: 5px;
+        border-radius: 10px;
         cursor: pointer;
         color: #fff;
-        font-size: 18px;
+        font-size: 15px;
         display: grid;
         grid-template-columns: 20px 1fr;
         align-items: center;

@@ -24,7 +24,7 @@
 </script>
 
 <div>
-    <Login isShown={isShow}/>
+    <Login isShown={isShow} on:close={() => isShow = false} />
     <div class="intro__content">
         <div class="start__wrap">
             <div class="start__image">

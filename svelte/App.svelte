@@ -30,6 +30,12 @@
         font-weight: normal;
         font-style: normal;
     }
+    @font-face {
+        font-family: 'Ramche';
+        src: url('Ramche.ttf') format('woff2');
+        font-weight: normal;
+        font-style: normal;
+    }
 
     :global(*) {
         margin: 0;
@@ -47,5 +53,6 @@
     :global(button) {
         border: none;
         cursor: pointer;
+        background-color: transparent;
     }
 </style>
