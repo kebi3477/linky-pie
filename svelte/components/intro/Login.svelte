@@ -52,10 +52,11 @@
         left: 0;
         width: 100%;
         height: 100%;
-        background: rgba(0, 0, 0, 0.7);
+        background: rgba(0, 0, 0, 0.85);
         display: flex;
         align-items: center;
         justify-content: center;
+        backdrop-filter: blur(5px);
     }
     .login__content {
         background: #1F1F1F;

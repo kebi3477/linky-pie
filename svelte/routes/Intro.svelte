@@ -162,17 +162,17 @@
     .start__button {
         width: 350px;
         height: 85px;
-        border: 1px solid #fff;
+        border: 3px solid #fff;
         border-radius: 50px;
         font-size: 33px;
         color: #fff;
         display: flex;
         align-items: center;
         justify-content: center;
-        background-color: transparent;
+        background-color: #0D1117;
         transition: .5s;
     }
     .start__button:hover {
-        background-color: #ffffff22;
+        background-color: #2F81F7;
     }
 </style>
