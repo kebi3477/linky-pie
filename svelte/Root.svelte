@@ -10,7 +10,7 @@
 
     onMount(async () => {
         if (await isLogin()) {
-            navigate("/block", { replace: true });
+            navigate("/my-page", { replace: true });
         } else {
             navigate("/intro", { replace: true });
         }

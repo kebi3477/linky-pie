@@ -4,11 +4,11 @@
     import notoSansKR from './public/fonts/NotoSans-Regular.woff2';
 
     import Root from "./Root.svelte";
-    import Login from './routes/Login.svelte';
     import Join from './routes/Join.svelte';
     import Block from './routes/Block.svelte';
     import Group from "./routes/Group.svelte";
     import Intro from './routes/Intro.svelte';
+    import Mypage from './routes/MyPage.svelte';
 
     import simbol from './public/images/simbol.svg';
     
@@ -29,8 +29,8 @@
         <Route path="block" component={Block}></Route>
         <Route path="group" component={Group}></Route>
         <Route path="join" component={Join}></Route>
-        <Route path="login" component={Login}></Route>
         <Route path="intro" component={Intro}></Route>
+        <Route path="my-page" component={Mypage}></Route>
         <Route path="/" component={Root}></Route>
     </Router>
 </main>
