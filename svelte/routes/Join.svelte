@@ -1,6 +1,5 @@
 <script>
     import Fetch from '../utils/fetch';
-    import Header from '../components/LoginHeader.svelte';
     import Sign from '../components/Sign.svelte';
 
     let id = '';
@@ -34,7 +33,6 @@
     {#if showModel}
         <Sign close={closeModal} />
     {/if}
-    <Header></Header>
     <div class="join__content">
         <div class="join__wraper">
             <div class="join__title title">Sign Up</div>

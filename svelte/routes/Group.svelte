@@ -1,6 +1,5 @@
 <script>
     import { onMount } from 'svelte';
-    import Header from '../components/MainHeader.svelte';
     import Loading from '../components/Loading.svelte';
     import Fetch from '../utils/fetch';
 
@@ -49,7 +48,6 @@
 </script>
 <main>
     <Loading bind:this={loading}></Loading>
-    <Header></Header>
     <div class="group__content">
         <div class="group__container">
             <input type="text" name="group" id="group__input" class="group__input" bind:value={title} on:keydown={handleEnter} on:paste={handlePaste}>

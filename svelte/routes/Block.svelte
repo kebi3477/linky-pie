@@ -3,7 +3,6 @@
     import { navigate } from "svelte-routing";
     import Fetch from "../utils/fetch";
     import Loading from '../components/Loading.svelte';
-    import Header from '../components/MainHeader.svelte';
 
     let url = '';
     let blocks = [];
@@ -66,7 +65,6 @@
 
 <main>
     <Loading bind:this={loading}></Loading>
-    <Header></Header>
     <div class="block__content">
         <div class="url__container">
             <input type="text" name="url" id="url__input" class="url__input" bind:value={url} on:keydown={handleEnter} on:paste={handlePaste}>
