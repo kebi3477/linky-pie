@@ -1,7 +1,6 @@
 <script>
     import { onMount } from 'svelte';
     import { Router, Link, Route } from "svelte-routing";
-    import notoSansKR from './public/fonts/NotoSans-Regular.woff2';
 
     import Root from "./Root.svelte";
     import Join from './routes/Join.svelte';
@@ -9,6 +8,7 @@
     import Group from "./routes/Group.svelte";
     import Intro from './routes/Intro.svelte';
     import Mypage from './routes/MyPage.svelte';
+    import Follow from './routes/Follow.svelte';
 
     import simbol from './public/images/simbol.svg';
     
@@ -31,6 +31,7 @@
         <Route path="join" component={Join}></Route>
         <Route path="intro" component={Intro}></Route>
         <Route path="my-page" component={Mypage}></Route>
+        <Route path="follow" component={Follow}></Route>
         <Route path="/" component={Root}></Route>
     </Router>
 </main>

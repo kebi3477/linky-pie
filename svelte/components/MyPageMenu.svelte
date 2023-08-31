@@ -1,17 +1,22 @@
 <script>
+    import { navigate } from "svelte-routing/src/history";
     import follow from '../public/images/icons/human-icon.svg';
     import group from '../public/images/icons/folder-icon.svg';
     import series from '../public/images/icons/alpha-icon.svg';
     import stack from '../public/images/icons/calendar-icon.svg';
+
+    function redirect(url) {
+        navigate(`/${url}`, { replace: true });
+    }
 </script>
 
 <div class="menu">
-    <div class="menu__item">
+    <button class="menu__item" on:click={() => redirect('follow')}>
         <div class="menu__img">
             <img src="{follow}" alt="follow">
         </div>
         <div class="menu__text">팔로우 관리</div>
-    </div>
+    </button>
     <div class="menu__item">
         <div class="menu__img">
             <img src="{group}" alt="group">
