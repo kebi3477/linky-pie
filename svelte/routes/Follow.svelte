@@ -49,7 +49,7 @@
 <style>
     .follow {
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #0D1117;
         display: flex;
         flex-flow: column nowrap;

@@ -84,6 +84,7 @@
 <style>
     .my-page {
         width: 100%;
+        min-height: 100vh;
         background-color: #0D1117;
         display: flex;
         flex-flow: column nowrap;

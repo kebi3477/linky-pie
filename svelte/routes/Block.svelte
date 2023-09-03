@@ -92,7 +92,7 @@
 <style>
     main {
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
         display: flex;
         flex-flow: column nowrap;
         justify-content: center;

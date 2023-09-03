@@ -103,7 +103,7 @@
 
     .intro {
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #0D1117;
     }
     .intro__container {
@@ -149,7 +149,7 @@
         gap: 55px;
         position: absolute;
         width: 100%;
-        height: 100vh;
+        min-height: 100vh;
         background-color: #00000088;
         align-items: center;
         justify-content: center;
