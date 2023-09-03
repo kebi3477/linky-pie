@@ -17,12 +17,12 @@
         </div>
         <div class="menu__text">팔로우 관리</div>
     </button>
-    <div class="menu__item">
+    <button class="menu__item" on:click={() => redirect('group')}>
         <div class="menu__img">
             <img src="{group}" alt="group">
         </div>
         <div class="menu__text">그룹 관리</div>
-    </div>
+    </button>
     <div class="menu__item">
         <div class="menu__img">
             <img src="{series}" alt="series">

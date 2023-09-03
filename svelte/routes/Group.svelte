@@ -1,114 +1,67 @@
 <script>
-    import { onMount } from 'svelte';
-    import Loading from '../components/Loading.svelte';
-    import Fetch from '../utils/fetch';
+    import Header from "../components/Header.svelte";
+    import Profile from "../components/Profile.svelte";
+    import MyPageMenu from "../components/MyPageMenu.svelte";
 
-    let loading;
-    let title;
-    let groups = [];
-
-    async function handleEnter(event) {
-        if(event.key !== 'Enter') {
-            return;
-        }
-
-        createGroup(title);
-    }
-
-    async function handlePaste(event) {
-        const title = (event.clipboardData || window.clipboardData).getData('text');
-
-        createGroup(title);
-    }
-
-    async function createGroup(title) {
-        loading.start();
-        const res = await Fetch.post('/api/groups', {
-            title: title,
-            type: 0
-        })
-
-        if (res.statusCode === 201) {
-            title = '';   
-            groups = [...groups, res.group];
-            console.log(groups);
-        }
-
-        loading.stop();
-    }
-
-    async function getGroupList() {
-        loading.start();
-        const res = await Fetch.get('/api/groups');
-        groups = res.group;
-        loading.stop();
-    }
-
-    onMount(getGroupList);
+    import folder from '../public/images/icons/folder-icon-big.svg'
+    import search from '../public/images/icons/search-icon.svg'
+    import arrowBottom from '../public/images/icons/arrow-bottom-icon.svg'
 </script>
-<main>
-    <Loading bind:this={loading}></Loading>
-    <div class="group__content">
-        <div class="group__container">
-            <input type="text" name="group" id="group__input" class="group__input" bind:value={title} on:keydown={handleEnter} on:paste={handlePaste}>
+
+<div class="group">
+    <Header></Header>
+    <div class="group__contents">
+        <div class="title">
+            <div class="title__text--big"><img src="{folder}" alt="folder"> 그룹 관리</div>
+            <div class="title__text--small">이 곳은 당신의 그룹을 수정할 수 있어</div>
         </div>
-        <div class="group__list">
-            {#each groups as item, idx}
-                <div class="group__item">
-                    <div>{idx}</div>
-                    <div>{item.title}</div>
-                </div>
-            {/each}
+        <div class="group__wrap">
+            <div class="profile">
+                <Profile></Profile>
+                <MyPageMenu></MyPageMenu>
+            </div>
+            <div class="contents">
+            </div>
         </div>
     </div>
-</main>
-
+</div>
 <style>
-    main {
+    .group {
         width: 100%;
         height: 100vh;
-        display: flex;
-        flex-flow: column nowrap;
-        justify-content: center;
-        align-items: center;
-        background-color: #102031;
-    }
-    .group__container {
-        width: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding-top: 20px;
-    }
-    .group__input {
-        width: 80%;
-    }
-    .group__content {
-        width: 500px;
-        height: 90vh;
-        background-color: #ffffff1f;
+        background-color: #0D1117;
         display: flex;
         flex-flow: column nowrap;
         align-items: center;
-        justify-content: start;
     }
-    .group__list {
-        width: 100%;
+    .group__contents {
+        width: 1200px;
+        padding-top: 100px;
+    }
+    .group__wrap {
+        display: grid;
+        grid-template-columns: 280px auto;
+        gap: 30px;
+        margin-top: 60px;
+    }
+
+    .title {
+        margin-top: -10px;
         display: flex;
         flex-flow: column;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
+        gap: 25px;
     }
-    .group__item {
-        width: 80%;
+    .title__text--big {
+        font-size: 40px;
+        color: #fff;
+        font-family: 'Ramche', sans-serif;
         display: flex;
-        flex-flow: row;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         gap: 10px;
     }
-    .group__item > * {
-        color: #fff;
+    .title__text--small {
+        font-size: 15px;
+        color: #AEAEAE;
     }
 </style>

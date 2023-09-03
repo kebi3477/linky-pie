@@ -39,7 +39,7 @@
 <style>
     @font-face {
         font-family: 'Noto Sans KR';
-        src: url('c9da3fade5b0bcb2.woff2') format('woff2');
+        src: url('NotoSans-Regular.woff2') format('woff2');
         font-weight: normal;
         font-style: normal;
     }
