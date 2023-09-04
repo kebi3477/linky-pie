@@ -1,21 +1,27 @@
 <script>
-
-</script>
+    export let user = {
+        id: '',
+        name: '',
+        image: '',
+        followers: 0,
+        following: 0
+    };
+ </script>
 
 <div class="profile">
     <div class="profile__image">
-        <img src="" alt="">
+        <img src="{user.image}" alt="{user.name}">
     </div>
-    <div class="profile__text--white profile__text--big title">링키파이12</div>
-    <div class="profile__text profile__text--small email">kebi3477@naver.com</div>
+    <div class="profile__text--white profile__text--big title">{user.name}</div>
+    <div class="profile__text profile__text--small email">{user.id}</div>
     <div class="profile__button">프로필 편집</div>
     <div class="profile__wrap">
         <div class="profile__wrap-text">
-            <div class="profile__text--white profile__text--bold">12</div>
+            <div class="profile__text--white profile__text--bold">{user.followers}</div>
             <div class="profile__text">followers</div>
         </div>
         <div class="profile__wrap-text">
-            <div class="profile__text--white profile__text--bold">20</div>
+            <div class="profile__text--white profile__text--bold">{user.following}</div>
             <div class="profile__text">following</div>
         </div>
     </div>
@@ -39,6 +45,11 @@
         border-radius: 100%;
         border: 1px solid #939393;
         background-color: #fff;
+        overflow: hidden;
+    }
+    .profile__image > img {
+        width: 100%;
+        height: 100%;
     }
     .profile__text {
         color: #777777;

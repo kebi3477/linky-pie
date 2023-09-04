@@ -1,4 +1,7 @@
 <script>
+    import { onMount } from 'svelte';
+    import { userData } from '../utils/store.js';
+
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
@@ -7,6 +10,24 @@
     import info from '../public/images/icons/infomation-icon.svg';
     import leftArrow from '../public/images/icons/arrow-left-icon.svg';
     import rightArrow from '../public/images/icons/arrow-right-icon.svg';
+
+    let user = {
+        id: '',
+        name: '',
+        image: '',
+        followers: 0,
+        following: 0
+    };
+
+    onMount(async () => {
+        user = {
+            id: $userData.id,
+            name: $userData.name,
+            image: $userData.image,
+            followers: $userData.followerCount ?? 0,
+            following: $userData.followingCount ?? 0
+        };
+    })
 </script>
 
 <div class="my-page">
@@ -19,7 +40,7 @@
         </div>
         <div class="my-page__wrap">
             <div class="profile">
-                <Profile></Profile>
+                <Profile user={user}></Profile>
                 <MyPageMenu></MyPageMenu>
             </div>
             <div class="contents">

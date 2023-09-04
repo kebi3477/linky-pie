@@ -40,4 +40,12 @@ export class FollowerRepository {
                .where('following.user_id = :userId', { userId })
                .getMany();
     }
+
+    public async getFollowerCount(userId: string): Promise<number> {
+        return await this.repository.count({ where: { user: { id: userId } }})
+    }
+
+    public async getFollowingCount(userId: string): Promise<number> {
+        return await this.repository.count({ where: { following: { id: userId } }})
+    }
 }

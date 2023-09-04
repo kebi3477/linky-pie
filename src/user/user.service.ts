@@ -60,6 +60,9 @@ export class UserService {
                 this.logger.log(`[사용자 조회] 실패 [ userId : ${id} ] -> 존재하지 않는 사용자ID `);
                 throw new Error(UserMessage.NOT_FOUND);
             }
+
+            user.followerCount = await this.followerModel.getFollowerCount(id);
+            user.followingCount = await this.followerModel.getFollowingCount(id);
             
             return user;
         } catch (error) {

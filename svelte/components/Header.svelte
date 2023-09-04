@@ -1,9 +1,17 @@
 <script>
+    import { navigate } from "svelte-routing/src/history";
     import logo from '../public/images/logo_b.svg';
+
+    function redirect(url) {
+        navigate(`/${url}`, { replace: true });
+    }
 </script>
 
+
 <div class="header">
-    <img src="{logo}" alt="logo">
+    <button on:click={() => redirect('my-page')}>
+        <img src="{logo}" alt="logo">
+    </button>
 </div>
 
 <style>

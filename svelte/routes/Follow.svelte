@@ -1,4 +1,7 @@
 <script>
+    import { onMount } from 'svelte';
+    import { userData } from '../utils/store.js';
+    
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
@@ -6,7 +9,24 @@
 
     import human from '../public/images/icons/human-icon-big.svg'
     import search from '../public/images/icons/search-icon.svg'
-    import arrowBottom from '../public/images/icons/arrow-bottom-icon.svg'
+
+    let user = {
+        id: '',
+        name: '',
+        image: '',
+        followers: 0,
+        following: 0
+    };
+
+    onMount(async () => {
+        user = {
+            id: $userData.id,
+            name: $userData.name,
+            image: $userData.image,
+            followers: $userData.followerCount ?? 0,
+            following: $userData.followingCount ?? 0
+        };
+    })
 </script>
 
 <div class="follow">
@@ -18,7 +38,7 @@
         </div>
         <div class="follow__wrap">
             <div class="profile">
-                <Profile></Profile>
+                <Profile user={user}></Profile>
                 <MyPageMenu></MyPageMenu>
             </div>
             <div class="contents">
@@ -112,26 +132,26 @@
     }
     .order {
         width: 190px;
-        height: 44px;
         background-color: #21262C;
         border-radius: 10px;
         display: flex;
-        flex-flow: nowrap;
-        padding: 10px;
     }
     #order {
         background-color: transparent;
         color: #fff;
         width: 100%;
+        height: 44px;
         border-radius: 10px;
+        padding: 5px 10px;
         border: none;
+        outline: none;
     }
     #order > option {
         background-color: #21262C;
         color: #fff;
         border: none;
-        border-radius: 10px;
         outline: none;
+        padding: 5px 0;
     }
     .humans {
         margin-top: 20px;
