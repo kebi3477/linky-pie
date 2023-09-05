@@ -40,6 +40,26 @@
         type = event.detail.type.toString();
         isShow = true;
     }
+
+    function changeGroups(event) {
+        if (event.detail.isCreate) {
+            groups = [event.detail, ...groups];
+        }
+
+        if (event.detail.isUpdate) {
+            groups.forEach(group => {
+                if (group.id === event.detail.id) {
+                    group.title = event.detail.title;
+                    group.type = event.detail.type;
+                }
+            });
+            groups = groups;
+        }
+
+        if (event.detail.isDelete) {
+            groups = groups.filter(group => group.id !== event.detail.id);
+        }
+    }
     
     async function getGroups() {
         try {
@@ -85,13 +105,13 @@
                 </div>
                 <div class="group__list">
                     {#each groups as item}
-                        <GroupCp group={item} on:editGroup={showUpdateGroupPopup}></GroupCp>
+                        <GroupCp group={item} on:editGroup={showUpdateGroupPopup} on:complete={changeGroups}></GroupCp>
                     {/each}
                 </div>
             </div>
         </div>
     </div>
-    <GroupPopup isShown={isShow} isCreate={isCreate} id={id} title={title} type={type} on:close={() => isShow = false} />
+    <GroupPopup on:complete={changeGroups} isShown={isShow} isCreate={isCreate} id={id} title={title} type={type} on:close={() => isShow = false} />
 </div>
 <style>
     .group {

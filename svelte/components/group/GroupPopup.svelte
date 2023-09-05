@@ -6,6 +6,10 @@
 
     const dispatch = createEventDispatcher();
 
+    function changeGroup(group) {
+        dispatch('complete', group);
+    }
+
     function closePopup() {
         dispatch('close');
     }
@@ -27,8 +31,12 @@
             })
     
             if (res.status === 201) {
+                const data = await res.json();
+                data.isCreate = true;
+
                 alert('그룹 생성 성공!');
                 closePopup();
+                changeGroup(data);
             } else {
                 alert('그룹 생성 실패!');
             }
@@ -51,8 +59,12 @@
             })
     
             if (res.status === 200) {
+                const data = await res.json();
+                data.isUpdate = true;
+
                 alert('그룹 수정 성공!');
                 closePopup();
+                changeGroup(data);
             } else {
                 alert('그룹 수정 실패!');
             }

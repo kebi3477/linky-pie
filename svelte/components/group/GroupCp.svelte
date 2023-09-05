@@ -3,6 +3,10 @@
 
     const dispatch = createEventDispatcher();
 
+    function changeGroup(group) {
+        dispatch('complete', group);
+    }
+
     function editGroup() {
         dispatch('editGroup', group);
     }
@@ -30,7 +34,11 @@
             })
     
             if (res.status === 200) {
+                const data = await res.json();
+                data.isDelete = true;
+
                 alert('그룹 삭제 성공!');
+                changeGroup(data);
             } else {
                 alert('그룹 삭제 실패!');
             }
