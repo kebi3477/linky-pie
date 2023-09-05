@@ -1,15 +1,59 @@
 <script>
+    import { createEventDispatcher } from 'svelte';
 
+    const dispatch = createEventDispatcher();
+
+    function editGroup() {
+        dispatch('editGroup', group);
+    }
+
+    function getGroupLabel(type) {
+        switch(type) {
+            case 0:
+                return '비공개'
+            case 1: 
+                return '팔로워 공개'
+            default:
+                return '전체 공개'
+        }
+    }
+
+    async function deleteGroup(id) {
+        if (!confirm('그룹을 삭제하시겠습니까?')) {
+            return;
+        }
+
+        try {
+            const res = await fetch(`/api/groups/${id}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' }
+            })
+    
+            if (res.status === 200) {
+                alert('그룹 삭제 성공!');
+            } else {
+                alert('그룹 삭제 실패!');
+            }
+        } catch (err) {
+            alert('그룹 삭제 실패!');
+            console.error(err);
+        }
+    }
+
+    export let group = {
+        title: '',
+        type: 0,
+    };
 </script>
 
 <div class="group__component">
     <div class="group__wrap">
-        <div class="group__title">그룹_1</div>
-        <div class="group__text">전체공개</div>
+        <div class="group__title">{group.title}</div>
+        <div class="group__text">{getGroupLabel(group.type)}</div>
     </div>
     <div class="group__wrap">
-        <div class="group__button">편집</div>
-        <div class="group__button">삭제</div>
+        <button class="group__button" on:click={editGroup}>편집</button>
+        <button class="group__button" on:click={() => deleteGroup(group.id)}>삭제</button>
     </div>
 </div>
 

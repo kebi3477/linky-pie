@@ -5,7 +5,6 @@
     import closeIcon from '../../public/images/icons/close-icon.svg';
 
     const dispatch = createEventDispatcher();
-    let title = '';
 
     function closePopup() {
         dispatch('close');
@@ -15,10 +14,62 @@
         title = '';
     }
 
+    async function createGroup() {
+        try {
+            const data = {
+                title, 
+                type: +type
+            }
+            const res = await fetch('/api/groups', {
+                method: 'POST',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            })
+    
+            if (res.status === 201) {
+                alert('그룹 생성 성공!');
+                closePopup();
+            } else {
+                alert('그룹 생성 실패!');
+            }
+        } catch (err) {
+            alert('그룹 생성 실패!');
+            console.error(err);
+        }
+    }
+
+    async function updateGroup() {
+        try {
+            const data = {
+                title, 
+                type: +type
+            }
+            const res = await fetch(`/api/groups/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(data),
+                headers: { 'Content-Type': 'application/json' }
+            })
+    
+            if (res.status === 200) {
+                alert('그룹 수정 성공!');
+                closePopup();
+            } else {
+                alert('그룹 수정 실패!');
+            }
+        } catch (err) {
+            alert('그룹 수정 실패!');
+            console.error(err);
+        }
+    }
+
+    export let id = '';
+    export let title = '';
+    export let type = "2";
     export let isShown = false;
+    export let isCreate = false;
 </script>
 
-<div class="popup" style="display: {isShown ? 'flex' : 'none'}">
+<div class="popup" style="display: {isShown ? 'flex' : 'none'};">
     <div class="create-group">
         <button class="close__button" on:click={closePopup}>
             <img src="{closeIcon}" class="close__image" alt="close" >
@@ -31,18 +82,18 @@
         </label>
         <div class="create-group__text">그룹 공개 여부</div>
         <label for="option" class="option__wrap">
-            <select name="option" id="option" class="option">
-                <option value="1">전체 공개</option>
-                <option value="0">비공개</option>
+            <select name="option" id="option" class="option" bind:value={type}>
+                <option value=2>전체 공개</option>
+                <option value=1>팔로워 공개</option>
+                <option value=0>비공개</option>
             </select>
         </label>
         <div class="create-group__wrap">
             <div class="create-group__button cancel">취소</div>
-            <div class="create-group__button save">저장하기</div>
+            <button class="create-group__button save" on:click={isCreate ? createGroup() : updateGroup()}>저장하기</button>
         </div>
     </div>
 </div>
-
 
 <style>
     .popup {

@@ -6,17 +6,17 @@
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
     import GroupCp from "../components/group/GroupCP.svelte";
-    import CreateGroupPopup from "../components/group/CreateGroupPopup.svelte";
+    import GroupPopup from "../components/group/GroupPopup.svelte";
 
-    import folder from '../public/images/icons/folder-icon-big.svg'
-    import plus from '../public/images/icons/plus-icon.svg'
+    import folder from '../public/images/icons/folder-icon-big.svg';
+    import plus from '../public/images/icons/plus-icon.svg';
 
     let isShow = false;
-
-    function showCreateGroupPopup() {
-        isShow = !isShow;
-    }
-
+    let isCreate = true;
+    let id = '';
+    let title = '';
+    let type = '2';
+    let groups = [];
     let user = {
         id: '',
         name: '',
@@ -24,6 +24,36 @@
         followers: 0,
         following: 0
     };
+
+    function showCreateGroupPopup() {
+        isCreate = true;
+        id = '';
+        title = '';
+        type = '2';
+        isShow = !isShow;
+    }
+
+    function showUpdateGroupPopup(event) {
+        isCreate = false;
+        id = event.detail.id;
+        title = event.detail.title;
+        type = event.detail.type.toString();
+        isShow = true;
+    }
+    
+    async function getGroups() {
+        try {
+            const res = await fetch('/api/groups');
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
 
     onMount(async () => {
         user = {
@@ -33,6 +63,7 @@
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
+        groups = await getGroups();
     })
 </script>
 
@@ -53,16 +84,14 @@
                     <button class="group__button" on:click={showCreateGroupPopup}>그룹 만들기 <img src="{plus}" alt="plus"></button>
                 </div>
                 <div class="group__list">
-                    <GroupCp></GroupCp>
-                    <GroupCp></GroupCp>
-                    <GroupCp></GroupCp>
-                    <GroupCp></GroupCp>
-                    <GroupCp></GroupCp>
+                    {#each groups as item}
+                        <GroupCp group={item} on:editGroup={showUpdateGroupPopup}></GroupCp>
+                    {/each}
                 </div>
             </div>
         </div>
     </div>
-    <CreateGroupPopup isShown={isShow} on:close={() => isShow = false} />
+    <GroupPopup isShown={isShow} isCreate={isCreate} id={id} title={title} type={type} on:close={() => isShow = false} />
 </div>
 <style>
     .group {
