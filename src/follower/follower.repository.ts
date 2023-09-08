@@ -28,24 +28,27 @@ export class FollowerRepository {
     public async getFollowers(userId: string): Promise<User[]> {
         return await this.userRepository
                .createQueryBuilder('user')
+               .addSelect(`CASE WHEN follow.user_id = user.id AND follow.follow_id = :userId THEN 1 ELSE 0 END`, 'amIFollowing')
                .innerJoin('user.followers', 'follower')
+               .leftJoin('user.following', 'follow', 'follow.follow_id = user.id')
                .where('follower.follow_id = :userId', { userId })
-               .getMany();
-    }
+               .getRawMany();
+    }    
 
-    public async getFollowing(userId: string): Promise<User[]> {
+    public async getFollowings(userId: string): Promise<User[]> {
         return await this.userRepository
                .createQueryBuilder('user')
+               .addSelect('1', 'amIFollowing')
                .innerJoin('user.following', 'following')
                .where('following.user_id = :userId', { userId })
-               .getMany();
-    }
+               .getRawMany();
+    }    
 
     public async getFollowerCount(userId: string): Promise<number> {
-        return await this.repository.count({ where: { user: { id: userId } }})
-    }
-
-    public async getFollowingCount(userId: string): Promise<number> {
         return await this.repository.count({ where: { following: { id: userId } }})
+    }
+    
+    public async getFollowingCount(userId: string): Promise<number> {
+        return await this.repository.count({ where: { user: { id: userId } }})
     }
 }

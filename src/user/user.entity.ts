@@ -97,9 +97,9 @@ export class User {
     @OneToMany(() => Follower, (follower) => follower.following)
     following: Follower[];
 
-
-    followerCount: number;
-    followingCount: number;
+    followerCount?: number;
+    followingCount?: number;
+    amIFollowing?: number;
 
     @ManyToMany(() => Block, block => block.likedByUsers)
     // @JoinTable()

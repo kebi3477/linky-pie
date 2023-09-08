@@ -35,6 +35,16 @@ export class UserController {
         }
     }
 
+    @Get()
+    @UseGuards(JwtAuthenticationGuard)
+    async readSearch(@Req() request: RequestWithUser, @Query('id') id?: string): Promise<User[]> {
+        try {
+            return await this.service.findAllUsers(request.user.id, id);
+        } catch (error) {
+            throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     @Post('/follow/:follow_id')
     @UseGuards(JwtAuthenticationGuard)
     async followUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string): Promise<User> {
@@ -51,7 +61,7 @@ export class UserController {
         }
     }
   
-    @Delete('/unfollow/:follow_id')
+    @Delete('/follow/:follow_id')
     @UseGuards(JwtAuthenticationGuard)
     async unfollowUser(@Req() request: RequestWithUser, @Param('follow_id') followId: string): Promise<User> {
         try {
@@ -83,9 +93,9 @@ export class UserController {
   
     @Get('/followings')
     @UseGuards(JwtAuthenticationGuard)
-    async getFollowing(@Req() request: RequestWithUser): Promise<User[]> {
+    async getFollowings(@Req() request: RequestWithUser): Promise<User[]> {
         try {
-            return await this.service.getFollowing(request.user.id);
+            return await this.service.getFollowings(request.user.id);
         } catch (error) {
             if (error.message === UserMessage.NOT_FOUND) {
                 throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);

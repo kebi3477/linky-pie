@@ -72,6 +72,16 @@ export class UserService {
     }
 
     /**
+     * 사용자 전체 검색
+     * 
+     * @param searchId 검색할 아이디
+     * @returns 사용자 목록
+     */
+    public async findAllUsers(userId: string, searchId?: string): Promise<User[]> {
+        return this.model.findAllUsers(userId, searchId);
+    }
+
+    /**
      * 팔로잉
      * 
      * @param userId 팔로우 하는 사용자 아이디
@@ -126,7 +136,7 @@ export class UserService {
             this.logger.log(`[언팔로잉] API 호출 [ userId : ${userId}, followId : ${followId} ]`);
     
             const follow: Follower = await this.followerModel.getFollower(userId, followId);
-            if (follow) {
+            if (!follow) {
                 this.logger.log(`[언팔로잉] 실패 [ userId : ${userId} ] -> 존재하지 않는 팔로우 `);
                 throw new Error(FollowerMessage.NOT_FOUND);
             }
@@ -180,7 +190,7 @@ export class UserService {
      * @param userId 팔로잉 하는 아이디
      * @returns 팔로잉 목록
      */
-    async getFollowing(userId: string): Promise<User[]> {
+    async getFollowings(userId: string): Promise<User[]> {
         try {
             const user: User = await this.model.read(userId);
             if (!user) {
@@ -188,7 +198,7 @@ export class UserService {
                 throw new Error(UserMessage.NOT_FOUND);
             }
 
-            return await this.followerModel.getFollowing(userId);
+            return await this.followerModel.getFollowings(userId);
         } catch (error) {
             this.logger.error(`[팔로잉 목록 조회] 오류! => ${error.message}`);
             throw error;

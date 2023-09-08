@@ -1,15 +1,20 @@
 <script>
     import { onMount } from 'svelte';
     import { userData } from '../utils/store.js';
+    import { debounce } from '../utils/util.js';
     
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
-    import Human from "../components/follow/Human.svelte";
+    import FollowCP from "../components/follow/FollowCP.svelte";
 
     import human from '../public/images/icons/human-icon-big.svg'
     import search from '../public/images/icons/search-icon.svg'
 
+    const debouncedSearch = debounce(handleSearch, 300);
+    let searchUser = '';
+    let followers = [];
+    let followings = [];
     let user = {
         id: '',
         name: '',
@@ -17,6 +22,59 @@
         followers: 0,
         following: 0
     };
+
+    async function getFollowers() {
+        try {
+            const res = await fetch('/api/users/followers');
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
+
+    async function getFollowings() {
+        try {
+            const res = await fetch('/api/users/followings');
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
+
+    function changeFollwings(event) {
+        if (event.detail.isCreate) {
+            followings = followings.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 1 } : following);
+        }
+
+        if (event.detail.isDelete) {
+            followings = followings.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 0 } : following);
+        }
+    }
+
+    async function handleSearch() {
+        try {
+            const res = await fetch(`/api/users?id=${searchUser}`)
+
+            if (res.status === 200) {
+                followings = await res.json();
+            } else {
+                followings = [];
+            }
+        } catch (err) {
+            followings = [];
+            console.error(err);
+        }
+    }
 
     onMount(async () => {
         user = {
@@ -26,6 +84,8 @@
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
+        followers = await getFollowers();
+        followings = await getFollowings();
     })
 </script>
 
@@ -45,7 +105,7 @@
                 <div class="contents__wrap">
                     <div class="search">
                         <img src="{search}" alt="search">
-                        <input type="text" class="search__input" placeholder="아이디 검색">
+                        <input type="text" class="search__input" placeholder="아이디 검색" bind:value={searchUser} on:input={debouncedSearch}>
                     </div>
                     <label class="order" for="order">
                         <select name="order" id="order">
@@ -56,10 +116,9 @@
                     </label>
                 </div>
                 <div class="humans">
-                    <Human></Human>
-                    <Human></Human>
-                    <Human></Human>
-                    <Human></Human>
+                    {#each followings as following} 
+                        <FollowCP on:editFollow={changeFollwings} user={following}></FollowCP>
+                    {/each}
                 </div>
             </div>
         </div>

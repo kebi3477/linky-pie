@@ -26,4 +26,25 @@ export class UserRepository {
     public async save(user: User): Promise<User> {
         return await this.repository.save(user);
     }
+
+    async findAllUsers(loggedInUserId: string, searchId?: string): Promise<User[]> {
+        const query = this.repository
+            .createQueryBuilder('user')
+            .addSelect(subQuery => {
+                return subQuery
+                    .select('CASE WHEN follow.user_id IS NOT NULL THEN 1 ELSE 0 END', 'amIFollowing')
+                    .from('followers', 'follow')
+                    .where('follow.user_id = :loggedInUserId')
+                    .andWhere('follow.follow_id = user.id')
+                    .limit(1);
+            }, 'amIFollowing')
+            .where('user.id != :loggedInUserId', { loggedInUserId })
+            .setParameter('loggedInUserId', loggedInUserId);
+
+        if (searchId) {
+            query.andWhere('user.id LIKE :searchId', { searchId: `%${searchId}%` });
+        }
+
+        return query.getRawMany();
+    }
 }
