@@ -28,7 +28,7 @@ export class FollowerRepository {
     public async getFollowers(userId: string): Promise<User[]> {
         return await this.userRepository
                .createQueryBuilder('user')
-               .addSelect(`CASE WHEN follow.user_id = user.id AND follow.follow_id = :userId THEN 1 ELSE 0 END`, 'amIFollowing')
+               .addSelect(`CASE WHEN follow.user_id = :userId AND follow.follow_id = user.id THEN 1 ELSE 0 END`, 'amIFollowing')
                .innerJoin('user.followers', 'follower')
                .leftJoin('user.following', 'follow', 'follow.follow_id = user.id')
                .where('follower.follow_id = :userId', { userId })
@@ -38,7 +38,7 @@ export class FollowerRepository {
     public async getFollowings(userId: string): Promise<User[]> {
         return await this.userRepository
                .createQueryBuilder('user')
-               .addSelect('1', 'amIFollowing')
+               .addSelect(`CASE WHEN following.user_id = :userId AND following.follow_id = user.id THEN 1 ELSE 0 END`, 'amIFollowing')
                .innerJoin('user.following', 'following')
                .where('following.user_id = :userId', { userId })
                .getRawMany();

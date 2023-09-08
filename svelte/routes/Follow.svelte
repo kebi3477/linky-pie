@@ -1,5 +1,5 @@
 <script>
-    import { onMount } from 'svelte';
+    import { onMount, onDestroy } from 'svelte';
     import { userData } from '../utils/store.js';
     import { debounce } from '../utils/util.js';
     
@@ -8,13 +8,13 @@
     import MyPageMenu from "../components/MyPageMenu.svelte";
     import FollowCP from "../components/follow/FollowCP.svelte";
 
-    import human from '../public/images/icons/human-icon-big.svg'
-    import search from '../public/images/icons/search-icon.svg'
+    import humanIcon from '../public/images/icons/human-icon-big.svg'
+    import searchIcon from '../public/images/icons/search-icon.svg'
 
     const debouncedSearch = debounce(handleSearch, 300);
+    let selectedFilter = 'follower';
     let searchUser = '';
-    let followers = [];
-    let followings = [];
+    let userList = [];
     let user = {
         id: '',
         name: '',
@@ -53,25 +53,38 @@
 
     function changeFollwings(event) {
         if (event.detail.isCreate) {
-            followings = followings.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 1 } : following);
+            userList = userList.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 1 } : following);
         }
 
         if (event.detail.isDelete) {
-            followings = followings.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 0 } : following);
+            userList = userList.map(following => following.user_id === event.detail.id ? { ...following, amIFollowing: 0 } : following);
+        }
+    }
+
+    async function handleFilter(key=null) {
+        key = this?.value !== undefined ? this.value : key;
+
+        if (key === 'following') {
+            userList = await getFollowings();
+        } else {
+            userList = await getFollowers();
         }
     }
 
     async function handleSearch() {
         try {
+            if (!searchUser) {
+                handleFilter(selectedFilter);
+            }
+            
             const res = await fetch(`/api/users?id=${searchUser}`)
-
             if (res.status === 200) {
-                followings = await res.json();
+                userList = await res.json();
             } else {
-                followings = [];
+                userList = [];
             }
         } catch (err) {
-            followings = [];
+            userList = [];
             console.error(err);
         }
     }
@@ -84,8 +97,11 @@
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
-        followers = await getFollowers();
-        followings = await getFollowings();
+
+        const queryParams = new URLSearchParams(location.search);
+        const type = queryParams.get("type");
+        selectedFilter = type ?? 'follower';
+        handleFilter(selectedFilter);
     })
 </script>
 
@@ -93,7 +109,7 @@
     <Header></Header>
     <div class="follow__contents">
         <div class="title">
-            <div class="title__text--big"><img src="{human}" alt="human"> 팔로우 관리</div>
+            <div class="title__text--big"><img src="{humanIcon}" alt="human"> 팔로우 관리</div>
             <div class="title__text--small">개발자 노예로 살아가는 저의 페이지에 오신걸 환영합니다. 팔로우 해주세요:D Plz...</div>
         </div>
         <div class="follow__wrap">
@@ -104,20 +120,28 @@
             <div class="contents">
                 <div class="contents__wrap">
                     <div class="search">
-                        <img src="{search}" alt="search">
+                        <img src="{searchIcon}" alt="search">
                         <input type="text" class="search__input" placeholder="아이디 검색" bind:value={searchUser} on:input={debouncedSearch}>
                     </div>
-                    <label class="order" for="order">
-                        <select name="order" id="order">
-                            <option value="">정렬 기준 기본</option>
-                            <option value="newer">최신 순</option>
-                            <option value="name">이름 순</option>
-                        </select>
-                    </label>
+                    <div class="selector__wrap">
+                        <label class="filter selector" for="filter">
+                            <select name="filter" id="filter" class="selector__select" bind:value={selectedFilter} on:change={handleFilter}>
+                                <option value="follower">팔로워</option>
+                                <option value="following">팔로잉</option>
+                            </select>
+                        </label>
+                        <label class="order selector" for="order">
+                            <select name="order" id="order" class="selector__select">
+                                <option value="">정렬 기준 기본</option>
+                                <option value="newer">최신 순</option>
+                                <option value="name">이름 순</option>
+                            </select>
+                        </label>
+                    </div>
                 </div>
                 <div class="humans">
-                    {#each followings as following} 
-                        <FollowCP on:editFollow={changeFollwings} user={following}></FollowCP>
+                    {#each userList as user} 
+                        <FollowCP on:editFollow={changeFollwings} user={user}></FollowCP>
                     {/each}
                 </div>
             </div>
@@ -189,13 +213,19 @@
     .search__input:focus {
         outline: none;
     }
-    .order {
-        width: 190px;
+
+    .selector__wrap {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 10px;
+    }
+    .selector {
         background-color: #21262C;
         border-radius: 10px;
         display: flex;
+        padding: 0 10px;
     }
-    #order {
+    .selector__select {
         background-color: transparent;
         color: #fff;
         width: 100%;
@@ -205,7 +235,7 @@
         border: none;
         outline: none;
     }
-    #order > option {
+    .selector__select > option {
         background-color: #21262C;
         color: #fff;
         border: none;

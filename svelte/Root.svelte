@@ -16,8 +16,12 @@
     }
 
     onMount(async () => {
+        const currentPath = location.pathname;
+        const searchParam = location.search;
+        const hash = location.hash;
+        
         if (await isLogin()) {
-            navigate("/my-page", { replace: true });
+            navigate(currentPath + hash + searchParam, { replace: true });
         } else {
             navigate("/intro", { replace: true });
         }

@@ -1,4 +1,10 @@
 <script>
+    import { navigate } from "svelte-routing/src/history";
+
+    function redirect(url) {
+        navigate(`${url}`, { replace: true });
+    }
+
     export let user = {
         id: '',
         name: '',
@@ -16,14 +22,14 @@
     <div class="profile__text profile__text--small email">{user.id}</div>
     <div class="profile__button">프로필 편집</div>
     <div class="profile__wrap">
-        <div class="profile__wrap-text">
+        <button class="profile__wrap-text" on:click={() => redirect('/follow?type=follower')}>
             <div class="profile__text--white profile__text--bold">{user.followers}</div>
             <div class="profile__text">followers</div>
-        </div>
-        <div class="profile__wrap-text">
+        </button>
+        <button class="profile__wrap-text" on:click={() => redirect('/follow?type=following')}>
             <div class="profile__text--white profile__text--bold">{user.following}</div>
             <div class="profile__text">following</div>
-        </div>
+        </button>
     </div>
 </div>
 
