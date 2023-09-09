@@ -87,7 +87,7 @@
             <img src="{closeIcon}" class="close__image" alt="close" >
         </button>
         <label for="title" class="title__wrap">
-            <input type="text" id="title" class="title" placeholder="그룹명" bind:value={title}>
+            <input type="text" id="title" class="title" placeholder="그룹명" bind:value={title} maxlength="10">
             <button class="empty-title" on:click={emptyTitle}>
                 <img src="{closeCircle}" alt="closeCircle">
             </button>

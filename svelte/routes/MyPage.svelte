@@ -6,11 +6,18 @@
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
     import Block from "../components/Block.svelte";
+    import GroupPopup from "../components/group/GroupPopup.svelte";
 
     import info from '../public/images/icons/infomation-icon.svg';
     import leftArrow from '../public/images/icons/arrow-left-icon.svg';
     import rightArrow from '../public/images/icons/arrow-right-icon.svg';
 
+    let isShow = false;
+    let isCreate = true;
+    let id = '';
+    let title = '';
+    let type = '2';
+    let groups = [];
     let user = {
         id: '',
         name: '',
@@ -18,6 +25,34 @@
         followers: 0,
         following: 0
     };
+
+    function showCreateGroupPopup() {
+        isCreate = true;
+        id = '';
+        title = '';
+        type = '2';
+        isShow = !isShow;
+    }
+
+    async function changeGroups(event) {
+        if (event.detail.isCreate) {
+            groups = await getGroups();
+        }
+    }
+
+    async function getGroups() {
+        try {
+            const res = await fetch('/api/groups');
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
 
     onMount(async () => {
         user = {
@@ -27,6 +62,7 @@
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
+        groups = await getGroups();
     })
 </script>
 
@@ -86,13 +122,11 @@
                         <div class="calendar__arrow"><img src="{rightArrow}" alt="right-arrow" /></div>
                     </div>
                 </div>
-                <div class="folders">
-                    <div class="folder__item active">폴더1</div>
-                    <div class="folder__item">폴더2</div>
-                    <div class="folder__item">폴더3</div>
-                    <div class="folder__item">폴더4</div>
-                    <div class="folder__item">폴더5</div>
-                    <div class="folder__item">+</div>
+                <div class="groups">
+                    {#each groups as item}
+                        <div class="group__item">{item.title}</div>
+                    {/each}
+                    <button class="group__item" on:click={showCreateGroupPopup}>+</button>
                 </div>
                 <div class="blocks">
                     <Block></Block>
@@ -100,6 +134,7 @@
             </div>
         </div>
     </div>
+    <GroupPopup on:complete={changeGroups} isShown={isShow} isCreate={isCreate} id={id} title={title} type={type} on:close={() => isShow = false} />
 </div>
 
 <style>
@@ -194,15 +229,34 @@
         font-weight: bold;  
     }
 
-    .folders {
+    .groups {
         width: 100%;
         display: flex;
         flex-flow: row nowrap;
         gap: 5px;
         margin-top: 55px;
+        overflow-x: auto;
+        max-width: 100%;
+        padding: 10px 0;
     }
-    .folder__item {
-        width: 95px;
+    .groups::-webkit-scrollbar {
+        width: 8px; 
+        height: 8px;
+    }
+    .groups::-webkit-scrollbar-thumb {
+        background-color: #2F81F7;
+        border-radius: 4px; 
+    }
+    .groups::-webkit-scrollbar-track {
+        background-color: #21262C;
+        border-radius: 4px;
+    }
+    .groups {
+        scrollbar-width: thin; 
+        scrollbar-color: #2F81F7 #21262C; 
+    }
+    .group__item {
+        min-width: 95px;
         height: 45px;
         background-color: #21262C;
         color: #757575;
@@ -213,8 +267,18 @@
         align-items: center;
         justify-content: center;
         cursor: pointer;
+        padding: 0 10px;
+        flex: 0 0 auto;
+        transition: .2s;
     }
-    .folder__item.active {
+    .group__item:hover {
+        background-color: #2F81F7;
+        color: #fff;
+    }
+    .group__item + .group__item {
+        margin-left: 5px;
+    }
+    .group__item.active {
         background-color: #2F81F7;
         color: #fff;
     }

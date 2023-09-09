@@ -2,7 +2,8 @@
     import { navigate } from "svelte-routing/src/history";
 
     function redirect(url) {
-        navigate(`${url}`, { replace: true });
+        // navigate(`${url}`, { replace: true });
+        location.href = url;
     }
 
     export let user = {

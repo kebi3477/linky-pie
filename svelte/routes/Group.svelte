@@ -124,7 +124,7 @@
     }
     .group__contents {
         width: 1200px;
-        padding-top: 100px;
+        padding: 100px 0;
     }
     .group__wrap {
         display: grid;
