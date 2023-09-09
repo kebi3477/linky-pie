@@ -1,11 +1,13 @@
-import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res, UseInterceptors, ClassSerializerInterceptor } from '@nestjs/common';
+import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpStatus, Query, Param, UseGuards, HttpCode, Req, Res, UseInterceptors, ClassSerializerInterceptor, UploadedFile } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDTO } from './user.dto';
+import { CreateUserDTO, UpdateUserNameDTO } from './user.dto';
 import { User } from '../user/user.entity';
 import { UserMessage } from './user.message';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
 import { FollowerMessage } from '../follower/follower.message';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { multerConfig } from 'multer.config';
 
 @Controller('users')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -42,6 +44,35 @@ export class UserController {
             return await this.service.findAllUsers(request.user.id, id);
         } catch (error) {
             throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Patch('/name')
+    @UseGuards(JwtAuthenticationGuard)
+    async updateName(@Req() request: RequestWithUser, @Body() updateUserNameDTO: UpdateUserNameDTO): Promise<User> {
+        try {
+            return await this.service.updateName(request.user.id, updateUserNameDTO);
+        } catch (error) {
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else {
+                throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+    }
+
+    @Patch('/image')
+    @UseGuards(JwtAuthenticationGuard)
+    @UseInterceptors(FileInterceptor('profileImage', multerConfig))
+    async updateProfileImage(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File): Promise<any> {
+        try {
+            return await this.service.updateProfileImage(request.user.id, file);
+        } catch (error) {
+            if (error.message === UserMessage.NOT_FOUND) {
+                throw new HttpException(UserMessage.NOT_FOUND, HttpStatus.NOT_FOUND);
+            } else {
+                throw new HttpException(UserMessage.SERVER_ERROR, HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
     }
 

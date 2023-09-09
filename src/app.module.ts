@@ -14,7 +14,7 @@ import { BlockSeriesModule } from './block-series/block-series.module';
 @Module({
     imports: [
         ServeStaticModule.forRoot({
-            rootPath: join(__dirname, '..', 'client'),
+            rootPath: join(process.cwd(), 'client'),
         }),
         ConfigModule.forRoot({
             isGlobal: true,

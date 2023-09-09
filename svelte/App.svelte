@@ -9,6 +9,7 @@
     import Intro from './routes/Intro.svelte';
     import Mypage from './routes/MyPage.svelte';
     import Follow from './routes/Follow.svelte';
+    import EditProfile from './routes/EditProfile.svelte';
 
     import simbol from './public/images/simbol.svg';
     
@@ -32,6 +33,7 @@
         <Route path="intro" component={Intro}></Route>
         <Route path="my-page" component={Mypage}></Route>
         <Route path="follow" component={Follow}></Route>
+        <Route path="edit-profile" component={EditProfile}></Route>
         <Route path="/" component={Root}></Route>
     </Router>
 </main>

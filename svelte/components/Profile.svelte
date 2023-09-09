@@ -21,7 +21,7 @@
     </div>
     <div class="profile__text--white profile__text--big title">{user.name}</div>
     <div class="profile__text profile__text--small email">{user.id}</div>
-    <div class="profile__button">프로필 편집</div>
+    <button class="profile__button" on:click={() => redirect('/edit-profile')}>프로필 편집</button>
     <div class="profile__wrap">
         <button class="profile__wrap-text" on:click={() => redirect('/follow?type=follower')}>
             <div class="profile__text--white profile__text--bold">{user.followers}</div>
@@ -55,8 +55,12 @@
         overflow: hidden;
     }
     .profile__image > img {
-        width: 100%;
-        height: 100%;
+        max-width: 100%;
+        max-height: 100%;
+        min-width: 100%;
+        min-height: 100%;
+        object-fit: cover;
+        object-position: center; 
     }
     .profile__text {
         color: #777777;

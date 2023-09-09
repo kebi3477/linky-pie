@@ -1,13 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import * as bcrypt from 'bcrypt';
 import { UserRepository } from './user.repository';
-import { CreateUserDTO } from './user.dto';
-import { Provider, User } from './user.entity';
+import { CreateUserDTO, UpdateUserNameDTO } from './user.dto';
+import { User } from './user.entity';
 import { UserMessage } from './user.message';
 import { Logger } from '../module/logger';
 import { FollowerRepository } from '../follower/follower.repository';
 import { Follower } from '../follower/follower.entity';
 import { FollowerMessage } from '../follower/follower.message';
+import multer from 'multer';
+import path from 'path';
 
 @Injectable()
 export class UserService {
@@ -79,6 +80,62 @@ export class UserService {
      */
     public async findAllUsers(userId: string, searchId?: string): Promise<User[]> {
         return this.model.findAllUsers(userId, searchId);
+    }
+
+    /**
+     * 사용자 이름 수정
+     * 
+     * @param userId 수정할 아이디
+     * @param updateUserNameDTO 이름 수정 DTO
+     * @returns 사용자
+     */
+    public async updateName(userId: string, updateUserNameDTO: UpdateUserNameDTO): Promise<User> {
+        try {
+            this.logger.log(`[사용자 이름 수정] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.model.read(userId);
+            if (!user) {
+                this.logger.log(`[사용자 이름 수정] 이름 수정 실패  [ userId : ${userId} ] -> 존재하지 않는 사용자`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+                        
+            user.name = updateUserNameDTO.name;
+            await this.model.save(user);
+            this.logger.log(`[사용자 이름 수정] 성공 [ userId : ${userId} ] `);
+        
+            return user;
+        } catch (error) {
+            this.logger.error(`[사용자 이름 수정] 오류! => ${error.message}`);
+            throw error;
+        }
+    }
+
+    /**
+     * 사용자 프로필 이미지 수정
+     * 
+     * @param userId 수정할 아이디
+     * @param file 프로필 이미지 파일
+     * @returns 사용자
+     */
+    public async updateProfileImage(userId: string, file: Express.Multer.File): Promise<User> {
+        try {
+            this.logger.log(`[사용자 프로필 이미지 수정] API 호출 [ userId : ${userId} ]`);
+
+            const user: User = await this.model.read(userId);
+            if (!user) {
+                this.logger.log(`[사용자 프로필 이미지 수정] 이미지 수정 실패  [ userId : ${userId} ] -> 존재하지 않는 사용자`);
+                throw new Error(UserMessage.NOT_FOUND);
+            }
+
+            user.image = process.env.PROJECT_URL + '/uploads/' + file.filename;
+            await this.model.save(user);
+            this.logger.log(`[사용자 프로필 이미지 수정] 성공 [ userId : ${userId} ] `);
+
+            return user;
+        } catch (error) {
+            this.logger.error(`[사용자 프로필 이미지 수정] 오류! => ${error.message}`);
+            throw error;
+        }
     }
 
     /**
@@ -203,5 +260,19 @@ export class UserService {
             this.logger.error(`[팔로잉 목록 조회] 오류! => ${error.message}`);
             throw error;
         }
+    }
+
+    public getMulterConfig() {
+        const storage = multer.diskStorage({
+            destination: (req, file, cb) => {
+                cb(null, './uploads/'); // 이미지가 저장될 경로
+            },
+            filename: (req, file, cb) => {
+                const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+                cb(null, file.fieldname + '-' + uniqueSuffix + path.extname(file.originalname)); 
+            }
+        });
+    
+        return { storage: storage };
     }
 }

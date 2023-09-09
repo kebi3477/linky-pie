@@ -20,3 +20,10 @@ export class CreateUserDTO {
 
     provider?: Provider;
 }
+
+export class UpdateUserNameDTO {
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(20)
+    name: string;
+}

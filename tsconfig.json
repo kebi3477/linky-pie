@@ -17,6 +17,6 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
-    "types": ["express", "jest"]
+    "types": ["express", "jest", "Multer"]
   }
 }
