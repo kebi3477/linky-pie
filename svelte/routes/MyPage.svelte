@@ -278,10 +278,10 @@
     .group__item + .group__item {
         margin-left: 5px;
     }
-    .group__item.active {
+    /* .group__item.active {
         background-color: #2F81F7;
         color: #fff;
-    }
+    } */
     .blocks {
         margin-top: 20px;
     }

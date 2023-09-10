@@ -41,13 +41,13 @@
 <style>
     @font-face {
         font-family: 'Noto Sans KR';
-        src: url('NotoSans-Regular.woff2') format('woff2');
+        src: url('../NotoSans-Regular.woff2') format('woff2');
         font-weight: normal;
         font-style: normal;
     }
     @font-face {
         font-family: 'Ramche';
-        src: url('Ramche.ttf') format('woff2');
+        src: url('../Ramche.ttf') format('woff2');
         font-weight: normal;
         font-style: normal;
     }

@@ -5,7 +5,7 @@
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
     import MyPageMenu from "../components/MyPageMenu.svelte";
-    import GroupCp from "../components/group/GroupCP.svelte";
+    import GroupCP from "../components/group/GroupCP.svelte";
     import GroupPopup from "../components/group/GroupPopup.svelte";
 
     import folder from '../public/images/icons/folder-icon-big.svg';
@@ -105,7 +105,7 @@
                 </div>
                 <div class="group__list">
                     {#each groups as item}
-                        <GroupCp group={item} on:editGroup={showUpdateGroupPopup} on:complete={changeGroups}></GroupCp>
+                        <GroupCP group={item} on:editGroup={showUpdateGroupPopup} on:complete={changeGroups}></GroupCP>
                     {/each}
                 </div>
             </div>
