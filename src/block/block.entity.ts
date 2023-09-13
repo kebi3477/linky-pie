@@ -1,9 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
 import { BlockGroup } from '../block-group/block-group.entity';
 import { User } from '../user/user.entity';
-import { Retrospective } from '../retrospective/retrospective.entity';
 import { BlockComment } from '../block-comment/block-comment.entity';
-import { BlockSeries } from 'src/block-series/block-series.entity';
 import { BlockSeriesBlock } from 'src/block-series-block/block-series-block.entity';
 
 @Entity('blocks')
@@ -80,9 +78,6 @@ export class Block {
         comment: '수정날짜' 
     })
     updatedAt: Date | null;
-
-    @OneToMany(() => Retrospective, (retrospective) => retrospective.block)
-    retrospectives: Retrospective[];
 
     @OneToMany(() => BlockComment, (blockComment) => blockComment.block)
     blockComment: BlockComment[];

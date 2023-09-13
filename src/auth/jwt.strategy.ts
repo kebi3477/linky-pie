@@ -6,6 +6,7 @@ import { Request } from 'express';
 import { TokenPayload } from './auth.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { AuthService } from './auth.service';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {

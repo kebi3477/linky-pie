@@ -10,6 +10,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { KakaoStrategy } from './kakao.strategy';
 import { GoogleStrategy } from './google.strategy';
 import { NaverStrategy } from './naver.strategy';
+import { UserService } from 'src/user/user.service';
 
 @Module({
     imports: [ 

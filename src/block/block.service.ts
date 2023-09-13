@@ -5,15 +5,15 @@ import { Block } from './block.entity';
 import axios from 'axios';
 import cheerio from 'cheerio';
 import { UserRepository } from '../user/user.repository';
-import { UserMessage } from '../user/user.message';
-import { BlockMessage } from './block.message';
 import { Logger } from '../module/logger';
 import { BlockGroup } from '../block-group/block-group.entity';
 import { GroupRepository } from '../block-group/block-group.repository';
 import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 import { User } from '../user/user.entity';
 import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
-import { UserLikesBLockMessage } from '../userLikesBlock/userLikesBlock.message';
+import { UserNotFoundError } from 'src/user/user.error';
+import { BlockNotFoundError, BlockServerError } from './block.error';
+import { UserLikesBlockConflictError, UserLikesBlockNotFoundError } from 'src/userLikesBlock/userLikesBlock.error';
 
 @Injectable()
 export class BlockService {
@@ -35,50 +35,46 @@ export class BlockService {
      * @returns 생성한 Block
      */
     public async create(userId: string, groupId: null|string, createBlockDTO: CreateBlockDTO): Promise<Block> {
-        try {
-            this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const contents: string = await this.getContentsByURL(createBlockDTO.link);
-            if (!contents) {
-                this.logger.log(`[블록 생성] 크롤링 실패`);
-                throw new Error(BlockMessage.NOT_FOUND_CONTENT);
-            }
-
-            const msg: string = await this.callChatGPT(contents);
-            if (!msg) {
-                this.logger.log(`[블록 생성] GPT 호출 실패 [ msg : ${msg} ] `);
-                throw new Error(BlockMessage.GPT_ERROR);
-            }
-
-            const res = JSON.parse(msg);
-            
-            if (groupId !== null) {
-                const group: BlockGroup = await this.groupModel.read(groupId);
-                createBlockDTO.blockGroup = group;
-            } else {
-                createBlockDTO.blockGroup = null;
-            }
-
-            createBlockDTO.user = user;
-            createBlockDTO.title = res.title;
-            createBlockDTO.subtitle = res.subtitle;
-            createBlockDTO.content = res.body;
-            createBlockDTO.hashtag = res.hashtag;
-        
-            this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
-            const newBlock: Block = this.model.create(createBlockDTO);
-            this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
-            return await this.model.save(newBlock);
-        } catch (error) {
-            this.logger.error(`[블록 생성] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 생성] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const contents: string = await this.getContentsByURL(createBlockDTO.link);
+        if (!contents) {
+            this.logger.log(`[블록 생성] 크롤링 실패`);
+            throw new BlockNotFoundError('URL 정보를 가져오지 못했습니다.');
+        }
+
+        const msg: string = await this.callChatGPT(contents);
+        if (!msg) {
+            this.logger.log(`[블록 생성] GPT 호출 실패 [ msg : ${msg} ] `);
+            throw new BlockServerError('AI가 처리 중 오류가 발생했습니다.');
+        }
+
+        const res = JSON.parse(msg);
+        
+        if (groupId !== null) {
+            const group: BlockGroup = await this.groupModel.read(groupId);
+            createBlockDTO.blockGroup = group;
+        } else {
+            createBlockDTO.blockGroup = null;
+        }
+
+        createBlockDTO.user = user;
+        createBlockDTO.title = res.title;
+        createBlockDTO.subtitle = res.subtitle;
+        createBlockDTO.content = res.body;
+        createBlockDTO.hashtag = res.hashtag;
+    
+        this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
+        const newBlock: Block = this.model.create(createBlockDTO);
+        this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
+
+        return await this.model.save(newBlock);
     }
 
     /**
@@ -88,27 +84,22 @@ export class BlockService {
      * @param blockId 블록ID
      */
     public async read(userId: string, blockId: string): Promise<Block> {
-        try {
-            this.logger.log(`[블록 조회] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const block: Block = await this.model.getBlockByUserId(blockId, userId);
-            if (!block) {
-                this.logger.log(`[블록 조회] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
-                throw new Error(BlockMessage.NOT_FOUND);
-            }
-
-            this.logger.log(`[블록 조회] 성공 [ blockId : ${blockId} ] `);
-            return block;
-        } catch (error) {
-            this.logger.error(`[블록 조회] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const block: Block = await this.model.getBlockByUserId(blockId, userId);
+        if (!block) {
+            this.logger.log(`[블록 조회] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+            throw new BlockNotFoundError();
+        }
+
+        this.logger.log(`[블록 조회] 성공 [ blockId : ${blockId} ] `);
+        return block;
     }
 
     /**
@@ -120,29 +111,24 @@ export class BlockService {
      * @return 수정한 블록
      */
     public async update(userId: string, blockId: string, updateBlockDTO: UpdateBlockDTO): Promise<Block> {
-        try {
-            this.logger.log(`[블록 수정] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 수정] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const block: Block = await this.model.getBlockByUserId(blockId, userId);
-            if (!block) {
-                this.logger.log(`[블록 수정] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
-                throw new Error(BlockMessage.NOT_FOUND);
-            }
-            
-            Object.assign(block, updateBlockDTO);
-            this.logger.log(`[블록 수정] 성공 [ blockId : ${blockId} ] `);
-
-            return await this.model.save(block);
-        } catch (error) {
-            this.logger.error(`[블록 수정] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 수정] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const block: Block = await this.model.getBlockByUserId(blockId, userId);
+        if (!block) {
+            this.logger.log(`[블록 수정] 실패 [ blockId : ${block}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+            throw new BlockNotFoundError();
+        }
+        
+        Object.assign(block, updateBlockDTO);
+        this.logger.log(`[블록 수정] 성공 [ blockId : ${blockId} ] `);
+
+        return await this.model.save(block);
     }
 
     /**
@@ -152,29 +138,24 @@ export class BlockService {
      * @param blockId 블록ID
      */
     public async delete(userId: string, blockId: string): Promise<Block> {
-        try {
-            this.logger.log(`[블록 삭제] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 삭제] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const block: Block = await this.model.getBlockByUserId(blockId, userId);
-            if (!block) {
-                this.logger.log(`[블록 삭제] 실패 [ blockId : ${blockId}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
-                throw new Error(BlockMessage.NOT_FOUND);
-            }
-
-            await this.model.delete(blockId);
-            this.logger.log(`[블록 삭제] 성공 [ blockId : ${blockId} ] `);
-            
-            return block;
-        } catch (error) {
-            this.logger.error(`[블록 삭제] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 삭제] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const block: Block = await this.model.getBlockByUserId(blockId, userId);
+        if (!block) {
+            this.logger.log(`[블록 삭제] 실패 [ blockId : ${blockId}, userId : ${userId} ] -> 블록을 찾을 수 없음`);
+            throw new BlockNotFoundError();
+        }
+
+        await this.model.delete(blockId);
+        this.logger.log(`[블록 삭제] 성공 [ blockId : ${blockId} ] `);
+        
+        return block;
     }
 
     /**
@@ -184,20 +165,15 @@ export class BlockService {
      * @returns Block[]
      */
     public async getBlockListByUser(userId: string): Promise<Block[]> {
-        try {
-            this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const user = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            return await this.model.getBlockListByUser(user);
-        } catch (error) {
-            console.log(error);
-            throw error;
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        return await this.model.getBlockListByUser(user);
     }
 
     /**
@@ -207,17 +183,12 @@ export class BlockService {
      * @returns Block[]
      */
     public async getBlockList(blockGroupId: string): Promise<Block[]> {
-        try {
-            this.logger.log(`[블록 목록 조회] API 호출 [ blockGroupId : ${blockGroupId} ]`);
+        this.logger.log(`[블록 목록 조회] API 호출 [ blockGroupId : ${blockGroupId} ]`);
 
-            const blockGroup: BlockGroup = new BlockGroup();
-            blockGroup.id = blockGroupId;
+        const blockGroup: BlockGroup = new BlockGroup();
+        blockGroup.id = blockGroupId;
 
-            return await this.model.getBlockListByGroup(blockGroup);
-        } catch (error) {
-            console.log(error);
-            throw error;
-        }
+        return await this.model.getBlockListByGroup(blockGroup);
     }
 
     /**
@@ -228,35 +199,31 @@ export class BlockService {
      * @returns 좋아요 정보
      */
     public async createLikes(userId: string, blockId: string): Promise<UserLikesBlock> {
-        try {
-            this.logger.log(`[블록 좋아요] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 좋아요] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 좋아요] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const block: Block = await this.model.read(blockId);
-            if (!block) {
-                this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
-                throw new Error(BlockMessage.NOT_FOUND);
-            }
-
-            const isExisted: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
-            if (isExisted) {
-                this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 이미 좋아요를 했습니다.`);
-                throw new Error(UserLikesBLockMessage.CONFLICT);
-            }
-        
-            this.logger.log(`[블록 좋아요] 시작 [ blockId : ${blockId} ]`);
-            const likes: UserLikesBlock = this.userLikesBlockModel.create(userId, blockId);
-            this.logger.log(`[블록 좋아요] 성공 [ id : ${likes.id} ] `);
-            return await this.userLikesBlockModel.save(likes);
-        } catch (error) {
-            this.logger.error(`[블록 좋아요] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user: User = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 좋아요] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const block: Block = await this.model.read(blockId);
+        if (!block) {
+            this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
+            throw new BlockNotFoundError();
+        }
+
+        const isExisted: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
+        if (isExisted) {
+            this.logger.log(`[블록 좋아요] 실패 [ blockId : ${blockId} ] -> 이미 좋아요를 했습니다.`);
+            throw new UserLikesBlockConflictError();
+        }
+    
+        this.logger.log(`[블록 좋아요] 시작 [ blockId : ${blockId} ]`);
+        const likes: UserLikesBlock = this.userLikesBlockModel.create(userId, blockId);
+        this.logger.log(`[블록 좋아요] 성공 [ id : ${likes.id} ] `);
+
+        return await this.userLikesBlockModel.save(likes);
     }
 
     /**
@@ -267,36 +234,31 @@ export class BlockService {
      * @returns 좋아요 정보
      */
     public async deleteLikes(userId: string, blockId: string): Promise<UserLikesBlock> {
-        try {
-            this.logger.log(`[블록 좋아요 취소] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 좋아요 취소] API 호출 [ userId : ${userId} ]`);
 
-            const user: User = await this.userModel.read(userId);
-            if (!user) {
-                this.logger.log(`[블록 좋아요 취소] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
-                throw new Error(UserMessage.NOT_FOUND);
-            }
-
-            const block: Block = await this.model.read(blockId);
-            if (!block) {
-                this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
-                throw new Error(BlockMessage.NOT_FOUND);
-            }
-
-            const likes: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
-            if (!likes) {
-                this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 좋아요를 찾을 수 없습니다.`);
-                throw new Error(UserLikesBLockMessage.NOT_FOUND);
-            }
-        
-            this.logger.log(`[블록 좋아요 취소] 시작 [ blockId : ${blockId} ]`);
-            this.userLikesBlockModel.delete(likes.id);
-            this.logger.log(`[블록 좋아요 취소] 성공 [ id : ${likes.id} ] `);
-
-            return likes;
-        } catch (error) {
-            this.logger.error(`[블록 좋아요 취소] 에러! [ error : ${error.message} ] `);
-            throw error;
+        const user: User = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 좋아요 취소] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const block: Block = await this.model.read(blockId);
+        if (!block) {
+            this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 블록을 찾을 수 없음`);
+            throw new BlockNotFoundError();
+        }
+
+        const likes: UserLikesBlock = await this.userLikesBlockModel.read(userId, blockId);
+        if (!likes) {
+            this.logger.log(`[블록 좋아요 취소] 실패 [ blockId : ${blockId} ] -> 좋아요를 찾을 수 없습니다.`);
+            throw new UserLikesBlockNotFoundError();
+        }
+    
+        this.logger.log(`[블록 좋아요 취소] 시작 [ blockId : ${blockId} ]`);
+        this.userLikesBlockModel.delete(likes.id);
+        this.logger.log(`[블록 좋아요 취소] 성공 [ id : ${likes.id} ] `);
+
+        return likes;
     }
 
     /**
@@ -306,17 +268,18 @@ export class BlockService {
      * @returns Block[]
      */
     public async getLikesBlockList(userId: string): Promise<Block[]> {
-        try {
-            this.logger.log(`[좋아요 블록 목록 조회] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[좋아요 블록 목록 조회] API 호출 [ userId : ${userId} ]`);
 
-            const userLikesBlocks: UserLikesBlock[] = await this.userLikesBlockModel.getBlocksByUser(userId);
-            const likedBlocks: Block[] = userLikesBlocks.map(ulb => ulb.block);
-
-            return likedBlocks;
-        } catch (error) {
-            console.log(error);
-            throw error;
+        const user: User = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[좋아요 블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
         }
+
+        const userLikesBlocks: UserLikesBlock[] = await this.userLikesBlockModel.getBlocksByUser(userId);
+        const likedBlocks: Block[] = userLikesBlocks.map(ulb => ulb.block);
+
+        return likedBlocks;
     }
 
     /**
@@ -373,6 +336,7 @@ export class BlockService {
             }
         } catch (error) {
             this.logger.log(`[GPT 호출] 오류 출력 [ error : ${error.message} ]`);
+            return "";
         }
     }
 

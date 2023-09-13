@@ -7,7 +7,6 @@ import { UserModule } from './user/user.module';
 import { BlockModule } from './block/block.module';
 import { AuthModule } from './auth/auth.module';
 import { GroupModule } from './block-group/block-group.module';
-import { RetrospectiveModule } from './retrospective/retrospective.module';
 import { BlockCommentModule } from './block-comment/block-comment.module';
 import { BlockSeriesModule } from './block-series/block-series.module';
 
@@ -39,7 +38,6 @@ import { BlockSeriesModule } from './block-series/block-series.module';
         BlockModule,
         AuthModule,
         GroupModule,
-        RetrospectiveModule,
         BlockCommentModule,
         BlockSeriesModule,
     ],

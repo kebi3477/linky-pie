@@ -9,7 +9,7 @@ export class BlockComment {
     })
     id: number;
 
-    @ManyToOne(() => Block, (block) => block.retrospectives, { 
+    @ManyToOne(() => Block, (block) => block.blockComment, { 
         onUpdate: 'CASCADE',
         onDelete: 'CASCADE' 
     })
