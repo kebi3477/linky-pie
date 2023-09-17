@@ -11,6 +11,9 @@
     }
 
     function closePopup() {
+        id = '';
+        title = '';
+        type = '2';
         dispatch('close');
     }
 

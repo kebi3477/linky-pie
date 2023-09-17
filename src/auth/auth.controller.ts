@@ -53,11 +53,14 @@ export class AuthController {
         return response.send(req);
     }
 
-    @Post('logout')
+    @Get('/logout')
     @HttpCode(HttpStatus.OK)
-    async logout(@Req() request: RequestWithUser, @Res() response: Response): Promise<Response<any, Record<string, any>>> {
-        response.setHeader('Set-Cookie', this.service.getCookieForLogOut());
-        
-        return response.sendStatus(HttpStatus.OK);
+    async logout(@Req() req: RequestWithUser, @Res() response: Response): Promise<Response<any, Record<string, any>>> {
+        const cookie = this.service.getCookieForLogOut();
+
+        response.setHeader('Set-Cookie', cookie);
+        response.redirect('/');
+
+        return response.send(req);
     }
 }

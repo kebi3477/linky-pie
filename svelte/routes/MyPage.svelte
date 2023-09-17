@@ -25,13 +25,15 @@
         followers: 0,
         following: 0
     };
+    let today = new Date();
+    let days = [];
 
     function showCreateGroupPopup() {
         isCreate = true;
         id = '';
         title = '';
         type = '2';
-        isShow = !isShow;
+        isShow = true;
     }
 
     async function changeGroups(event) {
@@ -54,6 +56,50 @@
         }      
     }
 
+    const getWeekNumber = (date) => {
+        const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
+        const pastDayOfMonth = (date - firstDayOfMonth + 86400000) / 86400000;
+
+        return Math.ceil((pastDayOfMonth + firstDayOfMonth.getDay() + 1) / 7) - 1;
+    }
+
+    const generateWeek = (date) => {
+        const startOfWeek = new Date(date);
+        startOfWeek.setDate(date.getDate() - date.getDay());
+
+        const endOfWeek = new Date(date);
+        endOfWeek.setDate(startOfWeek.getDate() + 6);
+
+        days = [];
+        for (let i = 0; i < 7; i++) {
+            const day = new Date(startOfWeek);
+            day.setDate(day.getDate() + i);
+            days.push(day);
+        }
+
+        return {
+            start: startOfWeek,
+            end: endOfWeek,
+            weekNumber: getWeekNumber(startOfWeek)
+        };
+    }
+
+    let currentWeek = generateWeek(today);
+
+    const moveWeek = (diff) => {
+        today.setDate(today.getDate() + (diff * 7));
+        currentWeek = generateWeek(today);
+    };
+
+    const checkToday = (date) => {
+        const today = new Date();
+
+        date.setHours(0, 0, 0, 0);
+        today.setHours(0, 0, 0, 0);
+
+        return date.getTime() === today.getTime();
+    }
+
     onMount(async () => {
         user = {
             id: $userData.id,
@@ -63,6 +109,7 @@
             following: $userData.followingCount ?? 0
         };
         groups = await getGroups();
+        generateWeek(today);
     })
 </script>
 
@@ -81,45 +128,17 @@
             </div>
             <div class="contents">
                 <div class="calendar">
-                    <div class="calendar__title">2023년 8월 22일 셋째주<img src="{info}" alt="infomation" /></div>
+                    <div class="calendar__title">{currentWeek.start.getFullYear()}년 {currentWeek.start.getMonth() + 1}월 {currentWeek.weekNumber}째주<img src="{info}" alt="infomation" /></div>
                     <div class="calendar__wrap">
-                        <div class="calendar__arrow"><img src="{leftArrow}" alt="left-arrow" /></div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Sun</div>
-                            <div class="calendar__text--big">02</div>
-                            <div class="calendar__text--middle">20</div>
+                        <button class="calendar__arrow" on:click={() => moveWeek(-1)}><img src="{leftArrow}" alt="left-arrow" /></button>
+                        {#each days as day, index}
+                        <div class="calendar__day {checkToday(day) ? 'active' : ''}">
+                            <div class="calendar__text--middle">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]}</div>
+                            <div class="calendar__text--big">0</div>
+                            <div class="calendar__text--middle">{day.getDate()}</div>
                         </div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Mon</div>
-                            <div class="calendar__text--big">12</div>
-                            <div class="calendar__text--middle">21</div>
-                        </div>
-                        <div class="calendar__day active">
-                            <div class="calendar__text--middle">Sat</div>
-                            <div class="calendar__text--big">25</div>
-                            <div class="calendar__text--middle">22</div>
-                        </div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Wed</div>
-                            <div class="calendar__text--big">00</div>
-                            <div class="calendar__text--middle">23</div>
-                        </div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Tue</div>
-                            <div class="calendar__text--big">00</div>
-                            <div class="calendar__text--middle">23</div>
-                        </div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Fri</div>
-                            <div class="calendar__text--big">00</div>
-                            <div class="calendar__text--middle">24</div>
-                        </div>
-                        <div class="calendar__day">
-                            <div class="calendar__text--middle">Sat</div>
-                            <div class="calendar__text--big">00</div>
-                            <div class="calendar__text--middle">25</div>
-                        </div>
-                        <div class="calendar__arrow"><img src="{rightArrow}" alt="right-arrow" /></div>
+                        {/each}
+                        <button class="calendar__arrow" on:click={() => moveWeek(1)}><img src="{rightArrow}" alt="right-arrow" /></button>
                     </div>
                 </div>
                 <div class="groups">
