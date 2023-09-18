@@ -26,19 +26,33 @@ export class FollowerRepository {
     }
 
     public async getFollowers(userId: string): Promise<User[]> {
+        const subQuery = this.repository
+                         .createQueryBuilder('follow')
+                         .select('1', 'amIFollowing')
+                         .where('follow.user_id = :userId')
+                         .andWhere('follow.follow_id = user.id')
+                         .getQuery();
+
         return await this.userRepository
                .createQueryBuilder('user')
-               .addSelect(`CASE WHEN follow.user_id = :userId AND follow.follow_id = user.id THEN 1 ELSE 0 END`, 'amIFollowing')
-               .innerJoin('user.followers', 'follower')
-               .leftJoin('user.following', 'follow', 'follow.follow_id = user.id')
+               .addSelect(`(${subQuery})`, 'amIFollowing')
+               .innerJoin('user.followers', 'follower', 'follower.follow_id = :userId')
                .where('follower.follow_id = :userId', { userId })
+               .orderBy('user.id')
                .getRawMany();
-    }    
+    }
 
     public async getFollowings(userId: string): Promise<User[]> {
+        const subQuery = this.repository
+                         .createQueryBuilder('follow')
+                         .select('1', 'amIFollowing')
+                         .where('follow.user_id = :userId')
+                         .andWhere('follow.follow_id = user.id')
+                         .getQuery();
+
         return await this.userRepository
                .createQueryBuilder('user')
-               .addSelect(`CASE WHEN following.user_id = :userId AND following.follow_id = user.id THEN 1 ELSE 0 END`, 'amIFollowing')
+               .addSelect(`(${subQuery})`, 'amIFollowing')
                .innerJoin('user.following', 'following')
                .where('following.user_id = :userId', { userId })
                .getRawMany();
