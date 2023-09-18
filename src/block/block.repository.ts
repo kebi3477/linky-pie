@@ -33,8 +33,8 @@ export class BlockRepository {
         return await this.repository.find({ where: { user }, order: { createdAt: "DESC" } })
     }
 
-    public async getBlockListByGroup(group: BlockGroup): Promise<Block[]> {
-        return await this.repository.find({ where: { group }, order: { createdAt: "DESC" } })
+    public async getBlockListByGroup(blockGroup: BlockGroup): Promise<Block[]> {
+        return await this.repository.find({ where: { blockGroup }, order: { createdAt: "DESC" } })
     }
 
     public async getBlockByUserId(blockId: string, userId: string): Promise<Block> {

@@ -13,8 +13,8 @@ export class BlockController {
 
     @Post()
     @UseGuards(JwtAuthenticationGuard)
-    async create(@Req() request: RequestWithUser, @Body() createBlockDTO: CreateBlockDTO): Promise<Block> {
-        return await this.service.create(request.user.id, null, createBlockDTO);
+    async create(@Req() request: RequestWithUser, @Query('group_id') groupId: string, @Body() createBlockDTO: CreateBlockDTO): Promise<Block> {
+        return await this.service.create(request.user.id, groupId, createBlockDTO);
     }
 
     @Get('/:block_id([a-f0-9]{8}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{4}-[a-f0-9]{12})')

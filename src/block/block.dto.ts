@@ -15,7 +15,7 @@ export class CreateBlockDTO {
 
     hashtag: string;
 
-    blockGroup?: BlockGroup|null;
+    blockGroup: BlockGroup;
     
     user: User;
 }

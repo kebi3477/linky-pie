@@ -104,7 +104,7 @@
             </select>
         </label>
         <div class="create-group__wrap">
-            <div class="create-group__button cancel">취소</div>
+            <button class="create-group__button cancel" on:click={closePopup}>취소</button>
             <button class="create-group__button save" on:click={isCreate ? createGroup() : updateGroup()}>저장하기</button>
         </div>
     </div>

@@ -54,7 +54,7 @@ export class BlockGroup {
     })
     updatedAt: Date | null;
 
-    @OneToMany(() => Block, (block) => block.group)
+    @OneToMany(() => Block, (block) => block.blockGroup)
     blocks: Block[];
 }
   

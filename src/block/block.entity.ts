@@ -52,7 +52,7 @@ export class Block {
     @JoinColumn({ 
         name: 'group_id'
     })
-    group: BlockGroup;
+    blockGroup: BlockGroup;
 
     @ManyToOne(() => User, (user) => user.blocks, { 
         onUpdate: 'CASCADE',

@@ -1,4 +1,6 @@
 <script>
+    import loading from '../public/images/loading.svg';
+
     let isLoading = false;
 
     export function start() {
@@ -11,7 +13,7 @@
 </script>
 <div class="popup__background" class:active={isLoading}>
     <div class="loading__body">
-        <div class="loading__circle"></div>
+        <img src="{loading}" alt="loading">
     </div>
 </div>
 <style>
@@ -31,17 +33,8 @@
         width: 50px;
         height: 50px;
     }
-    .loading__circle {
+    .loading__body > img {
         width: 100%;
-        height: 100%;
-        border-radius: 100%;
-        border: 10px solid #fff;
-        border-color: #fff #fff #fff transparent;
-        animation: spin 1s linear infinite;
     }
-
-    @keyframes spin {
-        0% { transform: rotate(0deg); }
-        100% { transform: rotate(360deg); }
-    }
+    
 </style>

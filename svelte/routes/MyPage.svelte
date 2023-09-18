@@ -5,15 +5,19 @@
 
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
+    import Loading from '../components/Loading.svelte';
     import MyPageMenu from "../components/MyPageMenu.svelte";
     import Block from "../components/Block.svelte";
     import GroupPopup from "../components/group/GroupPopup.svelte";
+    import BlockPopup from '../components/block/BlockPopup.svelte';
 
     import info from '../public/images/icons/infomation-icon.svg';
     import leftArrow from '../public/images/icons/arrow-left-icon.svg';
     import rightArrow from '../public/images/icons/arrow-right-icon.svg';
 
-    let isShow = false;
+    let loading;
+    let isGroupPopupShow = false;
+    let isBlockPopupShow = false;
     let isCreate = true;
     let id = '';
     let title = '';
@@ -28,23 +32,28 @@
     };
     let today = new Date();
     let days = [];
+    let selectGroupId = '';
     const activeDate = writable(new Date());
 
-    function showCreateGroupPopup() {
+    const showGroupPopup = () => {
         isCreate = true;
         id = '';
         title = '';
         type = '2';
-        isShow = true;
+        isGroupPopupShow = true;
     }
 
-    async function changeGroups(event) {
+    const closeGroupPopup = () => {
+        isGroupPopupShow = false;
+    }
+
+    const changeGroups = async (event) => {
         if (event.detail.isCreate) {
             groups = await getGroups();
         }
     }
 
-    async function getGroups() {
+    const getGroups = async () => {
         try {
             const res = await fetch('/api/groups');
             
@@ -102,8 +111,17 @@
         return activeTime === currentTime;
     }
     
-    function selectDate(date) {
+    const selectDate = (date) => {
         activeDate.set(date);
+    }
+
+    const showBlockPopup = (groupId) => {
+        isBlockPopupShow = true;
+        selectGroupId = groupId;
+    }
+
+    const closeBlockPopup = () => {
+        isBlockPopupShow = false;
     }
 
     onMount(async () => {
@@ -119,9 +137,9 @@
     })
 </script>
 
+<Loading bind:this={loading}></Loading>
 <div class="my-page">
     <Header></Header>
-
     <div class="my-page__contents">
         <div class="title">
             <div class="title__text--big">Welcome My Linky pie page.😄</div>
@@ -149,9 +167,9 @@
                 </div>
                 <div class="groups">
                     {#each groups as item}
-                        <div class="group__item">{item.title}</div>
+                        <button class="group__item" on:click={() => showBlockPopup(item.id)}>{item.title}</button>
                     {/each}
-                    <button class="group__item" on:click={showCreateGroupPopup}>+</button>
+                    <button class="group__item" on:click={showGroupPopup}>+</button>
                 </div>
                 <div class="blocks">
                     <Block></Block>
@@ -159,7 +177,8 @@
             </div>
         </div>
     </div>
-    <GroupPopup on:complete={changeGroups} isShown={isShow} isCreate={isCreate} id={id} title={title} type={type} on:close={() => isShow = false} />
+    <BlockPopup isShown={isBlockPopupShow} groupId={selectGroupId} on:close={closeBlockPopup}></BlockPopup>
+    <GroupPopup on:complete={changeGroups} isShown={isGroupPopupShow} isCreate={isCreate} id={id} title={title} type={type} on:close={closeGroupPopup} />
 </div>
 
 <style>

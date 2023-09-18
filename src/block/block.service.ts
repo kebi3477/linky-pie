@@ -35,7 +35,7 @@ export class BlockService {
      * @returns 생성한 Block
      */
     public async create(userId: string, groupId: null|string, createBlockDTO: CreateBlockDTO): Promise<Block> {
-        this.logger.log(`[블록 생성] API 호출 [ userId : ${userId} ]`);
+        this.logger.log(`[블록 생성] API 호출 [ userId : ${userId}, groupId : ${groupId} ]`);
 
         const user = await this.userModel.read(userId);
         if (!user) {
@@ -58,7 +58,9 @@ export class BlockService {
         const res = JSON.parse(msg);
         
         if (groupId !== null) {
+            this.logger.log(`[블록 생성] 그룹 조회 [ groupId : ${groupId} ] `);
             const group: BlockGroup = await this.groupModel.read(groupId);
+            console.log(group);
             createBlockDTO.blockGroup = group;
         } else {
             createBlockDTO.blockGroup = null;
@@ -70,6 +72,7 @@ export class BlockService {
         createBlockDTO.content = res.body;
         createBlockDTO.hashtag = res.hashtag;
     
+        console.log(createBlockDTO);
         this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
         const newBlock: Block = this.model.create(createBlockDTO);
         this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
