@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { userData } from '../utils/store.js';
+    import { writable } from 'svelte/store';
 
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
@@ -27,6 +28,7 @@
     };
     let today = new Date();
     let days = [];
+    const activeDate = writable(new Date());
 
     function showCreateGroupPopup() {
         isCreate = true;
@@ -70,12 +72,14 @@
         const endOfWeek = new Date(date);
         endOfWeek.setDate(startOfWeek.getDate() + 6);
 
-        days = [];
+        const newDays = [];
         for (let i = 0; i < 7; i++) {
             const day = new Date(startOfWeek);
             day.setDate(day.getDate() + i);
-            days.push(day);
+            newDays.push(day);
         }
+
+        days = [...newDays];
 
         return {
             start: startOfWeek,
@@ -91,13 +95,15 @@
         currentWeek = generateWeek(today);
     };
 
-    const checkToday = (date) => {
-        const today = new Date();
-
-        date.setHours(0, 0, 0, 0);
-        today.setHours(0, 0, 0, 0);
-
-        return date.getTime() === today.getTime();
+    const checkSelectDate = (active, current) => {
+        const activeTime = new Date(active).setHours(0, 0, 0, 0);
+        const currentTime = new Date(current).setHours(0, 0, 0, 0);
+        
+        return activeTime === currentTime;
+    }
+    
+    function selectDate(date) {
+        activeDate.set(date);
     }
 
     onMount(async () => {
@@ -132,11 +138,11 @@
                     <div class="calendar__wrap">
                         <button class="calendar__arrow" on:click={() => moveWeek(-1)}><img src="{leftArrow}" alt="left-arrow" /></button>
                         {#each days as day, index}
-                        <div class="calendar__day {checkToday(day) ? 'active' : ''}">
+                        <button class="calendar__day" class:active={checkSelectDate($activeDate, day)} on:click={() => selectDate(day)}>
                             <div class="calendar__text--middle">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]}</div>
                             <div class="calendar__text--big">0</div>
                             <div class="calendar__text--middle">{day.getDate()}</div>
-                        </div>
+                        </button>
                         {/each}
                         <button class="calendar__arrow" on:click={() => moveWeek(1)}><img src="{rightArrow}" alt="right-arrow" /></button>
                     </div>
