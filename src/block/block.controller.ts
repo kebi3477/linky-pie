@@ -58,4 +58,10 @@ export class BlockController {
     async getLikesBlockList(@Req() request: RequestWithUser): Promise<Block[]> {
         return await this.service.getLikesBlockList(request.user.id);
     }
+
+    @Get('/counts/week')
+    @UseGuards(JwtAuthenticationGuard)
+    async getBlockCountsByWeek(@Req() request: RequestWithUser, @Query('date') date: string): Promise<any[]> {
+        return await this.service.getBlockCountsByWeek(request.user.id, date);
+    }
 }

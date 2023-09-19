@@ -72,7 +72,6 @@ export class BlockService {
         createBlockDTO.content = res.body;
         createBlockDTO.hashtag = res.hashtag;
     
-        console.log(createBlockDTO);
         this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
         const newBlock: Block = this.model.create(createBlockDTO);
         this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
@@ -232,8 +231,8 @@ export class BlockService {
     /**
      * 블록 좋아요 취소
      * 
-     * @param userId 
-     * @param blockId 
+     * @param userId 사용자 ID
+     * @param blockId 블록 ID
      * @returns 좋아요 정보
      */
     public async deleteLikes(userId: string, blockId: string): Promise<UserLikesBlock> {
@@ -267,7 +266,7 @@ export class BlockService {
     /**
      * 좋아요한 블록 목록 조회
      * 
-     * @param userId 블록 그룹 ID
+     * @param userId 사용자 ID
      * @returns Block[]
      */
     public async getLikesBlockList(userId: string): Promise<Block[]> {
@@ -285,6 +284,26 @@ export class BlockService {
         return likedBlocks;
     }
 
+    /**
+     * 한 주 블록 갯수 조회
+     * 
+     * @param userId 사용자 ID
+     * @returns any[]
+     */
+    public async getBlockCountsByWeek(userId: string, date: string): Promise<{ date: string, count: number }[]> {
+        this.logger.log(`[한 주 블록 갯수 조회] API 호출 [ userId : ${userId} ]`);
+
+        const user: User = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[한 주 블록 갯수 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
+        }
+
+        const arrays = this.model.getBlockCountsByWeek(userId, date);
+
+        return arrays;
+    }
+    
     /**
      * URL 크롤링 후 p 태그의 내용 반환
      * 

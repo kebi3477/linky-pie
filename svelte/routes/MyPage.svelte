@@ -124,6 +124,33 @@
         isBlockPopupShow = false;
     }
 
+    const getCountByWeek = async () => {
+        try {
+            const res = await fetch(`/api/blocks/counts/week?date=${days[0]}`);
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
+
+    const setCountInDays = (dates) => {
+        let tempDays = [];
+
+        for (let i = 0; i < days.length; i++) {
+            if (dates[i]) {
+                days[i].count = dates[i].count;
+                tempDays[i] = days[i];
+            }
+        }
+
+        days = tempDays;
+    }
+
     onMount(async () => {
         user = {
             id: $userData.id,
@@ -134,6 +161,7 @@
         };
         groups = await getGroups();
         generateWeek(today);
+        setCountInDays(await getCountByWeek());
     })
 </script>
 
@@ -158,7 +186,7 @@
                         {#each days as day, index}
                         <button class="calendar__day" class:active={checkSelectDate($activeDate, day)} on:click={() => selectDate(day)}>
                             <div class="calendar__text--middle">{['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][day.getDay()]}</div>
-                            <div class="calendar__text--big">0</div>
+                            <div class="calendar__text--big">{day.count ?? 0}</div>
                             <div class="calendar__text--middle">{day.getDate()}</div>
                         </button>
                         {/each}
