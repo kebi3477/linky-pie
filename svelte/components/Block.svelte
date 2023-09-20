@@ -1,28 +1,35 @@
 <script>
     import heart from '../public/images/icons/heart-blue-icon.svg';
+    import { getTimeDifferenceDescription } from '../utils/util';
+
+    const openLink = link => {
+        window.open(link);
+    }
+
+    export let block;
 </script>
 
 <div class="block">
     <div class="block__header">
         <div class="profile">
             <div class="profile__image">
-                <img src="" alt="">
+                <img src="{block.user.image}" alt="user_image">
             </div>
             <div class="profile__data">
-                <div class="profile__name">링키파이12</div>
-                <div class="profile__write_date">4시간</div>
+                <div class="profile__name">{block.user.name}</div>
+                <div class="profile__write_date">{getTimeDifferenceDescription(block.createdAt)}</div>
             </div>
         </div>
         <div class="block__button">...</div>
     </div>
     <div class="block__body">
         <div></div>
-        <div class="block__content">네이버 취업 도전기 (시리즈 최종) 입니다. 이거를 읽어보시고 여러분들한테도 도움이 되길 원한...</div>
+        <div class="block__content">{block.content}</div>
         <div></div>
-        <div class="bookmark">
-            <div class="bookmark__title">[2022 하반기]LINE 신입공채 합격후기 최종</div>
+        <button class="bookmark" on:click={() => openLink(block.link)}>
+            <div class="bookmark__title">{block.title}</div>
             <div class="bookmark__writer">by. 고동고동</div>
-        </div>
+        </button>
     </div>
     <div class="block__footer">
         <div class="block__footer-text likes">
@@ -56,6 +63,11 @@
         height: 45px;
         border-radius: 100%;
         background-color: #fff;
+        overflow: hidden;
+    }
+    .profile__image > img {
+        width: 100%;
+        height: 100%;
     }
     .profile__name {
         font-size: 18px;

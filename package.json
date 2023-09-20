@@ -12,7 +12,7 @@
     "start": "nest start",
     "start:dev": "nest start --watch",
     "prestart:debug": "",
-    "start:debug": "rollup -c -w",
+    "start:debug": "set TZ=Asia/Seoul && rollup -c -w",
     "start:prod": "node dist/main",
     "svelt": "sirv client",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",

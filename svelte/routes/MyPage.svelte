@@ -23,6 +23,7 @@
     let title = '';
     let type = '2';
     let groups = [];
+    let blocks = [];
     let user = {
         id: '',
         name: '',
@@ -111,8 +112,10 @@
         return activeTime === currentTime;
     }
     
-    const selectDate = (date) => {
+    const selectDate = async (date) => {
         activeDate.set(date);
+        blocks = await getBlocksByDate(date);
+        console.log(blocks);
     }
 
     const showBlockPopup = (groupId) => {
@@ -151,6 +154,20 @@
         days = tempDays;
     }
 
+    const getBlocksByDate = async (date) => {
+        try {
+            const res = await fetch(`/api/blocks?date=${date ?? $activeDate}`);
+            
+            if (res.status === 200) {
+                return res.json();
+            } else {
+                return [];
+            }
+        } catch (err) {
+            return [];
+        }      
+    }
+
     onMount(async () => {
         user = {
             id: $userData.id,
@@ -160,6 +177,7 @@
             following: $userData.followingCount ?? 0
         };
         groups = await getGroups();
+        blocks = await getBlocksByDate();
         generateWeek(today);
         setCountInDays(await getCountByWeek());
     })
@@ -200,7 +218,9 @@
                     <button class="group__item" on:click={showGroupPopup}>+</button>
                 </div>
                 <div class="blocks">
-                    <Block></Block>
+                    {#each blocks as block}
+                        <Block block={block}></Block>
+                    {/each}
                 </div>
             </div>
         </div>
@@ -355,6 +375,9 @@
         color: #fff;
     } */
     .blocks {
-        margin-top: 20px;
+        margin: 20px 0;
+        display: flex;
+        flex-flow: column nowrap;
+        gap: 10px;
     }
 </style>

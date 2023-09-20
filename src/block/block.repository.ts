@@ -34,6 +34,23 @@ export class BlockRepository {
         return await this.repository.find({ where: { user }, order: { createdAt: "DESC" } })
     }
 
+    public async getBlockListByUserDate(userId: string, date: string): Promise<Block[]> {
+        const startOfDay = new Date(date);
+        startOfDay.setHours(0, 0, 0, 0);
+
+        const endOfDay = new Date(date);
+        endOfDay.setHours(23, 59, 59, 999);
+
+        return await this.repository.find({ 
+            where: { 
+                user: { id : userId },
+                createdAt: Between(startOfDay, endOfDay) 
+            },
+            order: { createdAt: "DESC" },
+            relations: [ "user" ]
+        });
+    }
+
     public async getBlockListByGroup(blockGroup: BlockGroup): Promise<Block[]> {
         return await this.repository.find({ where: { blockGroup }, order: { createdAt: "DESC" } })
     }
@@ -52,7 +69,7 @@ export class BlockRepository {
             dayStart.setHours(0, 0, 0, 0)
     
             const dayEnd = new Date(dayStart);
-            dayEnd.setHours(23, 59, 59, 999); // set to end of the day
+            dayEnd.setHours(23, 59, 59, 999);
     
             const count = await this.repository.count({
                 where: {

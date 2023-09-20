@@ -31,7 +31,7 @@ import { BlockSeriesModule } from './block-series/block-series.module';
                 entities: [__dirname + '/*/*.entity.{js,ts}'],
                 synchronize : true,
                 logging: true,
-                timezone: 'local',
+                timezone: 'Asia/Seoul',
             }),
         }),
         UserModule,
