@@ -100,9 +100,10 @@
 
     let currentWeek = generateWeek(today);
 
-    const moveWeek = (diff) => {
+    const moveWeek = async (diff) => {
         today.setDate(today.getDate() + (diff * 7));
         currentWeek = generateWeek(today);
+        setCountInDays(await getCountByWeek());
     };
 
     const checkSelectDate = (active, current) => {
@@ -115,7 +116,6 @@
     const selectDate = async (date) => {
         activeDate.set(date);
         blocks = await getBlocksByDate(date);
-        console.log(blocks);
     }
 
     const showBlockPopup = (groupId) => {

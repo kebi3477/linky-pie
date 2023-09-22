@@ -31,6 +31,7 @@
                 data.isCreate = true;
 
                 alert('링크 생성 성공!');
+                location.reload();
                 closePopup();
             } else {
                 alert('링크 생성 실패!');

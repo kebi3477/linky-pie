@@ -60,7 +60,6 @@ export class BlockService {
         if (groupId !== null) {
             this.logger.log(`[블록 생성] 그룹 조회 [ groupId : ${groupId} ] `);
             const group: BlockGroup = await this.groupModel.read(groupId);
-            console.log(group);
             createBlockDTO.blockGroup = group;
         } else {
             createBlockDTO.blockGroup = null;
@@ -356,7 +355,6 @@ export class BlockService {
                 this.logger.log(`[GPT 호출] 성공`);
                 return response.data.choices[0].message.content;
             } else {
-                console.log(response);
                 this.logger.log(`[GPT 호출] 실패`);
                 return "";
             }
