@@ -6,12 +6,15 @@ import { Block } from "./block.entity";
 import { CreateBlockDTO } from "./block.dto";
 import { BlockGroup } from "../block-group/block-group.entity";
 import { User } from "../user/user.entity";
+import { UserLikesBlock } from "../userLikesBlock/userLikesBlock.entity";
 
 @Injectable()
 export class BlockRepository {
     public constructor(
         @InjectRepository(Block)
         private readonly repository: Repository<Block>,
+        @InjectRepository(UserLikesBlock)
+        private readonly likesBlockRepository: Repository<UserLikesBlock>
     ) {}
 
     public create(createBlockDTO: CreateBlockDTO): Block {
@@ -40,14 +43,25 @@ export class BlockRepository {
         const startOfDay = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate(), 0, 0, 0, 0));
         const endOfDay = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate(), 23, 59, 59, 999));
     
-        return await this.repository.find({ 
-            where: { 
-                user: { id : userId },
-                createdAt: Between(startOfDay, endOfDay) 
-            },
-            order: { createdAt: "DESC" },
-            relations: [ "user" ]
+        const subQuery = this.likesBlockRepository.createQueryBuilder("ulb")
+            .select("COALESCE(COUNT(ulb.id), 0)", "likesCount")
+            .where("ulb.block_id = block.id")
+            .getQuery();
+    
+        const result = await this.repository.createQueryBuilder("block")
+            .addSelect(`(${subQuery})`, 'likesCount')
+            .leftJoinAndSelect('block.user', 'user')
+            .where('block.createdAt BETWEEN :startOfDay AND :endOfDay', { startOfDay, endOfDay })
+            .andWhere('block.user = :userId', { userId })
+            .groupBy("block.id, user.id")
+            .orderBy("block.createdAt", "DESC")
+            .getRawAndEntities();
+    
+        result.entities.forEach((block, index) => {
+            block.likesCount = +result.raw[index].likesCount;
         });
+    
+        return result.entities;
     }
     
     public async getBlockListByGroup(blockGroup: BlockGroup): Promise<Block[]> {

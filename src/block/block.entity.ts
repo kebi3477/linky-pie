@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn, CreateDateColumn, UpdateDateColumn, OneToMany, ManyToMany, JoinTable, ViewColumn } from 'typeorm';
 import { BlockGroup } from '../block-group/block-group.entity';
 import { User } from '../user/user.entity';
 import { BlockComment } from '../block-comment/block-comment.entity';
@@ -78,6 +78,8 @@ export class Block {
         comment: '수정날짜' 
     })
     updatedAt: Date | null;
+
+    likesCount?: number;
 
     @OneToMany(() => BlockComment, (blockComment) => blockComment.block)
     blockComment: BlockComment[];

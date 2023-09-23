@@ -9,10 +9,12 @@ import { BlockRepository } from '../block/block.repository';
 import { User } from '../user/user.entity';
 import { Block } from '../block/block.entity';
 import { APP_PIPE } from '@nestjs/core';
+import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([ BlockComment, User, Block ]),
+        TypeOrmModule.forFeature([ BlockComment, User, Block, UserLikesBlock ]),
     ],
     controllers: [ BlockCommentController ],
     providers: [ 
@@ -20,6 +22,7 @@ import { APP_PIPE } from '@nestjs/core';
         BlockCommentRepository,
         UserRepository,
         BlockRepository,
+        UserLikesBlockRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe

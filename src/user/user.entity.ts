@@ -102,7 +102,6 @@ export class User {
     amIFollowing?: number;
 
     @ManyToMany(() => Block, block => block.likedByUsers)
-    // @JoinTable()
     likedBlocks: Block[];
 
     static of(params: Partial<User>): User {

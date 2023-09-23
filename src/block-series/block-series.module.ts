@@ -11,10 +11,12 @@ import { BlockSeriesBlock } from 'src/block-series-block/block-series-block.enti
 import { BlockSeriesBlockRepository } from 'src/block-series-block/block-series-block.repository';
 import { BlockRepository } from 'src/block/block.repository';
 import { Block } from 'src/block/block.entity';
+import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
+import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Block, BlockSeries, User, BlockSeriesBlock]),
+        TypeOrmModule.forFeature([Block, BlockSeries, User, BlockSeriesBlock, UserLikesBlock]),
     ],
     controllers: [
         BlockSeriesController
@@ -25,6 +27,7 @@ import { Block } from 'src/block/block.entity';
         BlockSeriesRepository,
         BlockSeriesBlockRepository,
         UserRepository,
+        UserLikesBlockRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe

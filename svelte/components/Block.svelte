@@ -1,9 +1,29 @@
 <script>
-    import heart from '../public/images/icons/heart-blue-icon.svg';
+    import heart from '../public/images/icons/heart-gray-icon.svg';
+    import activeHeart from '../public/images/icons/heart-blue-icon.svg';
     import { getTimeDifferenceDescription } from '../utils/util';
 
     const openLink = link => {
         window.open(link);
+    }
+
+    const doLikes = async () => {
+        try {
+            const res = await fetch(`/api/blocks/${block.id}/likes`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' }
+            })
+    
+            if (res.status === 201) {
+                await res.json();
+                alert('좋아요 성공!');
+            } else {
+                alert('좋아요 실패!');
+            }
+        } catch (err) {
+            alert('좋아요 실패!');
+            console.error(err);
+        }
     }
 
     export let block;
@@ -32,11 +52,11 @@
         </button>
     </div>
     <div class="block__footer">
-        <div class="block__footer-text likes">
-            <img src="{heart}" alt="heart"> 5개
-        </div>
-        <div class="block__footer-text comments">댓글 2개</div>
-        <div class="block__footer-text scrap">스크랩 2회</div>
+        <button class="block__footer-text likes" on:click={doLikes}>
+            <img src="{heart}" alt="heart"> {block.likesCount}개
+        </button>
+        <div class="block__footer-text comments">댓글 0개</div>
+        <!-- <div class="block__footer-text scrap">스크랩 2회</div> -->
     </div>
 </div>
 
