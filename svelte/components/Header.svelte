@@ -23,11 +23,14 @@
 
 
 <div class="header">
-    <button on:click={() => redirect('my-page')}>
+    <button on:click={() => redirect('main')}>
         <img src="{logo}" alt="logo">
     </button>
 
-    <button on:click={logout}>로그아웃</button>
+    <div class="buttons">
+        <button on:click={() => redirect('my-page')}>마이페이지</button>
+        <button on:click={logout}>로그아웃</button>
+    </div>
 </div>
 
 <style>
@@ -41,7 +44,13 @@
         justify-content: space-between;
     }
 
-    .header > button {
+    .buttons {
+        display: flex;
+        flex-flow: row nowrap;
+        gap: 10px;
+    }
+
+    .buttons > button {
         font-family: 'Ramche', sans-serif;
     }
     

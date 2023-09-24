@@ -1,6 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
-import { Repository } from "typeorm";
+import { Repository, createQueryBuilder } from "typeorm";
 import { Between } from 'typeorm';
 import { Block } from "./block.entity";
 import { CreateBlockDTO } from "./block.dto";
@@ -43,13 +43,20 @@ export class BlockRepository {
         const startOfDay = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate(), 0, 0, 0, 0));
         const endOfDay = new Date(Date.UTC(inputDate.getUTCFullYear(), inputDate.getUTCMonth(), inputDate.getUTCDate(), 23, 59, 59, 999));
     
-        const subQuery = this.likesBlockRepository.createQueryBuilder("ulb")
+        const likesCountQuery = this.likesBlockRepository.createQueryBuilder("ulb")
             .select("COALESCE(COUNT(ulb.id), 0)", "likesCount")
             .where("ulb.block_id = block.id")
             .getQuery();
+            
+        const amILikesQuery = this.likesBlockRepository.createQueryBuilder('ulb2')
+            .select('COALESCE(COUNT(ulb2.id), 0)', 'amILikes')
+            .where('ulb2.block_id = block.id')
+            .andWhere('ulb2.user_id = :userId', { userId })
+            .getQuery();
     
         const result = await this.repository.createQueryBuilder("block")
-            .addSelect(`(${subQuery})`, 'likesCount')
+            .addSelect(`(${likesCountQuery})`, 'likesCount')
+            .addSelect(`(${amILikesQuery})`, 'amILikes')
             .leftJoinAndSelect('block.user', 'user')
             .where('block.createdAt BETWEEN :startOfDay AND :endOfDay', { startOfDay, endOfDay })
             .andWhere('block.user = :userId', { userId })
@@ -59,6 +66,35 @@ export class BlockRepository {
     
         result.entities.forEach((block, index) => {
             block.likesCount = +result.raw[index].likesCount;
+            block.amILikes = +result.raw[index].amILikes;
+        });
+    
+        return result.entities;
+    }
+
+    public async getAllBlockList(userId: string): Promise<Block[]> {
+        const likesCountQuery = this.likesBlockRepository.createQueryBuilder("ulb")
+            .select("COALESCE(COUNT(ulb.id), 0)", "likesCount")
+            .where("ulb.block_id = block.id")
+            .getQuery();
+            
+        const amILikesQuery = this.likesBlockRepository.createQueryBuilder('ulb2')
+            .select('COALESCE(COUNT(ulb2.id), 0)', 'amILikes')
+            .where('ulb2.block_id = block.id')
+            .andWhere(`ulb2.user_id = '${userId}'`)
+            .getQuery();
+    
+        const result = await this.repository.createQueryBuilder("block")
+            .addSelect(`(${likesCountQuery})`, 'likesCount')
+            .addSelect(`(${amILikesQuery})`, 'amILikes')
+            .leftJoinAndSelect('block.user', 'user')
+            .groupBy("block.id, user.id")
+            .orderBy("block.createdAt", "DESC")
+            .getRawAndEntities();
+    
+        result.entities.forEach((block, index) => {
+            block.likesCount = +result.raw[index].likesCount;
+            block.amILikes = +result.raw[index].amILikes;
         });
     
         return result.entities;

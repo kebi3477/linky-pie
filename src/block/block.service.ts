@@ -182,6 +182,21 @@ export class BlockService {
     }
 
     /**
+     * 메인 페이지 모든 블록 검색
+     * @param userId 사용자 ID
+     * @returns Bloc[]
+     */
+    public async getAllBlockList(userId: string): Promise<Block[]> {
+        const user = await this.userModel.read(userId);
+        if (!user) {
+            this.logger.log(`[블록 목록 조회] 실패 [ userId : ${userId} ] -> 사용자를 찾을 수 없음`);
+            throw new UserNotFoundError();
+        }
+
+        return await this.model.getAllBlockList(userId);
+    }
+
+    /**
      * 블록 목록 조회
      * 
      * @param blockGroupId 블록 그룹 ID

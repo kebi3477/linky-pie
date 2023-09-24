@@ -41,6 +41,12 @@ export class BlockController {
         return await this.service.getBlockListByUser(request.user.id, date);
     }
 
+    @Get('/all')
+    @UseGuards(JwtAuthenticationGuard)
+    async getAllBlockLike(@Req() request: RequestWithUser): Promise<Block[]> {
+        return await this.service.getAllBlockList(request.user.id);
+    }
+
     @Post('/:block_id/likes')
     @UseGuards(JwtAuthenticationGuard)
     async createLikes(@Req() request: RequestWithUser, @Param('block_id') blockId: string): Promise<UserLikesBlock> {

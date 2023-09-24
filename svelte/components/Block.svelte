@@ -3,6 +3,11 @@
     import activeHeart from '../public/images/icons/heart-blue-icon.svg';
     import { getTimeDifferenceDescription } from '../utils/util';
 
+    export let block;
+
+    let amILikes = block.amILikes > 0;
+    let heartImage = amILikes ? activeHeart : heart;
+
     const openLink = link => {
         window.open(link);
     }
@@ -16,9 +21,9 @@
     
             if (res.status === 201) {
                 await res.json();
-                alert('좋아요 성공!');
-            } else {
-                alert('좋아요 실패!');
+                amILikes = true;
+                heartImage = activeHeart;
+                block.likesCount++;
             }
         } catch (err) {
             alert('좋아요 실패!');
@@ -26,7 +31,33 @@
         }
     }
 
-    export let block;
+    const doUnLikes = async () => {
+        try {
+            const res = await fetch(`/api/blocks/${block.id}/likes`, {
+                method: 'Delete',
+                headers: { 'Content-Type': 'application/json' }
+            })
+    
+            if (res.status === 200) {
+                await res.json();
+                amILikes = false;
+                heartImage = heart;
+                block.likesCount--;
+            }
+        } catch (err) {
+            alert('좋아요 취소 실패!');
+            console.error(err);
+        }
+    }
+
+    const handleLikes = async () => {
+        if (amILikes) {
+            await doUnLikes();
+        } else {
+            await doLikes();
+        }
+    }
+
 </script>
 
 <div class="block">
@@ -52,8 +83,8 @@
         </button>
     </div>
     <div class="block__footer">
-        <button class="block__footer-text likes" on:click={doLikes}>
-            <img src="{heart}" alt="heart"> {block.likesCount}개
+        <button class="block__footer-text likes" on:click={handleLikes}>
+            <img src="{heartImage}" alt="heart"> {block.likesCount}개
         </button>
         <div class="block__footer-text comments">댓글 0개</div>
         <!-- <div class="block__footer-text scrap">스크랩 2회</div> -->
@@ -88,6 +119,7 @@
     .profile__image > img {
         width: 100%;
         height: 100%;
+        object-fit: cover;
     }
     .profile__name {
         font-size: 18px;
