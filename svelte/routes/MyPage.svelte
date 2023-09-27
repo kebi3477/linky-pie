@@ -168,6 +168,14 @@
         }      
     }
 
+    const loadingStart = () => {
+        loading.start();
+    }
+
+    const loadingStop = () => {
+        loading.stop();
+    }
+
     onMount(async () => {
         user = {
             id: $userData.id,
@@ -183,7 +191,6 @@
     })
 </script>
 
-<Loading bind:this={loading}></Loading>
 <div class="my-page">
     <Header></Header>
     <div class="my-page__contents">
@@ -225,8 +232,9 @@
             </div>
         </div>
     </div>
-    <BlockPopup isShown={isBlockPopupShow} groupId={selectGroupId} on:close={closeBlockPopup}></BlockPopup>
+    <BlockPopup isShown={isBlockPopupShow} groupId={selectGroupId} on:close={closeBlockPopup} on:start={loadingStart} on:end={loadingStop}></BlockPopup>
     <GroupPopup on:complete={changeGroups} isShown={isGroupPopupShow} isCreate={isCreate} id={id} title={title} type={type} on:close={closeGroupPopup} />
+    <Loading bind:this={loading}></Loading>
 </div>
 
 <style>

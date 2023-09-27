@@ -44,7 +44,10 @@
         align-items: center;
     }
     .main__contents {
-        width: 1200px;
+        width: 890px;
         padding-top: 100px;
+        display: flex;
+        flex-flow: column;
+        gap: 20px;
     }
 </style>

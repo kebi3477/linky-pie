@@ -47,7 +47,7 @@
     .buttons {
         display: flex;
         flex-flow: row nowrap;
-        gap: 10px;
+        gap: 20px;
     }
 
     .buttons > button {

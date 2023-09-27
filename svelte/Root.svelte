@@ -21,7 +21,7 @@
         const hash = location.hash;
         
         if (await isLogin()) {
-            const url = currentPath === '/' ? '/my-page' : currentPath + hash + searchParam;
+            const url = currentPath === '/' ? '/main' : currentPath + hash + searchParam;
             
             navigate(url, { replace: true });
         } else {

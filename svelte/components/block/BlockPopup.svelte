@@ -11,11 +11,20 @@
         dispatch('close');
     }
 
+    const createStart = () => {
+        dispatch('start');
+    }
+
+    const createEnd = () => {
+        dispatch('end');
+    }
+
     const emptyLink = () => {
         link = '';
     }
 
     const createBlock = async () => {
+        createStart();
         try {
             const data = {
                 link
@@ -29,8 +38,6 @@
             if (res.status === 201) {
                 const data = await res.json();
                 data.isCreate = true;
-
-                alert('링크 생성 성공!');
                 location.reload();
                 closePopup();
             } else {
@@ -40,6 +47,7 @@
             alert('링크 생성 실패!');
             console.error(err);
         }
+        createEnd();
     }
 
     export let groupId = '';
