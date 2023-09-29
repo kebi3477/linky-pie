@@ -6,6 +6,9 @@
 # environment
 .env
 
+# secure
+/ssl
+
 # Logs
 logs
 *.log
