@@ -32,6 +32,9 @@ export class BlockCommentRepository {
     }
 
     public async getListByBlockId(blockId: string): Promise<BlockComment[]> {
-        return this.repository.find({ where: { block: { id: blockId } } })
+        return this.repository.find({
+            where: { block: { id: blockId } },
+            relations: ['user']
+        });
     }
 }

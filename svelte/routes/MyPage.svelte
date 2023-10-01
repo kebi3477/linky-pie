@@ -72,7 +72,13 @@
         const firstDayOfMonth = new Date(date.getFullYear(), date.getMonth(), 1);
         const pastDayOfMonth = (date - firstDayOfMonth + 86400000) / 86400000;
 
-        return Math.ceil((pastDayOfMonth + firstDayOfMonth.getDay() + 1) / 7) - 1;
+        let weekNumber = Math.ceil((pastDayOfMonth + firstDayOfMonth.getDay() + 1) / 7); 
+
+        if (firstDayOfMonth.getDay()) {
+            return weekNumber - 1;
+        } else {
+            return weekNumber;
+        }
     }
 
     const generateWeek = (date) => {

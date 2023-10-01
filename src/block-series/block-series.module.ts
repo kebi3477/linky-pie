@@ -13,10 +13,12 @@ import { BlockRepository } from 'src/block/block.repository';
 import { Block } from 'src/block/block.entity';
 import { UserLikesBlockRepository } from '../userLikesBlock/userLikesBlock.repository';
 import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
+import { BlockCommentRepository } from 'src/block-comment/block-comment.repository';
+import { BlockComment } from 'src/block-comment/block-comment.entity';
 
 @Module({
     imports: [
-        TypeOrmModule.forFeature([Block, BlockSeries, User, BlockSeriesBlock, UserLikesBlock]),
+        TypeOrmModule.forFeature([ Block, BlockSeries, User, BlockSeriesBlock, UserLikesBlock, BlockComment ]),
     ],
     controllers: [
         BlockSeriesController
@@ -28,6 +30,7 @@ import { UserLikesBlock } from '../userLikesBlock/userLikesBlock.entity';
         BlockSeriesBlockRepository,
         UserRepository,
         UserLikesBlockRepository,
+        BlockCommentRepository,
         {
             provide: APP_PIPE,
             useClass: ValidationPipe

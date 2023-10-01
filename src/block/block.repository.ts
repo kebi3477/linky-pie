@@ -7,6 +7,7 @@ import { CreateBlockDTO } from "./block.dto";
 import { BlockGroup } from "../block-group/block-group.entity";
 import { User } from "../user/user.entity";
 import { UserLikesBlock } from "../userLikesBlock/userLikesBlock.entity";
+import { BlockComment } from "src/block-comment/block-comment.entity";
 
 @Injectable()
 export class BlockRepository {
@@ -14,7 +15,9 @@ export class BlockRepository {
         @InjectRepository(Block)
         private readonly repository: Repository<Block>,
         @InjectRepository(UserLikesBlock)
-        private readonly likesBlockRepository: Repository<UserLikesBlock>
+        private readonly likesBlockRepository: Repository<UserLikesBlock>,
+        @InjectRepository(BlockComment)
+        private readonly blockCommentRepository: Repository<BlockComment>,
     ) {}
 
     public create(createBlockDTO: CreateBlockDTO): Block {
@@ -53,10 +56,16 @@ export class BlockRepository {
             .where('ulb2.block_id = block.id')
             .andWhere('ulb2.user_id = :userId', { userId })
             .getQuery();
+        
+        const commentsCountQuery = this.blockCommentRepository.createQueryBuilder('comment')
+            .select('COALESCE(COUNT(comment.id), 0)', 'commentsCount')
+            .where('comment.block_id = block.id')
+            .getQuery();
     
         const result = await this.repository.createQueryBuilder("block")
             .addSelect(`(${likesCountQuery})`, 'likesCount')
             .addSelect(`(${amILikesQuery})`, 'amILikes')
+            .addSelect(`(${commentsCountQuery})`, 'commentsCount')
             .leftJoinAndSelect('block.user', 'user')
             .where('block.createdAt BETWEEN :startOfDay AND :endOfDay', { startOfDay, endOfDay })
             .andWhere('block.user = :userId', { userId })
@@ -67,6 +76,7 @@ export class BlockRepository {
         result.entities.forEach((block, index) => {
             block.likesCount = +result.raw[index].likesCount;
             block.amILikes = +result.raw[index].amILikes;
+            block.commentsCount = +result.raw[index].commentsCount;
         });
     
         return result.entities;
@@ -83,10 +93,16 @@ export class BlockRepository {
             .where('ulb2.block_id = block.id')
             .andWhere(`ulb2.user_id = '${userId}'`)
             .getQuery();
+
+        const commentsCountQuery = this.blockCommentRepository.createQueryBuilder('comment')
+            .select('COALESCE(COUNT(comment.id), 0)', 'commentsCount')
+            .where('comment.block_id = block.id')
+            .getQuery();
     
         const result = await this.repository.createQueryBuilder("block")
             .addSelect(`(${likesCountQuery})`, 'likesCount')
             .addSelect(`(${amILikesQuery})`, 'amILikes')
+            .addSelect(`(${commentsCountQuery})`, 'commentsCount')
             .leftJoinAndSelect('block.user', 'user')
             .groupBy("block.id, user.id")
             .orderBy("block.createdAt", "DESC")
@@ -95,6 +111,7 @@ export class BlockRepository {
         result.entities.forEach((block, index) => {
             block.likesCount = +result.raw[index].likesCount;
             block.amILikes = +result.raw[index].amILikes;
+            block.commentsCount = +result.raw[index].commentsCount;
         });
     
         return result.entities;
@@ -105,7 +122,41 @@ export class BlockRepository {
     }
 
     public async getBlockByUserId(blockId: string, userId: string): Promise<Block> {
-        return this.repository.findOne({ where: { id: blockId, user: { id: userId } } });
+        const likesCountQuery = this.likesBlockRepository.createQueryBuilder("ulb")
+            .select("COALESCE(COUNT(ulb.id), 0)", "likesCount")
+            .where("ulb.block_id = block.id")
+            .getQuery();
+            
+        const amILikesQuery = this.likesBlockRepository.createQueryBuilder('ulb2')
+            .select('COALESCE(COUNT(ulb2.id), 0)', 'amILikes')
+            .where('ulb2.block_id = block.id')
+            .andWhere(`ulb2.user_id = '${userId}'`)
+            .getQuery();
+
+        const commentsCountQuery = this.blockCommentRepository.createQueryBuilder('comment')
+            .select('COALESCE(COUNT(comment.id), 0)', 'commentsCount')
+            .where('comment.block_id = block.id')
+            .getQuery();
+
+        const result = await this.repository.createQueryBuilder("block")
+            .addSelect(`(${likesCountQuery})`, 'likesCount')
+            .addSelect(`(${amILikesQuery})`, 'amILikes')
+            .addSelect(`(${commentsCountQuery})`, 'commentsCount')
+            .leftJoinAndSelect('block.user', 'user')
+            .where("block.id = :blockId", { blockId })
+            .groupBy("block.id, user.id")
+            .orderBy("block.createdAt", "DESC")
+            .getRawAndEntities();
+
+        if (result.entities.length > 0) {
+            const block = result.entities[0];
+            block.likesCount = +result.raw[0].likesCount;
+            block.amILikes = +result.raw[0].amILikes;
+            block.commentsCount = +result.raw[0].commentsCount;
+            return block;
+        }
+
+        return null;
     }
 
     public async getBlockCountsByWeek(userId: string, date: string): Promise<{ date: string, count: number }[]> {

@@ -45,7 +45,7 @@
     }
     .main__contents {
         width: 890px;
-        padding-top: 100px;
+        padding: 50px 0;
         display: flex;
         flex-flow: column;
         gap: 20px;

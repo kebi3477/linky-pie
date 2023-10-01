@@ -7,6 +7,7 @@
     import Main from './routes/Main.svelte';
     import Mypage from './routes/MyPage.svelte';
     import Block from './routes/Block.svelte';
+    import Detail from './routes/Detail.svelte';
     import Group from "./routes/Group.svelte";
     import Follow from './routes/Follow.svelte';
     import EditProfile from './routes/EditProfile.svelte';
@@ -28,13 +29,15 @@
 <main name="web-collector">
     <Router {url}>
         <Route path="/" component={Root}></Route>
-        <Route path="intro" component={Intro}></Route>
-        <Route path="main" component={Main}></Route>
-        <Route path="my-page" component={Mypage}></Route>
-        <Route path="group" component={Group}></Route>
-        <Route path="block" component={Block}></Route>
-        <Route path="follow" component={Follow}></Route>
-        <Route path="edit-profile" component={EditProfile}></Route>
+        <Route path="/intro" component={Intro}></Route>
+        <Route path="/main" component={Main}></Route>
+        <Route path="/my-page" component={Mypage}></Route>
+        <Route path="/group" component={Group}></Route>
+        <Route path="/block" component={Block}></Route>
+        <Route path="/follow" component={Follow}></Route>
+        <Route path="/edit-profile" component={EditProfile}></Route>
+        <Route path="/detail" component={Detail}></Route>
+        <Route path="/detail/:block_id" component={Detail}></Route>
     </Router>
 </main>
 

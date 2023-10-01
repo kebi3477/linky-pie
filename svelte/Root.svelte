@@ -22,7 +22,6 @@
         
         if (await isLogin()) {
             const url = currentPath === '/' ? '/main' : currentPath + hash + searchParam;
-            
             navigate(url, { replace: true });
         } else {
             navigate("/intro", { replace: true });

@@ -81,6 +81,7 @@ export class Block {
 
     likesCount?: number;
     amILikes?: number;
+    commentsCount?: number;
 
     @OneToMany(() => BlockComment, (blockComment) => blockComment.block)
     blockComment: BlockComment[];

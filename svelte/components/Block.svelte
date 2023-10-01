@@ -1,4 +1,5 @@
 <script>
+    import { navigate } from "svelte-routing/src/history";
     import heart from '../public/images/icons/heart-gray-icon.svg';
     import activeHeart from '../public/images/icons/heart-blue-icon.svg';
     import { getTimeDifferenceDescription } from '../utils/util';
@@ -7,6 +8,10 @@
 
     let amILikes = block.amILikes > 0;
     let heartImage = amILikes ? activeHeart : heart;
+
+    function redirect(url) {
+        navigate(`/${url}`, { replace: true });
+    }
 
     const openLink = link => {
         window.open(link);
@@ -86,7 +91,7 @@
         <button class="block__footer-text likes" on:click={handleLikes}>
             <img src="{heartImage}" alt="heart"> {block.likesCount}개
         </button>
-        <div class="block__footer-text comments">댓글 0개</div>
+        <button class="block__footer-text comments" on:click={() => redirect(`detail/${block.id}`)}>댓글 {block.commentsCount}개</button>
         <!-- <div class="block__footer-text scrap">스크랩 2회</div> -->
     </div>
 </div>
