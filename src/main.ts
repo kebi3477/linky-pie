@@ -4,6 +4,7 @@ import * as cookieParser from 'cookie-parser';
 import { ValidationPipe } from '@nestjs/common';
 import * as express from 'express';
 import * as fs from 'fs';
+import * as path from 'path';
 
 const { UPLOAD_DIR, PORT, IS_HTTPS, HTTPS_KEY_URL, HTTPS_CERT_URL } = process.env;
 
@@ -12,6 +13,7 @@ async function bootstrap() {
 
     app.setGlobalPrefix('api');
     app.use('/uploads', express.static(UPLOAD_DIR));
+    app.use('/public', express.static(path.join(__dirname, '..', '..', 'svelte', 'public')));
     app.use(cookieParser());
     app.useGlobalPipes(new ValidationPipe({
         transform: true,
