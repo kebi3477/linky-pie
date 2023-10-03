@@ -21,7 +21,7 @@
         width: 100%;
         min-height: 100vh;
         background-color: rgba(0, 0, 0, .5);
-        position: absolute;
+        position: fixed;
         display: none;
         align-items: center;
         justify-content: center;

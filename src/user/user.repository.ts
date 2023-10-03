@@ -27,7 +27,7 @@ export class UserRepository {
         return await this.repository.save(user);
     }
 
-    async findAllUsers(loggedInUserId: string, searchId?: string): Promise<User[]> {
+    async findAllUsers(loggedInUserId: string, search?: string): Promise<User[]> {
         const query = this.repository
             .createQueryBuilder('user')
             .addSelect(subQuery => {
@@ -41,8 +41,8 @@ export class UserRepository {
             .where('user.id != :loggedInUserId', { loggedInUserId })
             .setParameter('loggedInUserId', loggedInUserId);
 
-        if (searchId) {
-            query.andWhere('user.id LIKE :searchId', { searchId: `%${searchId}%` });
+        if (search) {
+            query.andWhere('user.id LIKE :search OR user.name LIKE :search', { search: `%${search}%` });
         }
 
         return query.getRawMany();

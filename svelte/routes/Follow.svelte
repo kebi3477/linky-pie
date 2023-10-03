@@ -77,7 +77,7 @@
                 handleFilter(selectedFilter);
             }
             
-            const res = await fetch(`/api/users?id=${searchUser}`)
+            const res = await fetch(`/api/users?search=${searchUser}`)
             if (res.status === 200) {
                 userList = await res.json();
             } else {
@@ -121,7 +121,7 @@
                 <div class="contents__wrap">
                     <div class="search">
                         <img src="{searchIcon}" alt="search">
-                        <input type="text" class="search__input" placeholder="아이디 검색" bind:value={searchUser} on:input={debouncedSearch}>
+                        <input type="text" class="search__input" placeholder="아이디, 이름 검색" bind:value={searchUser} on:input={debouncedSearch}>
                     </div>
                     <div class="selector__wrap">
                         <label class="filter selector" for="filter">

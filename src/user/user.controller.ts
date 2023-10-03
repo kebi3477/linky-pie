@@ -25,8 +25,8 @@ export class UserController {
 
     @Get()
     @UseGuards(JwtAuthenticationGuard)
-    async readSearch(@Req() request: RequestWithUser, @Query('id') id?: string): Promise<User[]> {
-        return await this.service.findAllUsers(request.user.id, id);
+    async readSearch(@Req() request: RequestWithUser, @Query('search') search?: string): Promise<User[]> {
+        return await this.service.findAllUsers(request.user.id, search);
     }
 
     @Patch('/name')

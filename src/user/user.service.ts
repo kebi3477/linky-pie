@@ -65,11 +65,11 @@ export class UserService {
     /**
      * 사용자 전체 검색
      * 
-     * @param searchId 검색할 아이디
+     * @param search 검색할 아이디
      * @returns 사용자 목록
      */
-    public async findAllUsers(userId: string, searchId?: string): Promise<User[]> {
-        return this.model.findAllUsers(userId, searchId);
+    public async findAllUsers(userId: string, search?: string): Promise<User[]> {
+        return this.model.findAllUsers(userId, search);
     }
 
     /**

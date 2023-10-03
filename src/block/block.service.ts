@@ -56,6 +56,7 @@ export class BlockService {
         if (msg) {
             try {
                 const res = JSON.parse(msg);
+
                 createBlockDTO.content = res.body;
                 createBlockDTO.hashtag = res.hashtag;
             } catch (err) {
