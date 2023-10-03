@@ -14,11 +14,11 @@
 
     import simbol from './public/images/simbol.svg';
     
-
     onMount(() => {
         document.documentElement.lang = 'ko';
     });
-
+    
+    export let projectURL = '';
     export let url = "/";
 </script>
 
@@ -27,14 +27,14 @@
     <link rel="shortcut icon" href="{simbol}">
     <meta property="og:title" content="Linky Pie">
     <meta property="og:description" content="링크를 공유하다. 링키파이">
-    <meta property="og:image" content="{process.env.PROJECT_URL}/public/images/simbol.png">
-    <meta property="og:url" content="{process.env.PROJECT_URL}">
+    <meta property="og:image" content="{projectURL}/public/images/simbol.png">
+    <meta property="og:url" content="{projectURL}">
     <meta property="og:type" content="website">
 
     <meta name="twitter:card" content="summary">
     <meta name="twitter:title" content="Linky Pie">
     <meta name="twitter:description" content="링크를 공유하다. 링키파이">
-    <meta name="twitter:image" content="{process.env.PROJECT_URL}/public/images/simbol.png">
+    <meta name="twitter:image" content="{projectURL}/public/images/simbol.png">
 </svelte:head>
 <main name="web-collector">
     <Router {url}>
