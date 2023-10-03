@@ -24,6 +24,12 @@
         } 
     }
 
+    function handleKeydown(event) {
+        if (event.key === 'Enter') {
+            createComment();
+        }
+    }
+
     async function createComment() {
         try {
             const data = { content };
@@ -83,7 +89,7 @@
             {/each}
         </div>
         <div class="comment__wrap">
-            <textarea name="comment" id="comment" class="comment__textarea" bind:value={content}></textarea>
+            <input name="comment" id="comment" class="comment__input" bind:value={content} on:keydown={handleKeydown} />
             <button class="comment__button" on:click={createComment}>작성</button>
         </div>
     </div>
@@ -115,11 +121,12 @@
         display: flex;
         gap: 10px;
     }
-    .comment__textarea {
+    .comment__input {
         width: 100%;
         border-radius: 10px;
         resize: none;
         padding: 10px;
+        outline: none;
     }
     .comment__button {
         width: 100px;

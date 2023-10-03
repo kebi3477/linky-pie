@@ -43,19 +43,27 @@ export class BlockService {
             throw new UserNotFoundError();
         }
 
-        const contents: string = await this.getContentsByURL(createBlockDTO.link);
-        if (!contents) {
+        const { title, subtitle, content } = await this.getContentsByURL(createBlockDTO.link);
+        if (!title) {
             this.logger.log(`[블록 생성] 크롤링 실패`);
             throw new BlockNotFoundError('URL 정보를 가져오지 못했습니다.');
         }
 
-        const msg: string = await this.callChatGPT(contents);
-        if (!msg) {
-            this.logger.log(`[블록 생성] GPT 호출 실패 [ msg : ${msg} ] `);
-            throw new BlockServerError('AI가 처리 중 오류가 발생했습니다.');
+        createBlockDTO.title = title;
+        createBlockDTO.content = subtitle;
+
+        const msg: string = await this.callChatGPT(content);
+        if (msg) {
+            try {
+                const res = JSON.parse(msg);
+                createBlockDTO.content = res.body;
+                createBlockDTO.hashtag = res.hashtag;
+            } catch (err) {
+                this.logger.error(`JSON Paring Error! msg : ${msg}`)
+            }
         }
 
-        const res = JSON.parse(msg);
+        this.logger.log(`[블록 생성] GPT 호출 실패 [ msg : ${msg} ] `);
         
         if (groupId !== null) {
             this.logger.log(`[블록 생성] 그룹 조회 [ groupId : ${groupId} ] `);
@@ -66,12 +74,8 @@ export class BlockService {
         }
 
         createBlockDTO.user = user;
-        createBlockDTO.title = res.title;
-        createBlockDTO.subtitle = res.subtitle;
-        createBlockDTO.content = res.body;
-        createBlockDTO.hashtag = res.hashtag;
     
-        this.logger.log(`[블록 생성] 시작 [ title : ${res.title} ] `);
+        this.logger.log(`[블록 생성] 시작 [ title : ${createBlockDTO.title} ] `);
         const newBlock: Block = this.model.create(createBlockDTO);
         this.logger.log(`[블록 생성] 성공 [ id : ${newBlock.id} ] `);
 
@@ -328,23 +332,31 @@ export class BlockService {
      * @param url 웹 URL
      * @returns 
      */
-    private async getContentsByURL(url: string): Promise<string> {
+    private async getContentsByURL(url: string): Promise<{ title: string, subtitle: string, content: string }> {
         this.logger.log(`[크롤링] 시작 [ URL : ${url} ]`);
-
-        let body = "";
-
+    
+        let result = {
+            title: "",
+            subtitle: "",
+            content: ""
+        };
+    
         await axios.get(url).then(response => {
             const html = response.data;
             const $ = cheerio.load(html);
-            body = $('p').text();
+            
+            result.title = $('title').text();
+            result.subtitle = $('meta[name="description"]').attr('content') || $('meta[property="og:description"]').attr('content') || '';
+            result.content = $('p').text();
         })
         .catch(error => {
             this.logger.error(`[크롤링] 오류 출력 [ error : ${error.message} ]`);
         });
-
+    
         this.logger.log(`[크롤링] 성공`);
-        return body;
+        return result;
     }
+    
 
     /**
      * GPT에게 본문 내용으로 JSON 요청
