@@ -146,7 +146,7 @@ export class BlockCommentService {
             throw new BlockNotFoundError();
         }
         
-        const comments: BlockComment[] = await this.model.getListByBlockId(blockId);
+        const comments: BlockComment[] = await this.model.getListByBlockId(blockId, userId);
         this.logger.log(`[댓글 목록 조회] 성공 [ blockId : ${blockId} ] `);
         
         return comments;

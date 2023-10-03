@@ -37,7 +37,7 @@
                 await res.json();
                 content = '';
                 block.commentsCount++;
-                comments = await getComments();
+                reload();
             } else {
                 alert('댓글 생성 실패!');
             }
@@ -61,6 +61,10 @@
         }
     }
 
+    const reload = async () => {
+        comments = await getComments();
+    }
+
     onMount(async () => {
         block = await getBlock();
         comments = await getComments();
@@ -75,7 +79,7 @@
         {/if}
         <div class="detail__comments">
             {#each comments as comment}
-                <CommentCP comment={comment}></CommentCP> 
+                <CommentCP comment={comment} on:deleted={reload}></CommentCP> 
             {/each}
         </div>
         <div class="comment__wrap">

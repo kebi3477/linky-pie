@@ -31,10 +31,19 @@ export class BlockCommentRepository {
         return await this.repository.save(retrospective);
     }
 
-    public async getListByBlockId(blockId: string): Promise<BlockComment[]> {
-        return this.repository.find({
-            where: { block: { id: blockId } },
-            relations: ['user']
-        });
-    }
+    public async getListByBlockId(blockId: string, userId: string): Promise<(BlockComment & { isMine: number })[]> {
+        const result = await this.repository.createQueryBuilder('blockComment')
+            .leftJoinAndSelect('blockComment.user', 'user')
+            .leftJoinAndSelect('blockComment.block', 'block')
+            .addSelect("CASE WHEN user.id = :userId THEN 1 ELSE 0 END", "isMine")
+            .where('blockComment.block = :blockId', { blockId })
+            .setParameter('userId', userId)
+            .getRawAndEntities();
+    
+        return result.entities.map((blockComment, index) => ({
+            ...blockComment,
+            isMine: result.raw[index].isMine
+        }));
+    }    
+    
 }
