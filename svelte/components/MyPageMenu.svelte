@@ -23,18 +23,6 @@
         </div>
         <div class="menu__text">그룹 관리</div>
     </button>
-    <div class="menu__item">
-        <div class="menu__img">
-            <img src="{series}" alt="series">
-        </div>
-        <div class="menu__text">시리즈 관리</div>
-    </div>
-    <div class="menu__item">
-        <div class="menu__img">
-            <img src="{stack}" alt="stack">
-        </div>
-        <div class="menu__text">스택 관리</div>
-    </div>
 </div>
 
 <style>

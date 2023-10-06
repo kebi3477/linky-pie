@@ -76,7 +76,7 @@
                 <div class="profile__write_date">{getTimeDifferenceDescription(block.createdAt)}</div>
             </div>
         </div>
-        <div class="block__button">...</div>
+        <div class="block__button"></div>
     </div>
     <div class="block__body">
         <div></div>
