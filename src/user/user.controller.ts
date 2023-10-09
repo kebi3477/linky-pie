@@ -2,7 +2,7 @@ import { Controller, Post, Get, Put, Patch, Delete, Body, HttpException, HttpSta
 import { FileInterceptor } from '@nestjs/platform-express';
 import { multerConfig } from 'multer.config';
 import { UserService } from './user.service';
-import { CreateUserDTO, UpdateUserNameDTO } from './user.dto';
+import { CreateUserDTO, UpdateUserDescribeDTO, UpdateUserNameDTO } from './user.dto';
 import { User } from '../user/user.entity';
 import { JwtAuthenticationGuard } from '../auth/jwt.strategy';
 import { RequestWithUser } from '../auth/auth.interface';
@@ -40,6 +40,12 @@ export class UserController {
     @UseInterceptors(FileInterceptor('profileImage', multerConfig))
     async updateProfileImage(@Req() request: RequestWithUser, @UploadedFile() file: Express.Multer.File): Promise<any> {
         return await this.service.updateProfileImage(request.user.id, file);
+    }
+
+    @Patch('/describe')
+    @UseGuards(JwtAuthenticationGuard)
+    async updateDescribe(@Req() request: RequestWithUser, @Body() updateUserDescribeDTO: UpdateUserDescribeDTO): Promise<User> {
+        return await this.service.updateDescribe(request.user.id, updateUserDescribeDTO);
     }
 
     @Post('/follow/:follow_id')

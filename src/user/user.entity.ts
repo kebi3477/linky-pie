@@ -58,6 +58,14 @@ export class User {
     })
     provider: Provider;
 
+    @Column({
+        name: 'describe',
+        nullable: true,
+        length: 200,
+        comment: '프로필 설명'
+    })
+    describe: string;
+
     @CreateDateColumn({ 
         name: 'created_at',
         type: 'timestamp', 

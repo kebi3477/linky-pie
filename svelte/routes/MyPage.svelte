@@ -187,6 +187,7 @@
             id: $userData.id,
             name: $userData.name,
             image: $userData.image,
+            describe: $userData.describe,
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
@@ -202,7 +203,7 @@
     <div class="my-page__contents">
         <div class="title">
             <div class="title__text--big">Welcome My Linky pie page.😄</div>
-            <div class="title__text--small">개발자 노예로 살아가는 저의 페이지에 오신걸 환영합니다. 팔로우 해주세요:D Plz...</div>
+            <div class="title__text--small">{user.describe ? user.describe : `${user.name}의 페이지입니다.`}</div>
         </div>
         <div class="my-page__wrap">
             <div class="profile">

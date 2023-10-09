@@ -10,6 +10,7 @@
   
     let profileName = ''; 
     let profileImage; 
+    let profileDescribe = '';
     let user = {
         id: '',
         name: '',
@@ -66,6 +67,29 @@
         }
     }
 
+    async function updateDescribe() {
+        try {
+            const body = { describe: profileDescribe }
+            const res = await fetch("/api/users/describe", {
+                method: "PATCH",
+                body: JSON.stringify(body),
+                headers: { "Content-Type": "application/json", },
+            });
+            
+            if (res.status === 200) {
+                const data = await res.json();
+
+                alert("설명이 성공적으로 변경되었습니다.");
+                user.describe = data.describe;
+            } else {
+                alert("설명 변경에 실패하였습니다.");
+            }
+        } catch (error) {
+            alert("설명 변경에 실패하였습니다.");
+            console.log(error);
+        }
+    }
+
     function handleImageChange(event) {
         const file = event.target.files[0];
         if (file && file.type.startsWith('image/')) { // 이미지 파일인지 확인
@@ -81,10 +105,12 @@
             id: $userData.id,
             name: $userData.name,
             image: $userData.image,
+            describe: $userData.describe,
             followers: $userData.followerCount ?? 0,
             following: $userData.followingCount ?? 0
         };
         profileName = user.name;
+        profileDescribe = user.describe;
     })
   </script>
 
@@ -105,7 +131,7 @@
                 <div class="profile-edit">
                     <div class="profile-edit__wrap">
                         <label for="name">이름:</label>
-                        <input id="name" type="text" bind:value={profileName} maxlength="20"/>
+                        <input id="name" type="text" placeholder="이름을 입력해주세요." bind:value={profileName} maxlength="20"/>
                         <button on:click={updateName}>이름 수정</button>
                     </div>
                     <div class="profile-edit__wrap">
@@ -119,6 +145,11 @@
                                 </div>
                             </div>
                         {/if}
+                    </div>
+                    <div class="profile-edit__wrap">
+                        <label for="describe">설명:</label>
+                        <input id="describe" type="text" placeholder="{profileName}의 페이지입니다." bind:value={profileDescribe} maxlength="200"/>
+                        <button on:click={updateDescribe}>설명 수정</button>
                     </div>
                 </div>
             </div>

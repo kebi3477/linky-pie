@@ -2,7 +2,7 @@ import multer from 'multer';
 import path from 'path';
 import { Injectable } from '@nestjs/common';
 import { UserRepository } from './user.repository';
-import { CreateUserDTO, UpdateUserNameDTO } from './user.dto';
+import { CreateUserDTO, UpdateUserDescribeDTO, UpdateUserNameDTO } from './user.dto';
 import { User } from './user.entity';
 import { Logger } from '../module/logger';
 import { FollowerRepository } from '../follower/follower.repository';
@@ -115,6 +115,29 @@ export class UserService {
         await this.model.save(user);
         this.logger.log(`[사용자 프로필 이미지 수정] 성공 [ userId : ${userId} ] `);
 
+        return user;
+    }
+
+    /**
+     * 사용자 설명 수정
+     * 
+     * @param userId 수정할 아이디
+     * @param updateUserNameDTO 설명 수정 DTO
+     * @returns 사용자
+     */
+    public async updateDescribe(userId: string, updateUserDescribeDTO: UpdateUserDescribeDTO): Promise<User> {
+        this.logger.log(`[사용자 설명 수정] API 호출 [ userId : ${userId} ]`);
+
+        const user: User = await this.model.read(userId);
+        if (!user) {
+            this.logger.log(`[사용자 설명 수정] 이름 수정 실패  [ userId : ${userId} ] -> 존재하지 않는 사용자`);
+            throw new UserNotFoundError();
+        }
+                    
+        user.describe = updateUserDescribeDTO.describe;
+        await this.model.save(user);
+        this.logger.log(`[사용자 설명 수정] 성공 [ userId : ${userId} ] `);
+    
         return user;
     }
 

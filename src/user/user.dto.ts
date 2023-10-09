@@ -27,3 +27,10 @@ export class UpdateUserNameDTO {
     @MaxLength(20)
     name: string;
 }
+
+export class UpdateUserDescribeDTO {
+    @IsNotEmpty()
+    @IsString()
+    @MaxLength(200)
+    describe: string;
+}
