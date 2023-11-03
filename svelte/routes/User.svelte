@@ -4,7 +4,6 @@
 
     import Header from "../components/Header.svelte";
     import Profile from "../components/Profile.svelte";
-    import Loading from '../components/Loading.svelte';
     import Block from "../components/Block.svelte";
 
     import info from '../public/images/icons/infomation-icon.svg';
@@ -13,7 +12,6 @@
 
     export let user_id;
 
-    let loading;
     let groups = [];
     let blocks = [];
     let user = {
@@ -25,15 +23,8 @@
     };
     let today = new Date();
     let days = [];
-    let selectGroupId = '';
     const activeDate = writable(new Date());
-
-    const changeGroups = async (event) => {
-        if (event.detail.isCreate) {
-            groups = await getGroups();
-        }
-    }
-
+        
     const getGroups = async () => {
         try {
             const res = await fetch(`/api/groups/users/${user_id}`);
@@ -159,24 +150,7 @@
         }
     }
 
-    const loadingStart = () => {
-        loading.start();
-    }
-
-    const loadingStop = () => {
-        loading.stop();
-    }
-
     onMount(async () => {
-        // user = {
-        //     id: $userData.id,
-        //     name: $userData.name,
-        //     image: $userData.image,
-        //     describe: $userData.describe,
-        //     followers: $userData.followerCount ?? 0,
-        //     following: $userData.followingCount ?? 0
-        // };
-        
         user = await getUser();
         user = user = {
             id: user.id,
@@ -231,7 +205,6 @@
             </div>
         </div>
     </div>
-    <Loading bind:this={loading}></Loading>
 </div>
 
 <style>
