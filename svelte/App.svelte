@@ -11,6 +11,7 @@
     import Group from "./routes/Group.svelte";
     import Follow from './routes/Follow.svelte';
     import EditProfile from './routes/EditProfile.svelte';
+    import User from './routes/User.svelte';
 
     import simbol from './public/images/simbol.svg';
     
@@ -48,6 +49,7 @@
         <Route path="/edit-profile" component={EditProfile}></Route>
         <Route path="/detail" component={Detail}></Route>
         <Route path="/detail/:block_id" component={Detail}></Route>
+        <Route path="/user/:user_id" component={User}></Route>
     </Router>
 </main>
 

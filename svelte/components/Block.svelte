@@ -68,11 +68,11 @@
 <div class="block">
     <div class="block__header">
         <div class="profile">
-            <div class="profile__image">
+            <button class="profile__image" on:click={() => redirect(`user/${block.user.id}`)}>
                 <img src="{block.user.image}" alt="user_image">
-            </div>
+            </button>
             <div class="profile__data">
-                <div class="profile__name">{block.user.name}</div>
+                <button class="profile__name" on:click={() => redirect(`user/${block.user.id}`)}>{block.user.name}</button>
                 <div class="profile__write_date">{getTimeDifferenceDescription(block.createdAt)}</div>
             </div>
         </div>

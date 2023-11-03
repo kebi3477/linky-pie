@@ -1,6 +1,8 @@
 <script>
     import { onMount, onDestroy } from 'svelte';
+    import { navigate } from "svelte-routing/src/history";
     import { fade } from 'svelte/transition';
+    import { userData } from '../utils/store.js';
 
     import Login from '../components/intro/Login.svelte';
     import Block from '../components/intro/Block.svelte';
@@ -45,6 +47,10 @@
     }
 
     onMount(() => {
+        if ($userData?.id) {
+            navigate(`/main`, { replace: true });
+        }
+
         function handleOutsideClick(event) {
             if (isShow && !event.target.closest('.login__content') && !event.target.closest('.start__button')) {
                 isShow = false;

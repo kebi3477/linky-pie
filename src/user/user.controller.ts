@@ -17,18 +17,24 @@ export class UserController {
         return await this.service.create(createUserDTO);
     }
 
-    @Get('/me')
-    @UseGuards(JwtAuthenticationGuard)
-    async readMe(@Req() request: RequestWithUser): Promise<User> {
-        return await this.service.getById(request.user.id);
-    }
-
     @Get()
     @UseGuards(JwtAuthenticationGuard)
     async readSearch(@Req() request: RequestWithUser, @Query('search') search?: string): Promise<User[]> {
         return await this.service.findAllUsers(request.user.id, search);
     }
-
+    
+    @Get('/me')
+    @UseGuards(JwtAuthenticationGuard)
+    async readMe(@Req() request: RequestWithUser): Promise<User> {
+        return await this.service.getById(request.user.id);
+    }
+    
+    @Get('/:user_id')
+    @UseGuards(JwtAuthenticationGuard)
+    async readUser(@Param('user_id') userId: string): Promise<User> {
+        return await this.service.getById(userId);
+    }
+    
     @Patch('/name')
     @UseGuards(JwtAuthenticationGuard)
     async updateName(@Req() request: RequestWithUser, @Body() updateUserNameDTO: UpdateUserNameDTO): Promise<User> {

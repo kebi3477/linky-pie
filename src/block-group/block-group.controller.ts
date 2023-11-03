@@ -54,4 +54,13 @@ export class BlockGroupController {
     ): Promise<BlockGroup[]> {
         return await this.service.getList(request.user.id);
     }
+
+    @Get('/users/:user_id')
+    @UseGuards(JwtAuthenticationGuard)
+    async getListByUserId(
+        @Req() request: RequestWithUser,
+        @Param("user_id") userId: string
+    ): Promise<BlockGroup[]> {
+        return await this.service.getList(userId);
+    }
 }

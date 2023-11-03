@@ -41,6 +41,12 @@ export class BlockController {
         return await this.service.getBlockListByUser(request.user.id, date);
     }
 
+    @Get('/users/:user_id')
+    @UseGuards(JwtAuthenticationGuard)
+    async getBlockListByUserId(@Req() request: RequestWithUser, @Param('user_id') userId: string, @Query('date') date: string): Promise<Block[]> {
+        return await this.service.getBlockListByUser(userId, date);
+    }
+
     @Get('/all')
     @UseGuards(JwtAuthenticationGuard)
     async getAllBlockLike(@Req() request: RequestWithUser): Promise<Block[]> {
@@ -69,5 +75,15 @@ export class BlockController {
     @UseGuards(JwtAuthenticationGuard)
     async getBlockCountsByWeek(@Req() request: RequestWithUser, @Query('date') date: string): Promise<any[]> {
         return await this.service.getBlockCountsByWeek(request.user.id, date);
+    }
+
+    @Get('users/:user_id/counts/week')
+    @UseGuards(JwtAuthenticationGuard)
+    async getBlockCountsByWeekAndUserId(
+        @Req() request: RequestWithUser, 
+        @Param('user_id') userId: string, 
+        @Query('date') date: string
+    ): Promise<any[]> {
+        return await this.service.getBlockCountsByWeek(userId, date);
     }
 }

@@ -6,6 +6,7 @@
         location.href = url;
     }
 
+    export let edit = true;
     export let user = {
         id: '',
         name: '',
@@ -21,7 +22,11 @@
     </div>
     <div class="profile__text--white profile__text--big title">{user.name}</div>
     <div class="profile__text profile__text--small email">{user.id}</div>
-    <button class="profile__button" on:click={() => redirect('/edit-profile')}>프로필 편집</button>
+    {#if edit === true}
+        <button class="profile__button" on:click={() => redirect('/edit-profile')}>프로필 편집</button>
+    {:else}
+        <button class="profile__button disabled" disabled >프로필 편집</button>
+    {/if}
     <div class="profile__wrap">
         <button class="profile__wrap-text" on:click={() => redirect('/follow?type=follower')}>
             <div class="profile__text--white profile__text--bold">{user.followers}</div>
@@ -88,6 +93,9 @@
         padding: 10px;
         cursor: pointer;
         margin: 30px 0;
+    }
+    .profile__button.disabled {
+        background-color: #777777;
     }
 
     .profile__wrap {
