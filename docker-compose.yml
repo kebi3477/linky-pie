@@ -11,6 +11,7 @@ services:
       DATABASE_HOST: db
     volumes:
       - ./ssl:/ssl
+      - ./logs:/usr/log
 
   db:
     image: postgres:13

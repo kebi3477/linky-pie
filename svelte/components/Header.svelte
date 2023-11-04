@@ -10,7 +10,7 @@
         try {
             const res = await fetch('/api/auth/logout')
             if (res.status === 200) {
-                redirect('');
+                location.href = '/intro';
             } else {
                 alert('로그아웃 실패!');
             }

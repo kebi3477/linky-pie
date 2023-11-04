@@ -47,6 +47,7 @@
     }
 
     onMount(() => {
+        console.log($userData?.id);
         if ($userData?.id) {
             navigate(`/main`, { replace: true });
         }

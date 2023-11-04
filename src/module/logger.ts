@@ -2,6 +2,7 @@ import { utilities, WinstonModule } from "nest-winston";
 import { LoggerService } from '@nestjs/common';
 import * as winstonDaliy from 'winston-daily-rotate-file';
 import * as winston from "winston";
+import * as path from 'path';
 
 interface DailiyOption{
     level: string,
@@ -14,7 +15,7 @@ interface DailiyOption{
 
 export class Logger {
     private env: string = process.env.NODE_ENV;
-    private dir: string = __dirname + '/../../logs';
+    private dir: string = path.join(process.env.PWD, 'logs');
     private appName: string = "";
 
     public constructor(appName: string) {
