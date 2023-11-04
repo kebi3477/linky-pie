@@ -1,8 +1,5 @@
 <script>
-    import { navigate } from "svelte-routing/src/history";
-
     function redirect(url) {
-        // navigate(`${url}`, { replace: true });
         location.href = url;
     }
 
@@ -28,14 +25,25 @@
         <button class="profile__button disabled" disabled >프로필 편집</button>
     {/if}
     <div class="profile__wrap">
-        <button class="profile__wrap-text" on:click={() => redirect('/follow?type=follower')}>
-            <div class="profile__text--white profile__text--bold">{user.followers}</div>
-            <div class="profile__text">followers</div>
-        </button>
-        <button class="profile__wrap-text" on:click={() => redirect('/follow?type=following')}>
-            <div class="profile__text--white profile__text--bold">{user.following}</div>
-            <div class="profile__text">following</div>
-        </button>
+        {#if edit === true}
+            <button class="profile__wrap-text" on:click={() => redirect('/follow?type=follower')}>
+                <div class="profile__text--white profile__text--bold">{user.followers}</div>
+                <div class="profile__text">followers</div>
+            </button>
+            <button class="profile__wrap-text" on:click={() => redirect('/follow?type=following')}>
+                <div class="profile__text--white profile__text--bold">{user.following}</div>
+                <div class="profile__text">following</div>
+            </button>
+        {:else}
+            <div class="profile__wrap-text">
+                <div class="profile__text--white profile__text--bold">{user.followers}</div>
+                <div class="profile__text">followers</div>
+            </div>
+            <div class="profile__wrap-text">
+                <div class="profile__text--white profile__text--bold">{user.following}</div>
+                <div class="profile__text">following</div>
+            </div>
+        {/if}
     </div>
 </div>
 
