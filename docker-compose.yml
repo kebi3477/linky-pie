@@ -11,7 +11,8 @@ services:
       DATABASE_HOST: db
     volumes:
       - ./ssl:/ssl
-      - ./logs:/usr/log
+      - ./logs:/var/app/logs
+      - ./.env:/var/app/.env
 
   db:
     image: postgres:13
